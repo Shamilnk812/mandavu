@@ -44,6 +44,7 @@ class Venue(models.Model) :
     terms_and_conditions = models.FileField(upload_to='terms_conditions/', verbose_name="Terms and Conditions PDF", null=True, blank=True)
     is_verified = models.BooleanField(default=False)
     is_active  = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name

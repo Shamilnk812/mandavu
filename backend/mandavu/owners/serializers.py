@@ -3,7 +3,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 
-from .models import Owner,Venue
+from .models import Owner,Venue,Facility,Event
 from django.contrib.auth import authenticate
 
 
@@ -130,14 +130,14 @@ class UpdateOwnerSerializer(serializers.ModelSerializer) :
 
 
 
-# =============  VENUE HANDLING ===========
+# ============= VENUE HANDLING ===========
 
 
 class RegisterVenueSerializer(serializers.ModelSerializer) :
     
     class Meta:
         model = Venue
-        fields = ['owner', 'name', 'email', 'phone', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'state', 'district', 'pincode', 'address', 'latitude', 'longitude', 'terms_and_conditions']
+        fields = ['owner', 'name', 'email', 'phone', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'state', 'district', 'pincode', 'address', 'latitude', 'longitude']
 
     def create(self, validated_data):
         venue = Venue(**validated_data)
@@ -163,39 +163,48 @@ class RegisterVenueSerializer(serializers.ModelSerializer) :
             raise ValidationError(f"Geocoding error: {str(e)}")
         
 
-    # def geocode_address(self, venue) :
-    #     full_address = f"{venue.address}, {venue.district}, {venue.state}, {venue.pincode}"
+class VenueDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Venue
+        fields = '__all__'
 
-    #     gmaps = googlemaps.Client(key= settings.GOOGLE_API_KEY)
-    #     intermediate = json.dumps(gmaps.geocode(str(full_address)))
-    #     intermediate2 = json.loads(intermediate)
-    #     latitude = intermediate2[0]['geometry']['location']['lat']
-    #     logtitude = intermediate2[0]['geometry']['location']['lng']
 
-    #     venue.latitude = latitude
-    #     venue.longitude = logtitude
+class UpdateVenueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Venue
+        fields = ['owner', 'name', 'email', 'phone', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'state', 'district', 'pincode', 'address', 'latitude', 'longitude']
 
-    # def update(self, instance, validated_data):
-    #     for attr, value in validated_data.items():
-    #         setattr(instance, attr, value)
-    #     self.geocode_address(instance)
-    #     instance.save()
-    #     return instance
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        
+        self.geocode_address(instance)
+        instance.save()
+        return instance
 
-    # def geocode_address(self, venue):
-    #     geolocator = Nominatim(user_agent="myGeocoder")
-    #     full_address = f"{venue.address}, {venue.district}, {venue.state}, {venue.pincode}"
-    #     try:
-    #         location = geolocator.geocode(full_address)
-    #         if location:
-    #             venue.latitude = location.latitude
-    #             venue.longitude = location.longitude
-    #             print(f"Geocoding successful: {full_address} -> ({location.latitude}, {location.longitude})")
-    #         else:
-    #             print(f"Geocoding failed for address: {full_address}")
-    #             venue.latitude = None
-    #             venue.longitude = None
-    #     except (GeocoderTimedOut, GeocoderServiceError) as e:
-    #         print(f"Geocoding error for address '{full_address}': {str(e)}")
-    #         venue.latitude = None
-    #         venue.longitude = None
+    def geocode_address(self, venue):
+        geocoder = OpenCageGeocode(settings.OPENCAGE_API_KEY)
+        full_address = f"{venue.address}, {venue.district}, {venue.state}, {venue.pincode}, {settings.BASE_COUNTRY}"
+        try:
+            results = geocoder.geocode(full_address)
+            if results and len(results):
+                location = results[0]['geometry']
+                venue.latitude = location['lat']
+                venue.longitude = location['lng']
+                print(f"Geocoding successful: {full_address} -> ({location['lat']}, {location['lng']})")
+            else:
+                print(f"Geocoding failed for address: {full_address}")
+                raise ValidationError(f"Geocoding failed for address: {full_address}")
+        except Exception as e:
+            print(f"Geocoding error for address '{full_address}': {str(e)}")
+            raise ValidationError(f"Geocoding error: {str(e)}")
+
+
+
+class AddFacilitiesSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model  = Facility
+        fields = '__all__'
+
+    def create(self, validated_data):
+        return super().create(validated_data)    

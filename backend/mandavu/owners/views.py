@@ -123,5 +123,41 @@ class  VenueRegisterView(GenericAPIView) :
             print(serializer.data)
             return Response({'data':serializer.data,
                              'message':'Your Venue is Registerd waiting for admin approval'},
-                               status=status.HTTP_200_OK)
+                               status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+class VenueDetailsView(GenericAPIView):
+    serializer_class = VenueDetailsSerializer
+    def get(self, request, uid):
+        venue = get_object_or_404(Venue, owner=uid)
+        serializer = self.serializer_class(venue)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class UpdateVenueView(GenericAPIView) :
+    serializer_class = UpdateVenueSerializer
+    def put(self, request,vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        serializer = self.serializer_class(venue, data=request.data, partial=True)    
+        if serializer.is_valid(raise_exception=True) :
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class AddFacilitiesView(GenericAPIView):
+    serializer_class = AddFacilitiesSerializer
+    def post(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        facilities = Facility.objects.filter(venue=venue)
+        serializer = self.serializer_class(facilities, data=request.data)
+        if serializer.is_valid(raise_exception=True) :
+            serializer.save()
+            print(serializer.data)
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    

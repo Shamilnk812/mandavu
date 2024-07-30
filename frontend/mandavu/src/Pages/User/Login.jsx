@@ -1,6 +1,8 @@
 import { useFormik } from "formik"
 import { useNavigate } from "react-router-dom"
+import { useDispatch } from 'react-redux';
 import LoginSchema from "../../Validations/User/LoginSchema"
+import { UserLogin } from "../../Redux/Slices/User";
 import axios from "axios"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -8,8 +10,9 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function Login() {
-
+ 
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const formik = useFormik({
         initialValues:{
@@ -24,13 +27,19 @@ export default function Login() {
                 console.log(response.data);  
                 const { access_token, refresh_token, email,user_id } = response.data;
 
-                // Storing user data and tokens in localStorage
+
+                dispatch(UserLogin({
+                  user: { id: user_id, email },
+                  access_token,
+                  refresh_token,
+                }));
+        
+
                 localStorage.setItem('access_token', access_token);
                 localStorage.setItem('refresh_token', refresh_token);
                 localStorage.setItem('user_email', JSON.stringify({ email }));
                 localStorage.setItem('user_id', JSON.stringify({user_id}))
-                // localStorage.setItem('user_name', JSON.stringify({ name }));
-                toast.success('youu successfully logedin');
+                toast.success('you successfully logedin');
                 navigate('/user/home');
 
             }catch (error) {

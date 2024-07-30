@@ -7,9 +7,11 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
-from owners.models import Owner
+from owners.models import Owner,Venue
 from .serializers import *
-
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from .utils import send_approval_email
 # Create your views here.
 
 
@@ -122,3 +124,65 @@ class UnblockOwnerView(GenericAPIView) :
         owner.save()
         serializer = OwnerListSerializer(owner)
         return Response(serializer.data,status=status.HTTP_200_OK)    
+    
+
+
+#============= Venue Handling =================
+
+class VenueListView(APIView):
+    def get(self, request, format=None):
+        search_query = request.GET.get('search', '')
+        if search_query:
+            venues = Venue.objects.filter(name__icontains=search_query)
+        else:
+            venues = Venue.objects.all()
+
+        venue_list = [{
+            'id': venue.id,
+            'name': venue.name,
+            'is_verified': venue.is_verified,
+            'is_active': venue.is_active,
+            'created_at': venue.created_at
+        } for venue in venues]
+        print(venue_list)
+        return Response(venue_list, status=status.HTTP_200_OK)    
+
+class VenueVerifyView(APIView) :
+    def post(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        venue.is_verified = True
+        venue.save()
+        send_approval_email(venue)
+        print('venue approved ')
+        return Response(status=status.HTTP_200_OK)
+    
+
+class VenueUnVerifyView(APIView) :
+    def post(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        venue.is_verified = False
+        venue.save()
+        print('venue un approved ')
+        return Response(status=status.HTTP_200_OK)
+    
+
+
+class BlockVenueView(APIView) :
+    def post(self,request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        venue.is_active = False
+        venue.save()
+        return Response(status=status.HTTP_200_OK)
+
+
+class UnblockVenueView(APIView) :
+    def post(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        venue.is_active = True
+        venue.save()
+        return Response(status=status.HTTP_200_OK)
+
+class VenueDetailsView(APIView) :
+    def get(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        return Response(venue , status=status.HTTP_200_OK)

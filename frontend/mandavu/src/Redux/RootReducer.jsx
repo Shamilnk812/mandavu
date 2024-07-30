@@ -1,10 +1,10 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import User from "./Slices/User";
-import Owner from "./Slices/Owner";
+import user from "./Slices/User";
+import owner from "./Slices/Owner";
 
 const rootReducer = combineReducers({
-    user: User,
-    owner: Owner
+    user: user,
+    owner: owner
 })
 
 export default rootReducer;

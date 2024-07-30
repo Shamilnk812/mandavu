@@ -1,15 +1,19 @@
 import React, { useEffect,useState } from 'react';
 import { Link,useNavigate } from 'react-router-dom';
 import axios from "axios";
+
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch } from 'react-redux';
+import { UserLogout } from "../../Redux/Slices/User";
+
 
 
 
 
 export default  function Navb() {
 
-
+  const dispatch = useDispatch()
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -43,6 +47,8 @@ export default  function Navb() {
               }
           );
           if (response.status === 200) {
+              
+              dispatch(UserLogout())
               localStorage.removeItem('access_token');
               localStorage.removeItem('refresh_token');
               localStorage.removeItem('user_email');

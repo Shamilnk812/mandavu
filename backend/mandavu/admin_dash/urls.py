@@ -12,4 +12,10 @@ urlpatterns  =[
     path('owner-list/',OwnerListView.as_view(),name='owner-list'),
     path('block-owner/<int:uid>/',BlockOwnerView.as_view(),name='block-owner'),
     path('unblock-owner/<int:uid>/',UnblockOwnerView.as_view(),name='unblock-owner'),
+
+    path('venue-list/',VenueListView.as_view(),name='venue-list'),
+    path('block-venue/<int:vid>/',BlockVenueView.as_view(),name='block-venue'),
+    path('unblock-venue/<int:vid>/',UnblockVenueView.as_view(),name='unblock-venue'),
+    path('verify-venue/<int:vid>/',VenueVerifyView.as_view(),name='verify-venue'),
+    path('unverify-venue/<int:vid>/',VenueUnVerifyView.as_view(),name='unverify-venue'),
 ]

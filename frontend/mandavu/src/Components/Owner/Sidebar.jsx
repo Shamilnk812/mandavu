@@ -1,9 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link,useNavigate} from "react-router-dom";
+import { OwnerLogout } from "../../Redux/Slices/Owner";
 
-export default function Sidebar () {
+
+export default function  Sidebar () {
     
+    const dispatch = useDispatch()
     const navigate  = useNavigate()
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -23,6 +27,8 @@ export default function Sidebar () {
                 }
             );
             if (response.status === 200) {
+
+                dispatch(OwnerLogout())
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
                 localStorage.removeItem('owner_id');
@@ -162,12 +168,11 @@ export default function Sidebar () {
               </a>
             </li>
             <li>
-              <a
-                href="#"
+              <Link to='/owner/venue-management'
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-customColor3 dark:hover:bg-customColor3 group"
               >
                 <span className="flex-1 ms-3 whitespace-nowrap">Venue Management</span>
-              </a>
+              </Link>
             </li>
             <li>
               <Link to='/owner/details'
