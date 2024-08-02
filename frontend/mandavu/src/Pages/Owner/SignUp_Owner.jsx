@@ -3,7 +3,6 @@ import SignupSchema from '../../Validations/Owner/SignUpSchema';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -25,7 +24,7 @@ export default function SignUp() {
       console.log('Form submitted with values:', values);
       try{
         const response = await axios.post('http://127.0.0.1:8000/api/v2/auth/register/',values);
-        
+        localStorage.setItem('email',values.email)
         toast.success('Account created successfully! Please check your email for the OTP.')
         navigate('/owner/otp')
       }catch (error) {

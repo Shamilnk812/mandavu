@@ -205,6 +205,18 @@ class AddFacilitiesSerializer(serializers.ModelSerializer) :
     class Meta:
         model  = Facility
         fields = '__all__'
-
+    def validate(self, attrs):
+        facility_name = attrs.get('facility')
+        venue_id = attrs.get('venue')
+        if Facility.objects.filter(facility=facility_name,venue=venue_id).exists() :
+                raise serializers.ValidationError("This facility already exists for this venue.")
+        return attrs
+    
     def create(self, validated_data):
-        return super().create(validated_data)    
+        return Facility.objects.create(**validated_data)    
+
+
+class GetFacilitiesSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = Facility
+        fields = '__all__'

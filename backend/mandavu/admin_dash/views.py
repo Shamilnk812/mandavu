@@ -42,40 +42,41 @@ class AdminLogoutView(GenericAPIView) :
 #============== User handling =============
 
 
-class UserListView(GenericAPIView) :
-    serializer_class = UserListSerializer
-    def get(self, request) :
-        users  = User.objects.filter(is_superuser=False)
-        serializer = self.serializer_class(users, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+# class UserListView(GenericAPIView) :
+#     serializer_class = UserListSerializer
+#     def get(self, request) :
+#         users  = User.objects.filter(is_superuser=False)
+#         serializer = self.serializer_class(users, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-# class UserListView(APIView):
-#     # permission_classes = [IsAdminUser]
+class UserListView(APIView):
+    # permission_classes = [IsAdminUser]
 
-#     def get(self, request, format=None):
-#         search_query = request.GET.get('search', '')
-#         if search_query:
-#             users = User.objects.filter(
-#                 Q(first_name__icontains=search_query) |
-#                 Q(last_name__icontains=search_query) |
-#                 Q(email__icontains=search_query)
-#             )
-#         else:
-#             users = User.objects.all()
+    def get(self, request, format=None):
+        search_query = request.GET.get('search', '')
+        if search_query:
+            users = User.objects.filter(
+                Q(first_name__icontains=search_query) |
+                Q(last_name__icontains=search_query) |
+                Q(email__icontains=search_query)|
+                Q(is_verified=True)
+            )
+        else:
+            users = User.objects.filter(is_verified=True)
 
-#         user_list = [
-#             {
-#                 'id': user.id,
-#                 'first_name': user.first_name,
-#                 'last_name': user.last_name,
-#                 'email': user.email,
-#                 'date_joined': user.date_joined,
-#                 'is_active': user.is_active,
-#             }
-#             for user in users
-#         ]
-#         return Response(user_list, status=status.HTTP_200_OK)
+        user_list = [
+            {
+                'id': user.id,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'date_joined': user.date_joined,
+                'is_active': user.is_active,
+            }
+            for user in users
+        ]
+        return Response(user_list, status=status.HTTP_200_OK)
     
 
 
@@ -157,13 +158,13 @@ class VenueVerifyView(APIView) :
         return Response(status=status.HTTP_200_OK)
     
 
-class VenueUnVerifyView(APIView) :
-    def post(self, request, vid) :
-        venue = get_object_or_404(Venue, id=vid)
-        venue.is_verified = False
-        venue.save()
-        print('venue un approved ')
-        return Response(status=status.HTTP_200_OK)
+# class VenueUnVerifyView(APIView) :
+#     def post(self, request, vid) :
+#         venue = get_object_or_404(Venue, id=vid)
+#         venue.is_verified = False
+#         venue.save()
+#         print('venue un approved ')
+#         return Response(status=status.HTTP_200_OK)
     
 
 
@@ -182,7 +183,11 @@ class UnblockVenueView(APIView) :
         venue.save()
         return Response(status=status.HTTP_200_OK)
 
+
 class VenueDetailsView(APIView) :
+    serializer_class = VenueDetailsSeriallizer
     def get(self, request, vid) :
         venue = get_object_or_404(Venue, id=vid)
-        return Response(venue , status=status.HTTP_200_OK)
+        serializer = self.serializer_class(venue)
+        return Response(serializer.data , status=status.HTTP_200_OK)
+        

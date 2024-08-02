@@ -2,8 +2,6 @@ import axios from "axios";
 import {jwtDecode} from "jwt-decode"
 import dayjs from "dayjs"
 
-// const token = localStorage.getItem('access_token') ? JSON.parse(localStorage.getItem('access_token')) : null
-// const refresh_token = localStorage.getItem('refresh_token') ? JSON.parse(localStorage.getItem('refresh_token')) : null
 
 const token = localStorage.getItem('access_token');
 const refresh_token = localStorage.getItem('refresh_token');

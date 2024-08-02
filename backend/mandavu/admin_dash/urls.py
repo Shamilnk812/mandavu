@@ -17,5 +17,6 @@ urlpatterns  =[
     path('block-venue/<int:vid>/',BlockVenueView.as_view(),name='block-venue'),
     path('unblock-venue/<int:vid>/',UnblockVenueView.as_view(),name='unblock-venue'),
     path('verify-venue/<int:vid>/',VenueVerifyView.as_view(),name='verify-venue'),
-    path('unverify-venue/<int:vid>/',VenueUnVerifyView.as_view(),name='unverify-venue'),
+    # path('unverify-venue/<int:vid>/',VenueUnVerifyView.as_view(),name='unverify-venue'),
+    path('venue-details/<int:vid>/',VenueDetailsView.as_view(),name='venue-details'),
 ]

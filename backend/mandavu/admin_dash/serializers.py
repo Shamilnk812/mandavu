@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from users.models import User
-from owners.models import Owner
+from owners.models import Owner,Venue
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -74,3 +74,12 @@ class OwnerListSerializer(serializers.ModelSerializer) :
     class Meta:
         model = Owner
         fields = ['id', 'convention_center_name', 'first_name', 'last_name', 'email', 'is_active', 'date_joined']
+
+
+
+
+class VenueDetailsSeriallizer(serializers.ModelSerializer) :
+    class Meta:
+        model = Venue
+        fields = '__all__'
+

@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .models import OneTimePassword
-from .utils import sent_otp_to_user
+from .utils import sent_otp_to_user,encrypt_otp,decrypt_otp
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import smart_str,DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -24,6 +24,7 @@ class RegisterUserView(GenericAPIView) :
 
     def post(self, request) :
         user_data = request.data
+        print(user_data['email'])
         serializer = self.serializer_class(data=user_data)
         if serializer.is_valid(raise_exception=True) :
             serializer.save()
@@ -105,22 +106,40 @@ class ChangeUserPassword(GenericAPIView) :
 class VerifyUserOtp(GenericAPIView) :
     def post(self, request) :
         otp_code = request.data.get('otp')
+        email = request.data.get('email')
+        print(email,otp_code)
         try :
-            user_code_obj = OneTimePassword.objects.get(code=otp_code)
-            user = user_code_obj.user
-            if not user.is_verified :
-                user.is_verified = True
-                user.save()
+            user = User.objects.get(email=email)
+            otp_entry = OneTimePassword.objects.get(user=user)
+
+            decrypted_otp_code = decrypt_otp(otp_entry.code)
+            print(decrypted_otp_code)
+            if decrypted_otp_code == otp_code :
+                print(otp_code)
+
+            # if user_code_obj.is_expired() :
+            #     return Response({'message': 'OTP has expired'}, status=status.HTTP_400_BAD_REQUEST)
+
+          
+                if not user.is_verified :
+                    user.is_verified = True
+                    user.save()
+                    return Response({
+                        'message':'Account email verified successfully'
+                    },status=status.HTTP_200_OK)
+        
                 return Response({
-                    'message':'account email verified successfully'
-                },status=status.HTTP_200_OK)
-       
-            return Response({
-                     'message' : 'OTP is invlid user already verified'
-                     },status=status.HTTP_204_NO_CONTENT)
+                        'message' : 'User already verified'
+                        },status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+            
+
+        except User.DoesNotExist:
+                return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)    
         
         except OneTimePassword.DoesNotExist :
-            Response({'message':'OTP not provided '},status=status.HTTP_400_BAD_REQUEST)
+            Response({'message':'Invalid OTP'},status=status.HTTP_400_BAD_REQUEST)
 
 
 

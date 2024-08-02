@@ -2,32 +2,48 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Sidebar from "../../Components/Admin/Sidebar"
+import { toast } from "react-toastify"
 
 export default function OwnersList() {
     const navigate = useNavigate()
     const [owners,setOwners] = useState([])
 
-    useEffect(()=>{
-        const fetchOwnerslist = async () =>{
-            try{
-                const response = await axios.get('http://localhost:8000/api/admin_dash/auth/owner-list')
-                setOwners(response.data)
-                console.log(response.data)
-            }catch (error) {
-                console.error('somethin wrong ',error)
-            }
+    // useEffect(()=>{
+    //     const fetchOwnerslist = async () =>{
+    //         try{
+    //             const response = await axios.get('http://localhost:8000/api/admin_dash/auth/owner-list')
+    //             setOwners(response.data)
+    //             console.log(response.data)
+    //         }catch (error) {
+    //             console.error('somethin wrong ',error)
+    //         }
+    //     }
+    //     fetchOwnerslist()
+    // },[])
+
+
+    const fetchOwnerslist = async () =>{
+        try{
+            const response = await axios.get('http://localhost:8000/api/admin_dash/auth/owner-list')
+            setOwners(response.data)
+            console.log(response.data)
+        }catch (error) {
+            console.error('somethin wrong ',error)
         }
-        fetchOwnerslist()
-    },[])
+    }
+
+    useEffect(() => {
+        fetchOwnerslist();
+    }, []);
+
 
     const handleBlockOwner = async (uid) => {
         try{
             const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/block-owner/${uid}/`)
-            console.log('fsdjfjds',response.data)
-            alert('Owner Account is bloked ')
-            navigate(0)
+            toast.success('Owner Account is bloked ')
+            fetchOwnerslist()
         }catch (error) {
-            console.error('jdfjdsk',error)
+            toast.error('Something wrong')
         }
     }
 
@@ -35,10 +51,10 @@ export default function OwnersList() {
         try{
             const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/unblock-owner/${uid}/`)
             console.log('unbloked',response.data)
-            alert('Owner Account is unblocked')
-            navigate(0)
+            toast.success('Owner Account is unblocked')
+            fetchOwnerslist()
         }catch (error) {
-            console.error('an error',error)
+            toast.error('Something wrong')
         }
     }
 
@@ -46,7 +62,7 @@ export default function OwnersList() {
         <>
         <Sidebar/>
         <div className="p-4 sm:ml-64  ">
-         <div className="p-4 border-2 border-gray-200 border-dashed  rounded-lg dark:border-gray-700 mt-14">
+         <div className="p-4 border-2 border-gray-200 border-solid  rounded-lg dark:border-gray-700 mt-14">
             
 <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

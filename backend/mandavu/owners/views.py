@@ -152,12 +152,22 @@ class AddFacilitiesView(GenericAPIView):
     serializer_class = AddFacilitiesSerializer
     def post(self, request, vid) :
         venue = get_object_or_404(Venue, id=vid)
-        facilities = Facility.objects.filter(venue=venue)
-        serializer = self.serializer_class(facilities, data=request.data)
+        data = request.data.copy()
+        data['venue'] = venue.id
+        serializer = self.serializer_class(data=data)
         if serializer.is_valid(raise_exception=True) :
             serializer.save()
             print(serializer.data)
-            return Response(status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response({'data':serializer.data},status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class GetFacilitiesView(GenericAPIView) :
+    serializer_class= GetFacilitiesSerializer
+    def get(self, request, vid) :
+        facilities = Facility.objects.filter(venue=vid)
+        serializer = self.serializer_class(facilities, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     
     

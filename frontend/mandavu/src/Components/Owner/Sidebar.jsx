@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link,useNavigate} from "react-router-dom";
 import { OwnerLogout } from "../../Redux/Slices/Owner";
+import { toast } from "react-toastify";
 
 
 export default function  Sidebar () {
@@ -32,8 +33,8 @@ export default function  Sidebar () {
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
                 localStorage.removeItem('owner_id');
-                navigate("/owner/login");
                 toast.success("Logout successfully");
+                navigate("/owner/login");
             }
         } catch (error) {
             console.error("Logout failed:", error);

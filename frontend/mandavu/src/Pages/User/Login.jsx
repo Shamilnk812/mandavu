@@ -4,8 +4,7 @@ import { useDispatch } from 'react-redux';
 import LoginSchema from "../../Validations/User/LoginSchema"
 import { UserLogin } from "../../Redux/Slices/User";
 import axios from "axios"
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 
 
@@ -39,7 +38,7 @@ export default function Login() {
                 localStorage.setItem('refresh_token', refresh_token);
                 localStorage.setItem('user_email', JSON.stringify({ email }));
                 localStorage.setItem('user_id', JSON.stringify({user_id}))
-                toast.success('you successfully logedin');
+                toast.success('You successfully logged in');
                 navigate('/user/home');
 
             }catch (error) {
@@ -56,7 +55,6 @@ export default function Login() {
 
     return(
       <>
-      <ToastContainer />
       <div className="min-h-screen bg-customColor3 flex justify-center items-center">
         <div className="absolute w-60 h-60 rounded-xl bg-customColor2 -top-5 -left-16 z-0 transform rotate-45 hidden md:block"></div>
         <div className="py-12 px-12 bg-customColor4 rounded-2xl shadow-xl z-20">

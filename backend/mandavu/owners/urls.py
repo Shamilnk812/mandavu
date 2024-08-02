@@ -14,4 +14,6 @@ urlpatterns = [
     path('register-venue/',VenueRegisterView.as_view(),name='register-venue'),
     path('venue-details/<int:uid>/',VenueDetailsView.as_view(),name='venue-details'),
     path('update-venue/<int:vid>/',UpdateVenueView.as_view(),name='update-venue'),
+    path('add-facility/<int:vid>/',AddFacilitiesView.as_view(),name='add-facility'),
+    path('get-facility/<int:vid>/',GetFacilitiesView.as_view(),name='get-facility'),
 ]

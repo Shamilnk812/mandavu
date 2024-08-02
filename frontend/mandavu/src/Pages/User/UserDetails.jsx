@@ -2,8 +2,7 @@
 import { useEffect, useState } from "react";
 import Sidebar from "../../Components/User/Sidebar";
 import axios from "axios";
-
-
+import { toast } from "react-toastify";
 
 export default function UserDetails() {
 
@@ -52,18 +51,7 @@ export default function UserDetails() {
            alert('Email is required.');
            return;
         }
-        // if (!nameRegex.test(firstName)) {
-        //     alert('First name should contain only characters and be at least 2 characters long.');
-        //     return;
-        // }
-        // if (!nameRegex.test(lastName)) {
-        //     alert('Last name should contain only characters and be at least 2 characters long.');
-        //     return;
-        // }
-        // if (!emailRegex.test(email)) {
-        //     alert('Please enter a valid email address.');
-        //     return;
-        // }
+        
         const updatedUser = {
             first_name: firstName || user.first_name,
             last_name: lastName || user.last_name,
@@ -73,9 +61,9 @@ export default function UserDetails() {
             const response = await axios.put(`http://127.0.0.1:8000/api/v1/auth/update/${uid}/`, updatedUser);
             console.log(response.data);
             setUser(response.data);
-            alert('User details updated successfully');
+            toast.success('User details updated successfully');
         } catch (error) {
-            console.error('Error updating user details', error);
+            toast.error('Something Wrong');
             
         }
     };
@@ -83,24 +71,18 @@ export default function UserDetails() {
     const handleChangePassword = async (event) =>{
         event.preventDefault();
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+={}\[\]:;"'<>,.?/~`\\-]).{6,}$/;
-        if (!oldPassword.trim()==='') {
-            lert('Old password is required.');
+        if (!oldPassword.trim()===''|| !newPassword.trim()==='' || !confirmPassword.trim()==='') {
+            toast.error('All password fields are required.');
             return;
         }
-        if (!newPassword.trim()==='') {
-            alert('New password is required.');
-            return;
-        }
-        if (!confirmPassword.trim()==='') {
-            alert('Confirm password is required.');
-            return;
-        }
+        
+        
         if (newPassword !== confirmPassword) {
-            alert('Passwords do not match.');
+            toast.error('Passwords do not match.');
             return;
         }
         if (!passwordRegex.test(newPassword)) {
-            alert('Password must be at least 6 characters long and include at least one lowercase letter, one uppercase letter, and one special character.');
+            toast.error('Password must be at least 6 characters long and include at least one lowercase letter, one uppercase letter, and one special character.');
             return;
         }
         try{
@@ -108,7 +90,7 @@ export default function UserDetails() {
                 old_password:oldPassword,
                 new_password:newPassword
             });
-            alert('Passwords Changed successfully');
+            toast.success('Passwords Changed successfully');
             console.log(response.data.message)
             setOldPassword('');
             setConfirmPassword('');

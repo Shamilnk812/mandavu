@@ -3,7 +3,7 @@ import UserRoute from './Routes/UserRoute'
 import AdminRoute from './Routes/AdminRoute'
 import OwnerRoute from './Routes/OwnerRoute'
 import Dash from './Pages/Common/Dash'
-
+import { ToastContainer } from 'react-toastify'
 
 
 function App() {
@@ -18,6 +18,18 @@ function App() {
         <Route path='/owner/*' element={<OwnerRoute />} />
         <Route path='/admin/*' element={<AdminRoute />} />
       </Routes> 
+      <ToastContainer
+        position="bottom-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
      
     </>
   )

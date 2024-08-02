@@ -2,8 +2,8 @@ import { useFormik } from "formik";
 import Sidebar from "../../Components/Owner/Sidebar";
 import VenueRegisterSchema from "../../Validations/Owner/VenueRegisterSchema";
 import axios from "axios";
-import {ToastContainer, toast } from "react-toastify"
-import 'react-toastify/dist/ReactToastify.css';
+import {toast } from "react-toastify"
+import Facilities from "../../Components/Owner/Facilities";
 
 
 export default function VenueDetails({ venueDetails }) {
@@ -37,12 +37,11 @@ export default function VenueDetails({ venueDetails }) {
         try{
             const response = await axios.put(`http://127.0.0.1:8000/api/v2/auth/update-venue/${venueDetails.id}/`, updatedValues)
             console.log('Venue updated successfully:', response.data);
-            // toast.success('Venue Details Successfully updated')
-            alert('Venue Details Successfully updated')
+            toast.success('Venue Details Successfully updated')
+            
         }catch (error) {
             console.error('Error updating venue:', error);
-            // toast.error('Error updating venue')
-            alert('Error updating venue')
+            toast.error('Error updating venue')
 
         }
     }
@@ -270,6 +269,9 @@ export default function VenueDetails({ venueDetails }) {
                            </div>  
                         </form>
                     </div>
+
+                          <Facilities venueId={venueDetails.id}/>
+
                 </div>
             </div>
     </>

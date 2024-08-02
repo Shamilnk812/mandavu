@@ -2,7 +2,7 @@ import { useState,useEffect } from "react";
 import Sidebar from "../../Components/Admin/Sidebar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Slide } from "react-toastify";
+import { toast } from "react-toastify";
 
 
 export default function VenueList() {
@@ -11,18 +11,34 @@ export default function VenueList() {
     const [venues, setVenues] = useState([])
     const [searchTerm, setSearchTerm] = useState('')
 
-    useEffect(()=>{
-        const fetchVeneuList = async ()=>{
-            try{
-                const response = await axios.get(`http://127.0.0.1:8000/api/admin_dash/auth/venue-list/?search=${searchTerm}`);
-                setVenues(response.data)
-                console.log(response.data)
-            }catch(error) {
-                console.error('something wrong',error)
-            }
+    // useEffect(()=>{
+    //     const fetchVeneuList = async ()=>{
+    //         try{
+    //             const response = await axios.get(`http://127.0.0.1:8000/api/admin_dash/auth/venue-list/?search=${searchTerm}`);
+    //             setVenues(response.data)
+    //             console.log(response.data)
+    //         }catch(error) {
+    //             console.error('something wrong',error)
+    //         }
+    //     }
+    //     fetchVeneuList()
+    // },[searchTerm])
+
+
+    const fetchVenueList = async () => {
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/api/admin_dash/auth/venue-list/?search=${searchTerm}`);
+            setVenues(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.error('Something went wrong', error);
         }
-        fetchVeneuList()
-    },[searchTerm])
+    };
+    
+    useEffect(() => {
+        fetchVenueList();
+    }, [searchTerm]);
+    
 
     const handleSearchChange = (event) =>{
         setSearchTerm(event.target.value)
@@ -31,21 +47,21 @@ export default function VenueList() {
     const handleBlockVenue = async (venueId) => {
         try{
             const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/block-venue/${venueId}/`)
-            alert('Veneu is bloked')
-            navigate(0)
-            
+             toast.success('Venue is blocked')
+             fetchVenueList();
+           
         }catch (error) {
-            alert('something wrong')
+            toast.error('something wrong')
         }
     }
 
     const handleUnblockVenue = async (venueId) =>{
         try{
             const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/unblock-venue/${venueId}/`)
-            alert('Venue is unbloked')
-            navigate(0)
+             toast.success('venue is unbloked')
+             fetchVenueList();
         }catch (error) {
-            alert('something wrong')
+            toast.error('something wrong')
         }
     }
 
@@ -53,22 +69,17 @@ export default function VenueList() {
         try{
             const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/verify-venue/${venueId}/`);
             console.log(response.data)
-            alert('venue is verified succes fully')
-            navigate(0)
+            toast.success('venue is verified successfully')
+            fetchVenueList()
         }catch (error) {
-            alert('somethign wrong')
+            toast.error('something wrong')
         }
     }
 
-    const handleUnVerifyVenue = async (venueId) =>{
-        try{
-            const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/unverify-venue/${venueId}/`);
-            alert('venue is unverified succes fully')
-            navigate(0)
-        }catch (error) {
-            alert('somethign wrong')
-        }
+    const handleViewDetails = (venueId) => {
+        navigate(`/admin/show-venue-details/${venueId}`)
     }
+
 
     return(
         <>
@@ -117,7 +128,12 @@ export default function VenueList() {
                     {venue.name}
                 </th>
                 <td className="px-6 py-4">
-                   details
+                <button type="button" 
+                 className="px-4 py-2 text-white bg-purple-700 rounded hover:bg-purple-800"
+                 onClick={() => handleViewDetails(venue.id)}
+                    >
+                    View Details</button>
+
                 </td>
                 <td className="px-6 py-4">
                 {venue.created_at}

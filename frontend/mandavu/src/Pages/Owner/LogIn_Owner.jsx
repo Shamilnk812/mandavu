@@ -3,8 +3,7 @@ import LoginSchema from '../../Validations/User/LoginSchema'
 import { Link } from "react-router-dom"
 import axios from "axios"
 import { useDispatch } from 'react-redux';
-import {ToastContainer, toast } from "react-toastify"
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom"
 import { OwnerLogin } from "../../Redux/Slices/Owner";
 
@@ -51,7 +50,7 @@ export default function LogIn() {
   });
     return (
         <>
-       <ToastContainer/>
+      
   <div class="min-h-screen bg-customColor3 flex justify-center items-center">
   <div class="absolute w-60 h-60 rounded-xl bg-customColor2 -top-5 -left-16 z-0 transform rotate-45 hidden md:block"></div>
   <div class="py-12 px-12 bg-customColor4 rounded-2xl shadow-xl z-20">

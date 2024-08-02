@@ -7,19 +7,21 @@ import OwnerDetails from "../Pages/Owner/OwnerDetails";
 import VenueManagement from "../Pages/Owner/Venue_Management";
 import SuccessRegisterPage from "../Pages/Owner/SuccessRegister";
 
+import OwnerLogoutAuth from "../Utils/AuthCheck/OwnerLogoutAuth";
+import OwnerLoginAuth from "../Utils/AuthCheck/OwnerLoginAuth";
 
 
 export default function OwnerRoute() {
     return(
         <>  
         <Routes>
-            <Route path="/signup" element={<SignUp/>} />
-            <Route path="/login" element={<LogIn/>} />
-            <Route path="/otp" element={<OtpVerification/>} />
-            <Route path="/dashboard" element={<Dashboard_Owner/>} />
-            <Route path="/details" element={<OwnerDetails/>} />
-            <Route path="/venue-management" element={<VenueManagement/>} />
-            <Route path="/success-register" element={<SuccessRegisterPage/>} />
+            <Route path="/signup" element={<OwnerLogoutAuth> <SignUp/> </OwnerLogoutAuth>} />
+            <Route path="/login" element={<OwnerLogoutAuth> <LogIn/> </OwnerLogoutAuth>} />
+            <Route path="/otp" element={<OwnerLogoutAuth> <OtpVerification/> </OwnerLogoutAuth>} />
+            <Route path="/dashboard" element={<OwnerLoginAuth> <Dashboard_Owner/> </OwnerLoginAuth>} />
+            <Route path="/details" element={<OwnerLoginAuth> <OwnerDetails/> </OwnerLoginAuth>} />
+            <Route path="/venue-management" element={<OwnerLoginAuth> <VenueManagement/> </OwnerLoginAuth>} />
+            <Route path="/success-register" element={<OwnerLoginAuth> <SuccessRegisterPage/> </OwnerLoginAuth>} />
         </Routes>
         </>
     )

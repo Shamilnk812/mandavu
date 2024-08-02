@@ -1,12 +1,13 @@
 import { useFormik } from "formik"
 import { useNavigate } from "react-router-dom"
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import axios from 'axios';
-import 'react-toastify/dist/ReactToastify.css';
+
 import OtpSchema from "../../Validations/User/OtpSchema";
 export default function OtpVerification() {
 
     const navigate = useNavigate();
+    const email = localStorage.getItem('email');
     const formik = useFormik({
         initialValues:{
          otp:'',
@@ -14,8 +15,9 @@ export default function OtpVerification() {
         validationSchema: OtpSchema,
         onSubmit: async (values) => {
             try{
-                const response = await axios.post('http://127.0.0.1:8000/api/v1/auth/verify-otp/',values);
+                const response = await axios.post('http://127.0.0.1:8000/api/v1/auth/verify-otp/',{ ...values, email });
                 toast.success('OTP verified successfully!');
+                localStorage.removeItem('email')
                 navigate('/user/login'); 
             }catch (error) {
                 if (error.response && error.response.data) {
@@ -30,7 +32,7 @@ export default function OtpVerification() {
     })
     return(
         <>
-         <ToastContainer />
+        
         <div className="min-h-screen bg-customColor3 flex justify-center items-center">
           <div className="absolute w-60 h-60 rounded-xl bg-customColor2 -top-5 -left-16 z-0 transform rotate-45 hidden md:block"></div>
           <div className="py-12 px-12 bg-customColor4 rounded-2xl shadow-xl z-20">

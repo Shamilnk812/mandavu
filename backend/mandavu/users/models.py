@@ -3,7 +3,8 @@ from django.contrib.auth.models import AbstractBaseUser ,PermissionsMixin
 from django.utils.translation import gettext_lazy as _ 
 from .managers import UserManager
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from django.utils import timezone
+from datetime import timedelta
 
 class CustomUser(AbstractBaseUser) :
     first_name = models.CharField(max_length=100)
@@ -83,7 +84,11 @@ class User(CustomUser) :
 class OneTimePassword(models.Model) :
     user = models.OneToOneField(User,on_delete=models.CASCADE)
     code = models.CharField(max_length=6,unique=True)
-
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def is_expired(self):
+        return timezone.now() > self.created_at + timedelta(minutes=2)
+    
     def __str__(self) :
         return f"{self.user.first_name}-OTP"
     

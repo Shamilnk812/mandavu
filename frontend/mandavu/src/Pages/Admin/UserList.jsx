@@ -2,6 +2,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Sidebar from "../../Components/Admin/Sidebar"
+import { toast } from "react-toastify"
 
 
 export default function UserList() {
@@ -10,54 +11,55 @@ export default function UserList() {
     const [userList,setUserList] = useState([])
     const [searchTerm, setSearchTerm] = useState('');
 
-    useEffect(()=>{
-        const fetchUserList = async () =>{
-            try{
-                const response = await axios.get('http://127.0.0.1:8000/api/admin_dash/auth/user-list/')
-                console.log(response.data)
-                setUserList(response.data)
-            }catch (error) {
-                console.error('error fetching userlist ')
-            }
-        }
-        fetchUserList()
-    },[])
-
-    // useEffect(() => {
-    //     const fetchUserList = async () => {
-    //         try {
-    //             const response = await axios.get(`http://127.0.0.1:8000/api/admin_dash/auth/user-list/?search=${searchTerm}`);
-    //             console.log(response.data);
-    //             setUserList(response.data);
-    //         } catch (error) {
-    //             console.error('Error fetching user list', error);
+    // useEffect(()=>{
+    //     const fetchUserList = async () =>{
+    //         try{
+    //             const response = await axios.get('http://127.0.0.1:8000/api/admin_dash/auth/user-list/')
+    //             console.log(response.data)
+    //             setUserList(response.data)
+    //         }catch (error) {
+    //             console.error('error fetching userlist ')
     //         }
-    //     };
-    //     fetchUserList();
-    // }, [searchTerm]);
+    //     }
+    //     fetchUserList()
+    // },[])
 
-    // const handleSearchChange = (event) => {
-    //     setSearchTerm(event.target.value);
-    // };
+    const fetchUserList = async () => {
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/api/admin_dash/auth/user-list/?search=${searchTerm}`);
+            console.log(response.data);
+            setUserList(response.data);
+        } catch (error) {
+            console.error('Error fetching user list', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchUserList();
+    }, [searchTerm]);
+
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
 
     const handleBlockClick = async (uid) => {
         try{
             const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/block-user/${uid}/`)
-            alert('User account is blocked ')
-            navigate(0)
+            toast.success('User account is blocked ')
+            fetchUserList()
         }catch(error) {
             console.error('Error Blocking user',error)
-            alert(' faild to Block user ')
+            toast.error('Something wrong')
         }
         };
 
     const handleUnblockClick = async (uid) => {
         try{
             const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/unblock-user/${uid}/`)
-            alert('User account is Unblock.');
-            navigate(0)
+            toast.success('User account is Unblock.')
+            fetchUserList()
         }catch(error) {
-            console.error('Error unblockin user ',error)
+            toast.error('Something Wrong')
         }
        
         };
@@ -71,8 +73,8 @@ export default function UserList() {
                         <input
                             type="text"
                             placeholder="Search users..."
-                            // value={searchTerm}
-                            // onChange={handleSearchChange}
+                            value={searchTerm}
+                            onChange={handleSearchChange}
                             className="px-4 py-2 border rounded"
                         />
                     </div>
