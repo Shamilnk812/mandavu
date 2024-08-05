@@ -53,8 +53,9 @@ class Venue(models.Model) :
 
 class Facility(models.Model):
     facility = models.TextField(verbose_name="Facility Description")
-    price = models.IntegerField(verbose_name="Facility Price")
+    price = models.IntegerField(verbose_name="Facility Price", null=True,blank=True)
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name='facilities')
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.facility
@@ -64,6 +65,7 @@ class Event(models.Model):
     event_name = models.CharField(max_length=115, verbose_name="Event Name")
     event_photo = models.ImageField(upload_to='events/', verbose_name="Event Photo")
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name='events')
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.event_name
@@ -71,7 +73,10 @@ class Event(models.Model):
 
 class VenueImage(models.Model):
     venue_photo = models.ImageField(upload_to='venue_images/', verbose_name="Venue Photo")
+    name = models.CharField(max_length=150)
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name='images')
+    is_active = models.BooleanField(default=True)
+ 
 
     def __str__(self):
         return f"Image for {self.venue.name}"

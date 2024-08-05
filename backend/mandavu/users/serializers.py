@@ -11,6 +11,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from .utils import send_password_reset_email
 from rest_framework.exceptions import ValidationError
+from owners.serializers import BannerDetailsSerializer,GetFacilitiesSerializer
+from owners.models import Venue
 
 
 class UserRegisterSerializer(serializers.ModelSerializer) :
@@ -181,3 +183,19 @@ class SetNewPasswordSerializer(serializers.ModelSerializer) :
 
           
 
+class VenuesListSerializer(serializers.ModelSerializer) :
+    images = BannerDetailsSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Venue
+        fields = ['id','name', 'price', 'images']
+
+
+class SingleVenueDetailsSerializer(serializers.ModelSerializer) :
+    images = BannerDetailsSerializer(many=True, read_only=True)
+    facilities = GetFacilitiesSerializer(many=True, read_only=True)
+
+
+    class Meta:
+        model = Venue
+        fields = ['id','name', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'address', 'latitude', 'longitude', 'images', 'facilities']

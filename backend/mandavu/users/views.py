@@ -12,6 +12,16 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import make_password
 
+from rest_framework import generics
+from rest_framework.views import APIView
+
+import stripe
+from django.conf import settings
+from django.shortcuts import redirect
+from django.views.decorators.csrf import csrf_exempt
+
+from django.http import HttpResponse
+
 
 
 
@@ -175,3 +185,125 @@ class SetNewPassword(GenericAPIView) :
         serializer = self.serializer_class(data = request.data)
         serializer.is_valid(raise_exception=True)
         return Response({'message':'password reset successfully '},status=status.HTTP_200_OK)
+    
+
+
+
+# =================  ================
+
+
+class AllVenuesListView(GenericAPIView):
+    serializer_class = VenuesListSerializer
+
+    def get(self, request):
+        search_query = request.GET.get('search', '')
+        queryset = Venue.objects.filter(is_active=False , is_verified=True)
+        if search_query:
+            queryset = queryset.filter(name__icontains=search_query)
+        serializer = self.serializer_class(queryset, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class SingleVenueDetailsView(GenericAPIView) :
+    serializer_class = SingleVenueDetailsSerializer
+    def get(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        serializer = self.serializer_class(venue, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+# ============= Stripe Payment  =========
+
+
+# class CreateCheckOutSession(APIView):
+#     def post(self, request):
+#         amount = request.data.get('bookingAmount')
+#         venue_name = request.data.get('venueName')
+
+#         try:
+#             checkout_session = stripe.checkout.Session.create(
+#                 payment_method_types=['card'],
+#                 line_items=[
+#                     {
+#                         'price_data': {
+#                             'currency': 'usd',
+#                             'unit_amount': int(amount) * 100,  # Convert to cents
+#                             'product_data': {
+#                                 'name': venue_name
+#                             },
+#                         },
+#                         'quantity': 1,
+#                     }
+#                 ],
+#                 mode='payment',
+#                 success_url=settings.SITE_URL + '?success=true',
+#                 cancel_url=settings.SITE_URL + '?canceled=true',
+#             )
+#             return redirect(checkout_session.url)
+#         except stripe.error.StripeError as e:
+#             return Response({'msg': 'Stripe error', 'error': str(e)}, status=500)
+#         except Exception as e:
+#             return Response({'msg': 'Something went wrong while creating Stripe session', 'error': str(e)}, status=500)
+
+
+
+
+class CreateCheckOutSession(APIView):
+    def post(self, request):
+        amount = request.data.get('bookingAmount')
+        venue_name = request.data.get('venueName')
+
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[
+                    {
+                        'price_data': {
+                            'currency': 'usd',
+                            'unit_amount': int(amount) * 100,  # Convert to cents
+                            'product_data': {
+                                'name': venue_name,
+                            },
+                        },
+                        'quantity': 1,
+                    },
+                ],
+                mode='payment',
+                success_url=settings.SITE_URL + '?success=true',
+                cancel_url=settings.SITE_URL + '?canceled=true',
+            )
+            return Response({'id': checkout_session.id})
+        except stripe.error.StripeError as e:
+            return Response({'msg': 'Stripe error', 'error': str(e)}, status=500)
+        except Exception as e:
+            return Response({'msg': 'Something went wrong while creating Stripe session', 'error': str(e)}, status=500)
+        
+
+
+
+@csrf_exempt
+def strip_webhook_view(request) :
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+    print('machannuu')
+
+    try :
+        event = stripe.Webhook.construct_event(
+        payload, sig_header, settings.STRIPE_SECRET_WEBHOOK
+        )
+    except ValueError as e:
+        # Invalid payload
+        return Response(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature
+        return Response(status=400)
+    
+
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+
+        print('machaane working',session)
+
+    return HttpResponse(status=200)    

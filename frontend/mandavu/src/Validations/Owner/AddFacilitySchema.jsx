@@ -7,9 +7,9 @@ const AddFacilitySchema = Yup.object({
             return !/^[0-9]+$/.test(value);
         }),
     price: Yup.number()
-        .required("Price is required")
+        // .required("Price is required")
         .positive("Price must be a positive number")
-        .integer("Price must be an integer"),
+        // .integer("Price must be an integer"),
 });
 
 

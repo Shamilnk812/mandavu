@@ -10,7 +10,7 @@ function App() {
 
 
   return (
-    <>
+    <div className="min-h-screen bg-customColor1">
 
       <Routes>
         <Route path='/' element={<Dash />} />
@@ -31,7 +31,7 @@ function App() {
         theme="light"
       />
      
-    </>
+     </div>
   )
 }
 

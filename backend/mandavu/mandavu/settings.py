@@ -13,7 +13,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import environ
+import os
 from cryptography.fernet import Fernet
+import stripe
+from .DEFAULT import DEFAULT_HEADERS
 
 
 env = environ.Env(DEBUG=(bool, False))
@@ -34,8 +37,17 @@ ENCRYPTION_KEY = env('ENCRYPTION_KEY').encode()
 # Initialize the Fernet cipher suite with the encryption key
 CIPHER_SUITE = Fernet(ENCRYPTION_KEY)
 
+
+STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
+SITE_URL="http://localhost:5173"
+stripe.api_key = STRIPE_SECRET_KEY
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
+
+
+CORS_ORIGIN_ALLOW_ALL=True
 
 ALLOWED_HOSTS = []
 
@@ -58,10 +70,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -151,7 +163,29 @@ CORS_ALLOWED_ORIGINS = [
     # Add more origins as needed, or '*' to allow all origins
 ]
 
-CORS_ALLOW_ALL_ORIGINS = False
+# CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
 
 
 
@@ -190,8 +224,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

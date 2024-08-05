@@ -38,19 +38,19 @@ export default function Facilities({venueId}) {
         }
     })
 
-
-
-    const formik2 = useFormik({
-        initialValues:{
-
+    const updateFacility = async (id, updatedValues) => {
+        try{
+            console.log(updatedValues)
+            const response = await axios.put(`http://127.0.0.1:8000/api/v2/auth/update-facility/${venueId}/`,{...updatedValues, facility_id : id})
+            console.log(response.data)
+            toast.success('Facility updated successfully ')
+            fetchFacilities()
+        }catch(error) {
+            console.error('some this ',error)
         }
-    })
-    
+        
+    }
 
-
-    
-
-    
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -70,10 +70,32 @@ export default function Facilities({venueId}) {
         }
     }
 
+    const blockFacilities = async (facility_id) => {
+        try{
+            console.log('facilliii',facility_id)
+            const response = await axios.post(`http://127.0.0.1:8000/api/v2/auth/block-facility/${venueId}/`,{facility_id})
+            toast.success('Facility blocked successfully')
+            fetchFacilities()
+        }catch (error) {
+            console.error('some',error)
+            toast.error('Someting went wrong')
+        }}
+
+    const unblockFacilities = async (facility_id) => {
+        try{
+            const response = await axios.post(`http://127.0.0.1:8000/api/v2/auth/unblock-facility/${venueId}/`,{facility_id})
+            toast.success('Facility unblocked successfully')
+            fetchFacilities()
+        }catch (error) {
+            console.error('some',error)
+            toast.error('Someting went wrong')
+        }}
+    
+
     useEffect(()=> {
         fetchFacilities()
     },[])
-
+    
 
 
       return(
@@ -87,7 +109,7 @@ export default function Facilities({venueId}) {
                              >Add Facilites</button>
                            </div>  
 
-                            <ShowFacilityDetails facilityList={facilityList}/>
+                            <ShowFacilityDetails facilityList={facilityList} onUpdateFacility={updateFacility} blockFacilities={blockFacilities} unblockFacilities={unblockFacilities}/>
 
                     </div>
                 

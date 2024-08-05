@@ -16,4 +16,12 @@ urlpatterns = [
     path('update-venue/<int:vid>/',UpdateVenueView.as_view(),name='update-venue'),
     path('add-facility/<int:vid>/',AddFacilitiesView.as_view(),name='add-facility'),
     path('get-facility/<int:vid>/',GetFacilitiesView.as_view(),name='get-facility'),
+    path('update-facility/<int:vid>/',UpdateFacilitiesView.as_view(),name='update-facility'),
+    path('block-facility/<int:vid>/',BlockFacilityView.as_view(),name='block-facility'),
+    path('unblock-facility/<int:vid>/',UnblockFacilityView.as_view(),name='unblock-facility'),
+
+    path('add-banner/<int:vid>/',AddBannerView.as_view(),name='add-banner'),
+    path('banner-details/<int:vid>/',BannerDetailsView.as_view(),name='banner-details'),
+
+    
 ]

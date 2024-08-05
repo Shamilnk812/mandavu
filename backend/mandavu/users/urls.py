@@ -1,6 +1,9 @@
 from django.urls import path
 from .views import *
 from rest_framework_simplejwt.views import TokenRefreshView
+from django.views.decorators.csrf import csrf_exempt
+
+
 urlpatterns = [
     path('register/',RegisterUserView.as_view(),name='register'),
     path('login/',LoginUserView.as_view(),name='login'),
@@ -13,4 +16,9 @@ urlpatterns = [
     path('password-reset/',PasswordResetRequestView.as_view(),name='password-reset'),
     path('password-reset-confirm/<uidb64>/<token>/',PasswordResetConfirm.as_view(),name='password-reset-confirm'),
     path('set-new-password/',SetNewPassword.as_view(),name='set-new-password'),
+
+    path('venues-list/',AllVenuesListView.as_view(),name='venues-list'),
+    path('single-venue-details/<int:vid>/',SingleVenueDetailsView.as_view(),name='single-venue-details'),
+    path('create-checkout-session/',CreateCheckOutSession.as_view(),name='create-checkout-session'),
+    path('stripe-webhook/', strip_webhook_view, name='stripe-webhook'),
 ]

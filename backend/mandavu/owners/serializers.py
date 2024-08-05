@@ -3,7 +3,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 
-from .models import Owner,Venue,Facility,Event
+from .models import Owner,Venue,Facility,VenueImage
 from django.contrib.auth import authenticate
 
 
@@ -202,9 +202,18 @@ class UpdateVenueSerializer(serializers.ModelSerializer):
 
 
 class AddFacilitiesSerializer(serializers.ModelSerializer) :
+    price = serializers.IntegerField(required=False, allow_null=True)
+
     class Meta:
         model  = Facility
         fields = '__all__'
+
+    # def to_internal_value(self, data):
+    #     data = super().to_internal_value(data)
+    #     if data.get('price') == '':
+    #         data['price'] = None
+    #     return data
+        
     def validate(self, attrs):
         facility_name = attrs.get('facility')
         venue_id = attrs.get('venue')
@@ -220,3 +229,44 @@ class GetFacilitiesSerializer(serializers.ModelSerializer) :
     class Meta:
         model = Facility
         fields = '__all__'
+
+
+class UpdateFacilitiesSerializer(serializers.ModelSerializer) :
+    price = serializers.IntegerField(required=False, allow_null=True)
+
+    class Meta:
+        model = Facility
+        fields = '__all__'
+    
+    def validate(self, attrs):
+        facility = attrs.get('facility')
+        venue_id = attrs.get('venue')
+
+        if Facility.objects.filter(facility=facility, venue=venue_id).exclude(id=self.instance.id).exists() :
+            raise serializers.ValidationError("This facility already exists for this venue.")
+        return  attrs
+    
+    def update(self, instance, validated_data):
+        instance.facility = validated_data.get('facility', instance.facility)
+        instance.price = validated_data.get('price', instance.price)
+        instance.save()
+        return instance
+    
+
+#===========  Banner ========
+
+class AddBannerSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = VenueImage
+        fields = ['venue_photo', 'name']
+
+
+class BannerDetailsSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = VenueImage
+        fields = '__all__'
+        
+    def get_venue_photo(self, obj):
+        request = self.context.get('request')
+        photo_url = obj.venue_photo.url
+        return request.build_absolute_uri(photo_url)    

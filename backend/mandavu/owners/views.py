@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.generics import GenericAPIView
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
@@ -146,7 +147,7 @@ class UpdateVenueView(GenericAPIView) :
             return Response(serializer.data,status=status.HTTP_200_OK)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-
+#============  Facilities ==========
 
 class AddFacilitiesView(GenericAPIView):
     serializer_class = AddFacilitiesSerializer
@@ -154,6 +155,8 @@ class AddFacilitiesView(GenericAPIView):
         venue = get_object_or_404(Venue, id=vid)
         data = request.data.copy()
         data['venue'] = venue.id
+        if 'price' in data and data['price'] == '':
+            data['price'] = None
         serializer = self.serializer_class(data=data)
         if serializer.is_valid(raise_exception=True) :
             serializer.save()
@@ -168,6 +171,67 @@ class GetFacilitiesView(GenericAPIView) :
         facilities = Facility.objects.filter(venue=vid)
         serializer = self.serializer_class(facilities, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
+class UpdateFacilitiesView(GenericAPIView) :
+    serializer_class = UpdateFacilitiesSerializer
+
+    def put(self, request, vid) :
+        print(vid)
+        venue = get_object_or_404(Venue, id=vid) 
+        facility_id = request.data.get('facility_id')
+        facility = get_object_or_404(Facility, id=facility_id)
+        data = request.data.copy()
+        data['venue'] = venue.id
+        if 'price' in data and data['price'] == '':
+            data['price'] = None
+        serializer = self.serializer_class(instance=facility, data=data, partial=True)
+        if serializer.is_valid(raise_exception=True) :
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
+class BlockFacilityView(GenericAPIView) :
+    def post(self, request, vid) :
+        facility_id = request.data.get('facility_id')
+        venue = get_object_or_404(Venue, id=vid)
+        facility = get_object_or_404(Facility, id=facility_id, venue=venue)
+        facility.is_active = False
+        facility.save()
+        return Response({"message": "Facility blocked successfully"}, status=status.HTTP_200_OK)
+
+
+class UnblockFacilityView(GenericAPIView) :
+    def post(self, request, vid) :
+        facility_id = request.data.get('facility_id')
+        venue = get_object_or_404(Venue, id=vid)
+        facility = get_object_or_404(Facility , id=facility_id, venue=venue)
+        facility.is_active = True
+        facility.save()
+        return Response(status=status.HTTP_200_OK)    
+
+
+#================ Banner ==============
+
+class AddBannerView(APIView) :
+    def post(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        serializer = AddBannerSerializer(data=request.data)
+        if serializer.is_valid() :
+            serializer.validated_data['venue'] = venue
+            serializer.save()
+            return Response({"message": "Banner added successfully"}, status=status.HTTP_201_CREATED)
+        
+        print(serializer.errors)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class BannerDetailsView(APIView) :
+    
+    def get(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        banner_details = VenueImage.objects.filter(venue=venue)
+        serializer = BannerDetailsSerializer(banner_details, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)

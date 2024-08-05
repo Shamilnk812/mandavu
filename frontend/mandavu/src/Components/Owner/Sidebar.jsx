@@ -176,6 +176,20 @@ export default function  Sidebar () {
               </Link>
             </li>
             <li>
+              <Link to='/owner/banner-management'
+                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-customColor3 dark:hover:bg-customColor3 group"
+              >
+                <span className="flex-1 ms-3 whitespace-nowrap">Banner Management</span>
+              </Link>
+            </li>
+            <li>
+              <Link to='/owner/events-management'
+                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-customColor3 dark:hover:bg-customColor3 group"
+              >
+                <span className="flex-1 ms-3 whitespace-nowrap">Events Management</span>
+              </Link>
+            </li>
+            <li>
               <Link to='/owner/details'
                 
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-customColor3 dark:hover:bg-customColor3 group"

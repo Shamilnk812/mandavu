@@ -92,3 +92,35 @@ class OneTimePassword(models.Model) :
     def __str__(self) :
         return f"{self.user.first_name}-OTP"
     
+
+
+
+# class Booking(models.Model) :
+#     booking_status = (
+#         ('Booking Confirmed', 'Booking Confirmed'),
+#         ('Booking Completed', 'Booking Completed'),
+#         ('Booking Canceled', 'Booking Canceled')
+#     )
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+#     name = models.CharField(max_length=150)
+#     email = models.EmailField(max_length=225)
+#     phone = models.CharField(max_length=12)
+#     additional_phone = models.CharField(max_length=12)
+#     city = models.CharField(max_length=100)
+#     state = models.CharField(max_length=100)
+#     address = models.TextField()
+#     time = models.CharField(max_length=100)
+#     date = models.DateField()
+#     condition = models.CharField(max_length=100)
+#     total_price = models.IntegerField()
+#     booking_amount = models.IntegerField()
+#     status = models.CharField(max_length=100, choices=booking_status, default='Booking Confirmed')
+#     cancel_reason = models.TextField()
+    
+
+
+# class BookingDetails(models.Model) :
+#     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
+#     facilities = models.CharField(max_length=225)
+

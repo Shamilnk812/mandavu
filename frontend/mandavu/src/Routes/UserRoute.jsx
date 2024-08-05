@@ -7,6 +7,9 @@ import Profile from "../Pages/User/Profile";
 import Home from "../Pages/User/Home";
 import UserLoginAuth from "../Utils/AuthCheck/UserLoginAuth";
 import UserLogoutAuth from "../Utils/AuthCheck/UserLogoutAuth";
+import ShowAllVenues from "../Pages/User/ShowAllVenues";
+import ShowSingleVenueDetails from "../Pages/User/ShowSingleVenue";
+import VenueBooking from "../Pages/User/VenueBooking";
 
 export default function UserRoute() {
     return(
@@ -16,6 +19,11 @@ export default function UserRoute() {
             <Route path="/home" element={<UserLoginAuth> <Home/> </UserLoginAuth>} />
             <Route path="/otp" element={<UserLogoutAuth><OtpVerification/> </UserLogoutAuth>} />
             <Route path="/profile" element={ <UserLoginAuth> <Profile/> </UserLoginAuth>} />
+            <Route path="/show-all-venues" element={ <UserLoginAuth> <ShowAllVenues/> </UserLoginAuth>} />
+            <Route path="/show-single-venue/:venueId" element={ <UserLoginAuth> <ShowSingleVenueDetails/> </UserLoginAuth>} />
+            <Route path="/venue-booking/:venueId" element={ <UserLoginAuth> <VenueBooking/> </UserLoginAuth>} />
+            
+            
         </Routes>
     )
 }
