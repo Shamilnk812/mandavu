@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import *
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -199,3 +199,16 @@ class SingleVenueDetailsSerializer(serializers.ModelSerializer) :
     class Meta:
         model = Venue
         fields = ['id','name', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'address', 'latitude', 'longitude', 'images', 'facilities']
+
+
+
+# ============= Show Bookings ============
+
+
+class ShowBookingSerializer(serializers.ModelSerializer) :
+
+    start = serializers.DateField(source='date')
+
+    class Meta:
+        model = Booking
+        fields = ['id', 'start', 'status' ]

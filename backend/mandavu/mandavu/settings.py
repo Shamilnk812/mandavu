@@ -41,6 +41,7 @@ CIPHER_SUITE = Fernet(ENCRYPTION_KEY)
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 SITE_URL="http://localhost:5173"
 stripe.api_key = STRIPE_SECRET_KEY
+STRIPE_SECRET_WEBHOOK=env('STRIPE_SECRET_WEBHOOK')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!

@@ -10,6 +10,7 @@ import UserLogoutAuth from "../Utils/AuthCheck/UserLogoutAuth";
 import ShowAllVenues from "../Pages/User/ShowAllVenues";
 import ShowSingleVenueDetails from "../Pages/User/ShowSingleVenue";
 import VenueBooking from "../Pages/User/VenueBooking";
+import ViewSlote from "../Pages/User/ViewSlote";
 
 export default function UserRoute() {
     return(
@@ -22,6 +23,8 @@ export default function UserRoute() {
             <Route path="/show-all-venues" element={ <UserLoginAuth> <ShowAllVenues/> </UserLoginAuth>} />
             <Route path="/show-single-venue/:venueId" element={ <UserLoginAuth> <ShowSingleVenueDetails/> </UserLoginAuth>} />
             <Route path="/venue-booking/:venueId" element={ <UserLoginAuth> <VenueBooking/> </UserLoginAuth>} />
+            <Route path="/view-slote/:venueId" element={ <UserLoginAuth> <ViewSlote/> </UserLoginAuth>} />
+
             
             
         </Routes>

@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Navb from '../../Components/User/Navb';
 import { loadStripe } from '@stripe/stripe-js';
+import { useSelector } from 'react-redux';
+
+
 export default function VenueBooking() {
     const { venueId } = useParams();
+    const navigate = useNavigate()
+    const userId = useSelector((state)=> state.user.user?.id);
     const [venue, setVenue] = useState(null);
     const [totalAmount, setTotalAmount] = useState(0);
     const [bookingAmount, setBookingAmount] = useState(0);
+    
 
     const stripePromise = loadStripe('pk_test_51Pk7W0InNBryIEQ5TM0E3lDkhnP8fVDez4nJsHBG5n0Rx0mhb6y1QNZKw8iotApyKCzccZ8pSFMnqD2V93MqF9bC00HrsiLp5u');
     
@@ -55,7 +61,7 @@ export default function VenueBooking() {
             updatedFacilities = [...bookingDetails.facilities, facility];
             const newTotal = totalAmount + (facility.price || 0)
             setTotalAmount(newTotal);
-            setBookingAmount(totalAmount * 0.15)
+            setBookingAmount(newTotal * 0.15)
         } else {
             updatedFacilities = bookingDetails.facilities.filter(f => f.id !== facility.id);
             const newTotal = totalAmount - (facility.price || 0);
@@ -73,15 +79,25 @@ export default function VenueBooking() {
      
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const updatedFacilities = bookingDetails.facilities.map(facility => 
+            `${facility.facility} - ${facility.price}`
+        );
+    
+
         const updatedBookingDetails = {
                     ...bookingDetails,
                     totalAmount,
                     bookingAmount,
-                    venueName: venue?.name
+                    venueName: venue?.name,
+                    venueId:venue?.id,
+                    userId:userId,
+                    facilities: updatedFacilities
                 };
-    
+               console.log('form data',updatedBookingDetails)
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/v1/auth/create-checkout-session/', updatedBookingDetails);
+        
     
             const { id } = response.data;
     
@@ -219,15 +235,21 @@ export default function VenueBooking() {
                                         <input className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="date" type="date" name="date" value={bookingDetails.date} onChange={handleChange} />
                                     </div>
                                 </div>
+                                <div className="flex flex-wrap -mx-3 mb-4">
+                                    <div className="w-full md:w-1/2 px-3 mb-3 md:mb-0">
+                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="airConditioning">Air Conditioning</label>
+                                        <select className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="airConditioning" name="airConditioning" value={bookingDetails.airConditioning} onChange={handleChange}>
+                                            <option value="">Select an option</option>
+                                            {renderAirConditioningOptions()}
+                                        </select>
 
-                                <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="airConditioning">Air Conditioning</label>
-                                    <select className="block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" id="airConditioning" name="airConditioning" value={bookingDetails.airConditioning} onChange={handleChange}>
-                                        <option value="">Select an option</option>
-                                        {renderAirConditioningOptions()}
-                                    </select>
+                                    </div>
+                                    <div className="w-full md:w-1/2 px-3">
+                                       <button onClick={()=> navigate(`/user/view-slote/${venue.id}`) }>View Slote</button>
+                                    </div>
                                 </div>
 
+                                
                                 <div className="mb-4">
                                     <label className="block text-gray-700 text-sm font-bold mb-2">Facilities</label>
                                     {renderFacilities()}

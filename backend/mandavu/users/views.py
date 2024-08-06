@@ -4,7 +4,7 @@ from .serializers import *
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .models import OneTimePassword
+from .models import OneTimePassword,Booking,BookingDetails
 from .utils import sent_otp_to_user,encrypt_otp,decrypt_otp
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import smart_str,DjangoUnicodeDecodeError
@@ -21,6 +21,8 @@ from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
 
 from django.http import HttpResponse
+import json
+from datetime import datetime
 
 
 
@@ -253,6 +255,13 @@ class CreateCheckOutSession(APIView):
     def post(self, request):
         amount = request.data.get('bookingAmount')
         venue_name = request.data.get('venueName')
+        venue_id = request.data.get('venueId')
+        user_id  = request.data.get('userId')
+
+        user = get_object_or_404(User, id=user_id)
+        venue = get_object_or_404(Venue, id=venue_id)
+
+        booking_details = request.data
 
         try:
             checkout_session = stripe.checkout.Session.create(
@@ -272,6 +281,9 @@ class CreateCheckOutSession(APIView):
                 mode='payment',
                 success_url=settings.SITE_URL + '?success=true',
                 cancel_url=settings.SITE_URL + '?canceled=true',
+                 metadata={
+                    'booking_details': json.dumps(booking_details)  # Send all request data as metadata
+                }
             )
             return Response({'id': checkout_session.id})
         except stripe.error.StripeError as e:
@@ -287,7 +299,7 @@ def strip_webhook_view(request) :
     payload = request.body
     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
     event = None
-    print('machannuu')
+
 
     try :
         event = stripe.Webhook.construct_event(
@@ -303,7 +315,60 @@ def strip_webhook_view(request) :
 
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
+        booking_details = json.loads(session['metadata']['booking_details']) 
+        
+        user_id  = booking_details['userId']
+        venue_id = booking_details['venueId']
+        date_str = booking_details['date']
+        user = get_object_or_404(User, id=user_id)
+        venue = get_object_or_404(Venue, id=venue_id)
 
-        print('machaane working',session)
+        try:
+            date = datetime.strptime(date_str, '%Y-%m-%d').date()  # Adjust the format if necessary
+        except ValueError:
+            return Response(status=400)  # Invalid date format
+
+
+        booking = Booking.objects.create(
+            user=user,  # Set to None if user info is not available
+            venue=venue,
+            name=booking_details['fullName'],  # Data from frontend
+            email=booking_details['email'],
+            phone=booking_details['phoneNumber'],
+            additional_phone=booking_details['additionalPhoneNumber'],
+            city=booking_details['city'],
+            state=booking_details['state'],
+            address=booking_details['fullAddress'],
+            time=booking_details['timeOfDay'],
+            date=date,
+            condition=booking_details['airConditioning'],
+            total_price=booking_details['totalAmount'],
+            booking_amount=booking_details['bookingAmount']  # Assuming 15% booking amount
+            
+        )
+
+        facilities = booking_details.get('facilities', [])
+        for facility in facilities:
+            # facility_str = f"{facility['facility']} - {facility['price']}"
+            BookingDetails.objects.create(
+                booking=booking,
+                facilities=facility
+            )
+
+        print('Booking created successfully with facilities', session)
 
     return HttpResponse(status=200)    
+
+
+
+
+class BookingDetails(GenericAPIView) :
+    serializer_class = ShowBookingSerializer
+
+    def get(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid) 
+        bookings = Booking.objects.filter(venue=venue)
+        serializer = self.serializer_class(bookings,many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+         

@@ -21,4 +21,6 @@ urlpatterns = [
     path('single-venue-details/<int:vid>/',SingleVenueDetailsView.as_view(),name='single-venue-details'),
     path('create-checkout-session/',CreateCheckOutSession.as_view(),name='create-checkout-session'),
     path('stripe-webhook/', strip_webhook_view, name='stripe-webhook'),
+
+    path('booking-details/<int:vid>/',BookingDetails.as_view(),name='booking-details'),
 ]
