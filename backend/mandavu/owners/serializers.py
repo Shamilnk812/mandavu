@@ -13,6 +13,8 @@ from geopy.exc import GeocoderTimedOut,GeocoderServiceError
 from django.conf import settings
 import googlemaps
 import json
+from users.models import Booking
+
 
 from opencage.geocoder import OpenCageGeocode
 from rest_framework.exceptions import ValidationError
@@ -270,3 +272,14 @@ class BannerDetailsSerializer(serializers.ModelSerializer) :
         request = self.context.get('request')
         photo_url = obj.venue_photo.url
         return request.build_absolute_uri(photo_url)    
+    
+
+# =========== booking =========
+
+
+class AllBookingDetailsSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = Booking
+        fields = '__all__'
+
+

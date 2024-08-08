@@ -21,7 +21,7 @@ export default function AddBannerModal({ handleCloseModal, handleAddBanner }) {
     return (
         <div id="authentication-modal" tabIndex="-1" className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden">
             <div className="relative p-4 w-full max-w-md max-h-full">
-                <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                <div className="relative bg-teal-800 rounded-lg shadow dark:bg-teal-800">
                     <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                         <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                             Add Banner
@@ -45,7 +45,7 @@ export default function AddBannerModal({ handleCloseModal, handleAddBanner }) {
                                     type="file"
                                     name="venue_photo"
                                     id="venue_photo"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                    className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg  block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
                                     onChange={handleImageChange}
                                     onBlur={formik.handleBlur}
                                 />
@@ -59,7 +59,7 @@ export default function AddBannerModal({ handleCloseModal, handleAddBanner }) {
                                     type="text"
                                     name="name"
                                     id="name"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                    className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg  block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     value={formik.values.name}
@@ -69,7 +69,9 @@ export default function AddBannerModal({ handleCloseModal, handleAddBanner }) {
                                 ) : null}
                             </div>
                             <div className="flex justify-center pt-4">
-                                <button type="submit" className="w-1/2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add</button>
+                                <button type="submit"                         
+                                className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800"                    
+                                >+ Add</button>
                             </div>
                         </form>
                     </div>

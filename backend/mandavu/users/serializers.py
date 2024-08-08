@@ -11,7 +11,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from .utils import send_password_reset_email
 from rest_framework.exceptions import ValidationError
-from owners.serializers import BannerDetailsSerializer,GetFacilitiesSerializer
+from owners.serializers import BannerDetailsSerializer,GetFacilitiesSerializer,VenueDetailsSerializer
 from owners.models import Venue
 
 
@@ -205,10 +205,20 @@ class SingleVenueDetailsSerializer(serializers.ModelSerializer) :
 # ============= Show Bookings ============
 
 
-class ShowBookingSerializer(serializers.ModelSerializer) :
+class ShowBookingDetailsForCalandarSerializer(serializers.ModelSerializer) :
 
     start = serializers.DateField(source='date')
 
     class Meta:
         model = Booking
         fields = ['id', 'start', 'status' ]
+
+
+
+class ShowBookingListSerializer(serializers.ModelSerializer) :
+    venue = VenueDetailsSerializer(read_only=True)
+
+    class Meta:
+        model = Booking
+        fields = '__all__'
+    

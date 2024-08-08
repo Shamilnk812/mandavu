@@ -103,67 +103,67 @@ export default function UserDetails() {
  
     return(
         <>
-         <div class="bg-customColor1">
-    <div class="flex min-h-screen">
-          <Sidebar/>
-        <div class="flex-1 p-10 text-2xl">
-    <h3 class="text-2xl font-semibold mb-4 text-center">User Details</h3>
-    <div class="bg-customColor2 p-24 rounded-lg shadow-lg">
-       <div>
-        <form onSubmit={handleUpdateUserDetails} class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                    <label for="first-name" class="block text-lg font-medium text-gray-700">First Name</label>
-                    <input type="text"   defaultValue={user.first_name} onChange={(e)=>setFirstName(e.target.value)} placeholder="First Name" class="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3" />
-                </div>
-                <div>
-                    <label for="last-name" class="block text-lg font-medium text-gray-700">Last Name</label>
-                    <input type="text" defaultValue={user.last_name} onChange={(e)=> setLastName(e.target.value)} placeholder="Last Name" class="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3" />
+    <div className="bg-customColor7 flex">
+            <Sidebar />
+            <div className="flex-1 p-10 text-2xl ml-64"> {/* Add margin-left to account for sidebar */}
+                <div className="bg-customColor8 rounded-lg shadow-lg pb-10">
+                <h3 className="text-2xl bg-gradient-to-r from-teal-500 to-gray-800 font-semibold mb-4 py-3 text-center text-white  rounded-tl-lg rounded-tr-lg">User Details</h3>
+                    <div className=" p-8 ">
+                    <div>
+                        <form onSubmit={handleUpdateUserDetails} className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <label htmlFor="first-name" className="block text-lg font-medium text-gray-700">First Name</label>
+                                    <input type="text" defaultValue={user.first_name} onChange={(e) => setFirstName(e.target.value)} placeholder="First Name" className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500" />
+                                </div>
+                                <div>
+                                    <label htmlFor="last-name" className="block text-lg font-medium text-gray-700">Last Name</label>
+                                    <input type="text" defaultValue={user.last_name} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500" />
+                                </div>
+                            </div>
+                            <div className="flex justify-center">
+                                <div className="w-1/2">
+                                    <label htmlFor="email" className="block text-lg font-medium text-gray-700">Email</label>
+                                    <input type="text" defaultValue={user.email} onChange={(e) => setEmail(e.target.value)} placeholder="Email Address" className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500" />
+                                </div>
+                            </div>
+                            <div className="flex justify-center">
+                                <button type="submit" className="mt-2  bg-teal-600 text-white  text-sm py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800">Edit & Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div className="mt-12">
+                        <h3 className="text-2xl font-semibold mb-4 text-center">Change Password</h3>
+
+                        <form onSubmit={handleChangePassword} className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <label htmlFor="old-password" className="block text-lg font-medium text-gray-700">Old Password</label>
+                                    <input type="password" placeholder="Old password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500" />
+                                </div>
+                                <div>
+                                    <label htmlFor="new-password" className="block text-lg font-medium text-gray-700">New Password</label>
+                                    <input type="password" placeholder="New password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500" />
+                                </div>
+                            </div>
+                            <div className="flex justify-center">
+                                <div className="w-1/2">
+                                    <label htmlFor="confirm-password" className="block text-lg font-medium text-gray-700">Confirm Password</label>
+                                    <input type="password" placeholder="Confirm password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="block text-sm py-3 px-4 rounded-lg bg-customColor7 w-full border border-gray-400 outline-teal-500" />
+                                </div>
+                            </div>
+                            <div className="flex justify-center">
+                                <button type="submit" className="mt-2 bg-teal-600 text-white text-sm py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800">Change Password</button>
+                            </div>
+                        </form>
+                    </div>
+
+
+                    </div>
+
                 </div>
             </div>
-            <div class="flex justify-center">
-                <div class="w-1/2">
-                    <label for="email" class="block text-lg font-medium text-gray-700">Email</label>
-                    <input type="text" defaultValue={user.email} onChange={(e) => setEmail(e.target.value)} placeholder="Email Address" class="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3" />
-                </div>
-            </div>
-            <div class="flex justify-center">
-                <button type="submit" class="bg-orange-600 text-white  text-lg px-8 py-1 rounded-md shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500">Edit</button>
-            </div>
-        </form>
         </div>
-       <div class="mt-12">
-       <h3 class="text-2xl font-semibold mb-4 text-center">Change Password</h3>
-
-        <form onSubmit={handleChangePassword} class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                    <label for="old-password" class="block text-lg font-medium text-gray-700">Old Password</label>
-                    <input type="password" placeholder="Old password" value={oldPassword} onChange={(e)=> setOldPassword(e.target.value)} class="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3" />
-                </div>
-                <div>
-                    <label for="new-password" class="block text-lg font-medium text-gray-700">New Password</label>
-                    <input type="password" placeholder="New password" value={newPassword} onChange={(e)=> setNewPassword(e.target.value)} class="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3" />
-                </div>
-            </div>
-            <div class="flex justify-center">
-                <div class="w-1/2">
-                    <label for="confirm-password" class="block text-lg font-medium text-gray-700">Confirm Password</label>
-                    <input type="password" placeholder="Confirm password" value={confirmPassword} onChange={(e)=> setConfirmPassword(e.target.value)} class="block text-sm py-3 px-4 rounded-lg bg-customColor1 w-full border border-gray-400 outline-customColor3" />
-                </div>
-            </div>
-            <div class="flex justify-center">
-                <button type="submit" class="bg-orange-600 text-white text-lg px-4 py-2 rounded-md shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500">Change password</button>
-            </div>
-        </form>
-        </div>
-
-
-        
-    </div>
-</div>
-    </div>
-</div>
         </>
     )
 }

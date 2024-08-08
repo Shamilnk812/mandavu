@@ -9,8 +9,10 @@ import SuccessRegisterPage from "../Pages/Owner/SuccessRegister";
 
 import OwnerLogoutAuth from "../Utils/AuthCheck/OwnerLogoutAuth";
 import OwnerLoginAuth from "../Utils/AuthCheck/OwnerLoginAuth";
-import BannerManagement from "../Pages/Owner/BannerManagement";
+// import BannerManagement from "../Pages/Owner/BannerManagement";
 import EventsManagement from "../Pages/Owner/EventsManagement";
+import BannerManage from "../Pages/Owner/BannerManage";
+import BookingManagement from "../Pages/Owner/BookingManagement";
 
 
 export default function OwnerRoute() {
@@ -24,8 +26,9 @@ export default function OwnerRoute() {
             <Route path="/details" element={<OwnerLoginAuth> <OwnerDetails/> </OwnerLoginAuth>} />
             <Route path="/venue-management" element={<OwnerLoginAuth> <VenueManagement/> </OwnerLoginAuth>} />
             <Route path="/success-register" element={<OwnerLoginAuth> <SuccessRegisterPage/> </OwnerLoginAuth>} />
-            <Route path="/banner-management" element={<OwnerLoginAuth> <BannerManagement/> </OwnerLoginAuth>} />
+            <Route path="/banner-management" element={<OwnerLoginAuth> <BannerManage/> </OwnerLoginAuth>} />
             <Route path="/events-management" element={<OwnerLoginAuth> <EventsManagement/> </OwnerLoginAuth>} />
+            <Route path="/booking-management" element={<OwnerLoginAuth> <BookingManagement/> </OwnerLoginAuth>} />
         </Routes>
         </>
     )

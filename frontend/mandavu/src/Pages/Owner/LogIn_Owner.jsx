@@ -51,33 +51,33 @@ export default function LogIn() {
     return (
         <>
       
-  <div class="min-h-screen bg-customColor3 flex justify-center items-center">
-  <div class="absolute w-60 h-60 rounded-xl bg-customColor2 -top-5 -left-16 z-0 transform rotate-45 hidden md:block"></div>
-  <div class="py-12 px-12 bg-customColor4 rounded-2xl shadow-xl z-20">
+  <div class="min-h-screen bg-teal-600 flex justify-center items-center">
+  <div class="absolute w-60 h-60 rounded-xl bg-teal-500 -top-5 -left-16 z-0 transform rotate-45 hidden md:block"></div>
+  <div class="py-12 px-12 bg-white rounded-2xl shadow-xl z-20">
     <div>
       <h1 class="text-3xl font-bold text-center mb-4 cursor-pointer">Login Your Account</h1>
       <p class="w-80 text-center text-sm mb-8 font-semibold text-gray-700 tracking-wide cursor-pointer">Login your account to enjoy all the services</p>
     </div>
     <form onSubmit={formik.handleSubmit} class="space-y-4">
 
-    <input type="text" name='email' value={formik.values.email} onChange={formik.handleChange} placeholder="Email Addres" class="block text-sm py-3 px-4 rounded-lg w-full bg-customColor4 border border-gray-300 outline-customColor5" />
+    <input type="text" name='email' value={formik.values.email} onChange={formik.handleChange} placeholder="Email Addres" class="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500" />
       {formik.errors.email && formik.touched.email ? (
               <div className="text-red-500 text-sm">{formik.errors.email}</div>
             ) : null}     
             
-            <input type="password" name='password'  value={formik.values.password} onChange={formik.handleChange} placeholder="Password" class="block text-sm py-3 px-4 rounded-lg w-full bg-customColor4 border border-gray-300 outline-customColor5" />
+            <input type="password" name='password'  value={formik.values.password} onChange={formik.handleChange} placeholder="Password" class="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500" />
       {formik.errors.password && formik.touched.password ? (
               <div className="text-red-500 text-sm">{formik.errors.password}</div>
             ) : null}
 
     <div class="text-center mt-6">
-      <button type="submit" class="w-full py-2 text-xl text-white bg-customColor5 rounded-lg hover:bg-customColor3 transition-all">Login Account</button>
+      <button type="submit" class="w-full py-2 text-xl text-white bg-teal-500 rounded-lg hover:bg-teal-600 transition-all">Login Account</button>
       <p class="mt-4 text-sm">I don't have an account ?<span class="underline  cursor-pointer"><Link to={'/owner/signup'}>SignUp</Link> </span></p>
     </div>
     </form>
   </div>
-  <div class="w-40 h-40 absolute bg-customColor2 rounded-full top-0 right-12 hidden md:block"></div>
-  <div class="w-20 h-40 absolute bg-customColor2 rounded-full bottom-20 left-10 transform rotate-45 hidden md:block"></div>
+  <div class="w-40 h-40 absolute bg-teal-500 rounded-full top-0 right-12 hidden md:block"></div>
+  <div class="w-20 h-40 absolute bg-teal-500 rounded-full bottom-20 left-10 transform rotate-45 hidden md:block"></div>
 </div>
         </>
     )

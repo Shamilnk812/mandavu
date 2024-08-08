@@ -2,7 +2,7 @@ import { useFormik } from "formik";
 import { useState, useEffect } from "react";
 import AddFacilitySchema from "../../Validations/Owner/AddFacilitySchema";
 
-export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blockFacilities, unblockFacilities }) {
+export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blockFacilities, unblockFacilities, facilityAddingModal }) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedFacility, setSelectedFacility] = useState(null);
 
@@ -45,20 +45,18 @@ export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blo
 
     return (
         <>
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                {/* Container for heading and button */}
-                <div className="flex justify-between items-center py-4">
-                    <h2 className="text-lg font-bold text-gray-700 dark:text-white">Facilities</h2>
+            <div className="relative overflow-x-auto ">
+                <div className="flex justify-end items-center py-4 pr-2">
                     <button
-                        // Function to handle opening the modal for adding a facility
-                        className="bg-blue-600 text-white font-medium text-sm px-4 py-2 rounded-md hover:bg-blue-700 transition duration-150"
+                        className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800"
+                        onClick={facilityAddingModal}
                     >
-                        Add Facility
+                       + Add Facility
                     </button>
                 </div>
 
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <thead className="text-xs text-white uppercase bg-gradient-to-r from-teal-500 to-gray-800 dark:bg-gradient-to-r from-teal-500 to-gray-800 dark:text-white">
                         <tr>
                             <th scope="col" className="px-6 py-3">Facilities</th>
                             <th scope="col" className="px-6 py-3">Price</th>
@@ -68,11 +66,11 @@ export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blo
                     </thead>
                     <tbody>
                         {facilityList.map((facility) => (
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700" key={facility.id}>
-                                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <tr className="bg-customColor7 border-b border-gray-400 dark:bg-customColor7 dark:border-gray-400" key={facility.id}>
+                                <th scope="row" className="px-6 py-4 font-medium text-gray-700 whitespace-nowrap dark:text-gray-700">
                                     {facility.facility}
                                 </th>
-                                <td className="px-6 py-4">{facility.price}</td>
+                                <td className="px-6 py-4 text-gray-700">{facility.price}</td>
                                 <td className="px-6 py-4"><span
                                     className={
                                         facility.is_active
@@ -85,7 +83,7 @@ export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blo
                                 <td className="px-6 py-4">
                                     <button
                                         type="button"
-                                        className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2 me-1 mb-1 dark:focus:ring-yellow-900"
+                                        className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500  font-medium rounded-lg text-sm px-5 py-2 me-1 mb-1 "
                                         onClick={() => handleOpenEditModal(facility)}
                                     >
                                         Edit
@@ -93,7 +91,7 @@ export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blo
                                     {facility.is_active ? (
                                             <button
                                                 type="button"
-                                                className="focus:outline-none ml-2 text-white  bg-red-500 hover:bg-red-600 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2 me-1 mb-1 dark:focus:ring-red-900"
+                                                className="focus:outline-none ml-2 text-white  bg-red-500 hover:bg-red-600   font-medium rounded-lg text-sm px-5 py-2 me-1 mb-1 "
                                                 onClick={()=> blockFacilities(facility.id)}
                                             >
 
@@ -102,7 +100,7 @@ export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blo
                                         ) : (
                                             <button
                                                 type="button"
-                                                className="focus:outline-none ml-2 text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2 me-1 mb-1 dark:focus:ring-green-900"
+                                                className="focus:outline-none ml-2 text-white bg-green-500 hover:bg-green-600 font-medium rounded-lg text-sm px-5 py-2 me-1 mb-1 "
                                                 onClick={()=> unblockFacilities(facility.id)}
                                             >
                                                 Unblock
@@ -118,14 +116,14 @@ export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blo
             {isEditModalOpen && (
                 <div id="authentication-modal" tabIndex="-1" className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden">
                     <div className="relative p-4 w-full max-w-md max-h-full">
-                        <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                        <div className="relative bg-teal-800 rounded-lg shadow dark:bg-teal-800">
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                                     Edit Facilities
                                 </h3>
                                 <button
                                     type="button"
-                                    className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                    className="text-gray-400 bg-transparent hover:bg-customColor7 hover:text-gray-600 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-customColor7 dark:hover:text-gray-600"
                                     onClick={handleCloseEditModal}
                                 >
                                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -142,7 +140,7 @@ export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blo
                                             type="text"
                                             name="facility"
                                             id="facility"
-                                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                            className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg  block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
                                             onChange={formik.handleChange}
                                             value={formik.values.facility}
                                         />
@@ -156,7 +154,7 @@ export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blo
                                             type="text"
                                             name="price"
                                             id="price"
-                                            className="bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                            className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg  block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
                                             onChange={formik.handleChange}
                                             value={formik.values.price}
                                         />
@@ -165,7 +163,7 @@ export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blo
                                         ) : null}
                                     </div>
                                     <div className="flex justify-center pt-4">
-                                        <button type="submit" className="w-1/2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                        <button type="submit" className="w-1/2 mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800">
                                             Update
                                         </button>
                                     </div>

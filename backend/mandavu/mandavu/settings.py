@@ -39,7 +39,7 @@ CIPHER_SUITE = Fernet(ENCRYPTION_KEY)
 
 
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
-SITE_URL="http://localhost:5173"
+SITE_URL="http://localhost:5173/user/show-booking-details"
 stripe.api_key = STRIPE_SECRET_KEY
 STRIPE_SECRET_WEBHOOK=env('STRIPE_SECRET_WEBHOOK')
 

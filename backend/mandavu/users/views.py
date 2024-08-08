@@ -218,37 +218,6 @@ class SingleVenueDetailsView(GenericAPIView) :
 # ============= Stripe Payment  =========
 
 
-# class CreateCheckOutSession(APIView):
-#     def post(self, request):
-#         amount = request.data.get('bookingAmount')
-#         venue_name = request.data.get('venueName')
-
-#         try:
-#             checkout_session = stripe.checkout.Session.create(
-#                 payment_method_types=['card'],
-#                 line_items=[
-#                     {
-#                         'price_data': {
-#                             'currency': 'usd',
-#                             'unit_amount': int(amount) * 100,  # Convert to cents
-#                             'product_data': {
-#                                 'name': venue_name
-#                             },
-#                         },
-#                         'quantity': 1,
-#                     }
-#                 ],
-#                 mode='payment',
-#                 success_url=settings.SITE_URL + '?success=true',
-#                 cancel_url=settings.SITE_URL + '?canceled=true',
-#             )
-#             return redirect(checkout_session.url)
-#         except stripe.error.StripeError as e:
-#             return Response({'msg': 'Stripe error', 'error': str(e)}, status=500)
-#         except Exception as e:
-#             return Response({'msg': 'Something went wrong while creating Stripe session', 'error': str(e)}, status=500)
-
-
 
 
 class CreateCheckOutSession(APIView):
@@ -362,8 +331,10 @@ def strip_webhook_view(request) :
 
 
 
-class BookingDetails(GenericAPIView) :
-    serializer_class = ShowBookingSerializer
+# ==================   Booking =================
+
+class ShowBookingDetailsForCalandar(GenericAPIView) :
+    serializer_class = ShowBookingDetailsForCalandarSerializer
 
     def get(self, request, vid) :
         venue = get_object_or_404(Venue, id=vid) 
@@ -371,4 +342,39 @@ class BookingDetails(GenericAPIView) :
         serializer = self.serializer_class(bookings,many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+
+class ShowBookingListView(GenericAPIView) :
+    serializer_class = ShowBookingListSerializer
+    def get(self, rquest, uid) :
+        user = get_object_or_404(User, id=uid)
+        all_bookings = Booking.objects.filter(user=user)
+        serializer = self.serializer_class(all_bookings, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ShowSingleBookingDetails(GenericAPIView) :
+    serializer_class = ShowBookingListSerializer
+    def get(self, request, bid) :
+        booking_obj = get_object_or_404(Booking, id=bid)
+        serializer = self.serializer_class(booking_obj)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+
+class CancelBookingView(GenericAPIView) :
+    def post(self, request, bid) :
+        cancel_reason = request.data.get('reason')
+        print(cancel_reason)
+        booking_obj = get_object_or_404(Booking, id=bid)
+        booking_obj.cancel_reason = cancel_reason
+        booking_obj.status = 'Booking Canceled'
+        booking_obj.save()
+        return Response(status=status.HTTP_200_OK)
+
+
+    
+
+
+
+        
          

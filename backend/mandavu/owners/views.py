@@ -9,6 +9,7 @@ from django.contrib.auth.hashers import make_password
 
 from .serializers import *
 from .models import *
+from users.models import Booking
 from .utils import sent_otp_to_owner
 
 # Create your views here.
@@ -235,3 +236,40 @@ class BannerDetailsView(APIView) :
         banner_details = VenueImage.objects.filter(venue=venue)
         serializer = BannerDetailsSerializer(banner_details, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class BlockBannerView(APIView) :
+    def post(self, request, bid) :
+        banner_obj = get_object_or_404(VenueImage, id=bid)
+        banner_obj.is_active = False 
+        banner_obj.save()
+        return Response(status=status.HTTP_200_OK)
+    
+
+class UnblockBannerView(APIView) :
+    def post(self, request, bid) :
+        banner_obj = get_object_or_404(VenueImage, id=bid)
+        banner_obj.is_active = True 
+        banner_obj.save()
+        return Response(status=status.HTTP_200_OK)
+    
+
+
+class AllBookingDetailsView(GenericAPIView) :
+    serializer_class = AllBookingDetailsSerializer
+    def get(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        all_bookings = Booking.objects.filter(venue=venue)
+        serializer = self.serializer_class(all_bookings, many=True)
+        print(serializer.data)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+
+class CancellingBookingView(GenericAPIView) :
+    def post(self, request, bid) :
+        cancel_reason = request.data.get('reason')
+        booking_obj = get_object_or_404(Booking, id=bid)
+        booking_obj.cancel_reason = cancel_reason
+        booking_obj.status = 'Booking Canceled'
+        booking_obj.save()
+        return Response(status=status.HTTP_200_OK)

@@ -3,7 +3,7 @@ import axios from "axios"
 import { useFormik } from "formik"
 import VenueRegisterSchema from "../../Validations/Owner/VenueRegisterSchema"
 import { useNavigate } from "react-router-dom"
-import {ToastContainer, toast } from "react-toastify"
+import { toast } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -46,11 +46,14 @@ export default function VenueRegister() {
     return(
         <>
 
-  <ToastContainer/>
-  <div className="flex flex-col flex-1 ml-64 mt-20 bg-customColor1 min-h-screen">
+  
+  <div className="flex flex-col flex-1 ml-64 mt-14 bg-customColor7 min-h-screen">
       <div className="p-10">
-        <h3 className="text-2xl font-semibold mb-4 text-center">Register Your Venue</h3>
-        <div className="bg-customColor2 p-8 md:p-24 rounded-lg shadow-lg">
+        <div>
+        <h3 className="text-2xl font-semibold text-center text-white py-3 rounded-tl-lg rounded-tr-lg bg-gradient-to-r from-teal-500 to-gray-800">Register Your Venue</h3>
+        </div>
+        <div className="bg-customColor8 px-12  py-10 rounded-bl-lg rounded-br-lg">
+        <div className=" p-8 ">
           <form className="space-y-4" onSubmit={formik.handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
@@ -59,7 +62,7 @@ export default function VenueRegister() {
                   type="text"
                   name="name"
                   placeholder="Convention Center Name"
-                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   value={formik.values.name}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -74,7 +77,7 @@ export default function VenueRegister() {
                   type="email"
                   name="email"
                   placeholder="Email Address"
-                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   value={formik.values.email}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -88,7 +91,7 @@ export default function VenueRegister() {
                 <textarea
                   name="description"
                   placeholder="Description"
-                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   value={formik.values.description}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -103,7 +106,7 @@ export default function VenueRegister() {
                   type="text"
                   name="phone"
                   placeholder="Phone Number"
-                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   value={formik.values.phone}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -118,7 +121,7 @@ export default function VenueRegister() {
                   type="number"
                   name="price"
                   placeholder="Price"
-                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   value={formik.values.price}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -133,7 +136,7 @@ export default function VenueRegister() {
                   type="number"
                   name="dining_seat_count"
                   placeholder="Dining Seat Count"
-                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   value={formik.values.dining_seat_count}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -148,7 +151,7 @@ export default function VenueRegister() {
                   type="number"
                   name="auditorium_seat_count"
                   placeholder="Auditorium Seat Count"
-                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   value={formik.values.auditorium_seat_count}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -207,7 +210,7 @@ export default function VenueRegister() {
                   type="text"
                   name="state"
                   placeholder="State"
-                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   value={formik.values.state}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -222,7 +225,7 @@ export default function VenueRegister() {
                   type="text"
                   name="district"
                   placeholder="District"
-                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   value={formik.values.district}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -237,7 +240,7 @@ export default function VenueRegister() {
                   type="text"
                   name="pincode"
                   placeholder="Pincode"
-                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   value={formik.values.pincode}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -251,7 +254,7 @@ export default function VenueRegister() {
                 <textarea
                   name="address"
                   placeholder="Address"
-                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                  className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   value={formik.values.address}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -264,13 +267,17 @@ export default function VenueRegister() {
             <div className="flex justify-center">
               <button
                 type="submit"
-                className="inline-block px-6 py-3 bg-blue-600 text-white font-medium text-sm leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-              >
-                Save Details
+                className="mt-2 bg-teal-600 text-white mt-6 py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800"              >
+                Register Venue
               </button>
             </div>
           </form>
         </div>
+
+
+
+        </div>
+
       </div>
     </div>
         </>

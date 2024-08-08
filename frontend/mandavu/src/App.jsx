@@ -10,7 +10,7 @@ function App() {
 
 
   return (
-    <div className="min-h-screen bg-customColor1">
+    <div className="min-h-screen bg-customColor7">
 
       <Routes>
         <Route path='/' element={<Dash />} />

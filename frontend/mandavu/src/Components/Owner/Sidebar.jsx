@@ -48,7 +48,7 @@ export default function  Sidebar () {
          <>
       
 
-<nav className="fixed top-0 z-50 w-full bg-customColor2 border-b border-customColor2 dark:bg-customColor2 dark:border-customColor2">
+<nav className="fixed top-0 z-50 w-full bg-teal-700 border-b border-teal-700 dark:bg-teal-700 dark:border-teal-700">
         <div className="px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-start rtl:justify-end">
@@ -155,36 +155,35 @@ export default function  Sidebar () {
 
       <aside
         id="logo-sidebar"
-        className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} bg-customColor2 border-r border-customColor2 sm:translate-x-0 dark:customColor2 dark:border-customColor2`}
+        className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} bg-teal-700 border-r border-teal-700 sm:translate-x-0 dark:teal-700 dark:border-teal-700`}
         aria-label="Sidebar"
       >
-        <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-customColor2">
+        <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-teal-700">
           <ul className="space-y-2 font-medium">
             <li>
-              <a
-                href="#"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-customColor3 dark:hover:bg-customColor3 group"
+              <Link to='/owner/booking-management'
+                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
                 <span className="ms-3">Dashboard</span>
-              </a>
+              </Link>
             </li>
             <li>
               <Link to='/owner/venue-management'
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-customColor3 dark:hover:bg-customColor3 group"
+                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
                 <span className="flex-1 ms-3 whitespace-nowrap">Venue Management</span>
               </Link>
             </li>
             <li>
               <Link to='/owner/banner-management'
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-customColor3 dark:hover:bg-customColor3 group"
+                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
                 <span className="flex-1 ms-3 whitespace-nowrap">Banner Management</span>
               </Link>
             </li>
             <li>
               <Link to='/owner/events-management'
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-customColor3 dark:hover:bg-customColor3 group"
+                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
                 <span className="flex-1 ms-3 whitespace-nowrap">Events Management</span>
               </Link>
@@ -192,7 +191,7 @@ export default function  Sidebar () {
             <li>
               <Link to='/owner/details'
                 
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-customColor3 dark:hover:bg-customColor3 group"
+                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
                 <span className="flex-1 ms-3 whitespace-nowrap">Profile</span>
               </Link>
@@ -200,7 +199,7 @@ export default function  Sidebar () {
             <li>
               <a
                 href="#"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-customColor3 dark:hover:bg-customColor3 group"
+                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
                 <span className="flex-1 ms-3 whitespace-nowrap">Inbox</span>
               </a>
@@ -208,7 +207,7 @@ export default function  Sidebar () {
             <li>
               <a
                 onClick={handleOwnerLogout}
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-black hover:bg-customColor3 dark:hover:bg-customColor3 group"
+                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
                 <span className="flex-1 ms-3 whitespace-nowrap">Log Out</span>
               </a>

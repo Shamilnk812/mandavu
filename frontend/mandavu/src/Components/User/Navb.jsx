@@ -64,7 +64,7 @@ export default  function Navb() {
     return(
         <>
             
-    <nav className="border-customColor2 bg-customColor2 dark:customColor2 dark:customColor2">
+    <nav className="fixed fixed top-0 left-0 w-full border-teal-700 bg-teal-700 dark:teal-700 dark:teal-700 z-50">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="#" className="flex items-center space-x-3 rtl:space-x-reverse">
           <img src="/user/mandavu-logo.png" className="h-8" alt="Mandavu logo" />
@@ -100,6 +100,9 @@ export default  function Navb() {
         </div>
       </div>
     </nav>
+    <div className="pt-16" > 
+
+              </div>
         </>
     )
 }

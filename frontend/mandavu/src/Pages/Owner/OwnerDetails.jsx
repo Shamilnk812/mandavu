@@ -102,10 +102,12 @@ export default function OwnerDetails() {
     return(
         <>
         <Sidebar/>
- <div className="flex flex-col flex-1 ml-64 mt-20 bg-customColor1 min-h-screen">
+ <div className="flex flex-col flex-1 ml-64 mt-14 bg-customColor7 min-h-screen">
         <div className="p-10">
-          <h3 className="text-2xl font-semibold mb-4 text-center">Owner Details</h3>
-          <div className="bg-customColor2 p-8 md:p-24 rounded-lg shadow-lg">
+          <div className="bg-customColor8 pb-10 rounded-lg shadow-lg">
+          <h3 className="text-2xl font-semibold  text-center text-white py-3 bg-gradient-to-r from-teal-500 to-gray-800 rounded-tl-lg rounded-tr-lg">Owner Details</h3>
+            
+          <div className="p-8">
             <form onSubmit={handleUpdateOwnerDetails} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
@@ -115,7 +117,7 @@ export default function OwnerDetails() {
                     placeholder="First Name"
                     defaultValue={owner.first_name}
                     onChange={(e)=>setFirstName(e.target.value)}
-                    className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                    className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   />
                 </div>
                 <div>
@@ -125,7 +127,7 @@ export default function OwnerDetails() {
                     placeholder="Last Name"
                     defaultValue={owner.last_name}
                     onChange={(e)=>setLastName(e.target.value)}
-                    className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                    className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   />
                 </div>
               </div>
@@ -137,14 +139,14 @@ export default function OwnerDetails() {
                     placeholder="Email Address"
                     defaultValue={owner.email}
                     onRateChange={(e)=>setEmail(e.target.value)}
-                    className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                    className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   />
                 </div>
               </div>
               <div className="flex justify-center">
                 <button
                   type="submit"
-                  className="inline-block px-6 py-3 bg-blue-600 text-white font-medium text-sm leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+                  className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800"
                 >
                   Save Details
                 </button>
@@ -162,7 +164,7 @@ export default function OwnerDetails() {
                     placeholder="Old Password"
                     value={oldPassword}
                     onChange={(e)=> setOldPassword(e.target.value)}
-                    className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                    className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   />
                 </div>
                 <div>
@@ -172,7 +174,7 @@ export default function OwnerDetails() {
                     placeholder="New Password"
                     value={newPassword}
                     onChange={(e)=> setNewPassword(e.target.value)}
-                    className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                    className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   />
                 </div>
               </div>
@@ -184,20 +186,23 @@ export default function OwnerDetails() {
                     placeholder="Confirm Password"
                     value={confirmPassword} 
                     onChange={(e)=> setConfirmPassword(e.target.value)}
-                    className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor1 border border-gray-400 outline-customColor3"
+                    className="block text-sm py-3 px-4 rounded-lg w-full bg-customColor7 border border-gray-400 outline-teal-500"
                   />
                 </div>
               </div>
               <div className="flex justify-center">
                 <button
                   type="submit"
-                  className="inline-block px-6 py-3 bg-blue-600 text-white font-medium text-sm leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-                >
+                  className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800"                >
                   Change Password
                 </button>
               </div>
             </form>
           </div>
+        </div>
+
+
+
         </div>
       </div>
         </>

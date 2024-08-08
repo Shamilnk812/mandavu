@@ -22,6 +22,11 @@ urlpatterns = [
 
     path('add-banner/<int:vid>/',AddBannerView.as_view(),name='add-banner'),
     path('banner-details/<int:vid>/',BannerDetailsView.as_view(),name='banner-details'),
+    path('block-banner/<int:bid>/',BlockBannerView.as_view(),name='block-banner'),
+    path('unblock-banner/<int:bid>/',UnblockBannerView.as_view(),name='unblock-banner'),
+
+    path('all-booking-details/<int:vid>/',AllBookingDetailsView.as_view(),name='all-booking-details'),
+    path('booking-cancelling/<int:bid>/',CancellingBookingView.as_view(),name='booking-cancelling'),
 
     
 ]
