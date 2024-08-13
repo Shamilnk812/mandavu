@@ -119,23 +119,23 @@ OPENCAGE_API_KEY = env('OPENCAGE_API_KEY')
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 # DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql',
-#        'NAME': 'mandavudatabase',
-#        'USER': 'postgres',
-#        'PASSWORD': '2445057',
-#        'HOST': 'localhost',
-#        'PORT': '5432',
-#    }
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
 # }
+
+DATABASES = {
+   'default': {
+       'ENGINE': 'django.db.backends.postgresql',
+       'NAME': 'mandavu',
+       'USER': 'postgres',
+       'PASSWORD': '2445057',
+       'HOST': 'localhost',
+       'PORT': '5432',
+   }
+}
 
 AUTH_USER_MODEL="users.CustomUser"
 

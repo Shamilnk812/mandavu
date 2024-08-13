@@ -16,27 +16,33 @@ export default function VenueManagement() {
   const [venueDetails,setVenueDetails] = useState(null)
   const [loading,setLoading] = useState(true)
   const dispatch = useDispatch();
+  
+  const fetchVenueDetails = async ()=>{
+    if (ownerId) {
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/v2/auth/venue-details/${ownerId}/`);
+        console.log(response.data)
+        setVenueDetails(response.data)
+        if (response.data.is_verified) {
+          dispatch(SetVenueId(response.data.id)); 
+      }
+      }catch(error){
+        console.error('Error fetching venue details:', error);
+      }finally{
+        setLoading(false)
+      }
+    }else{
+      setLoading(false);
+    }
+  }
 
   useEffect(()=> {
-    const fetchVenueDetails = async ()=>{
-      if (ownerId) {
-        try {
-          const response = await axios.get(`http://127.0.0.1:8000/api/v2/auth/venue-details/${ownerId}/`);
-          setVenueDetails(response.data)
-          if (response.data.is_verified) {
-            dispatch(SetVenueId(response.data.id)); 
-        }
-        }catch(error){
-          console.error('Error fetching venue details:', error);
-        }finally{
-          setLoading(false)
-        }
-      }else{
-        setLoading(false);
-      }
-    }
+
     fetchVenueDetails()
   },[ownerId,dispatch])
+
+
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -44,9 +50,11 @@ export default function VenueManagement() {
   return (
         <>
           <Sidebar/>
-          {!venueDetails &&  <VenueRegister/>}
+          {/* {!venueDetails &&  <VenueRegister/>}
           {venueDetails && venueDetails.is_verified === true && <VenueDetails venueDetails={venueDetails}/>}
-          {venueDetails && venueDetails.is_verified === false && <SuccessRegisterPage/> }
+          {venueDetails && venueDetails.is_verified === false && <SuccessRegisterPage/> } */}
+
+          <VenueDetails venueDetails={venueDetails} fetchVenueDetails={fetchVenueDetails}/>
          
         </>
     )

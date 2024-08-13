@@ -1,4 +1,4 @@
-import BannerManagement from "./BannerManagement";
+import BannerManagement from "./VenuePhotosManagement";
 import { useEffect,useState } from "react";
 import { useSelector,useDispatch } from "react-redux";
 import RegisterAlertMessage from "../../Components/Owner/RegisterAlertMessage";

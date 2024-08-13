@@ -10,27 +10,132 @@ from django.contrib.auth.hashers import make_password
 from .serializers import *
 from .models import *
 from users.models import Booking
-from .utils import sent_otp_to_owner
+from .utils import sent_otp_to_owner,decode_base64_file
+import base64
+from django.core.files.base import ContentFile
 
 # Create your views here.
 
 
 
-class RegisterOwnerView(GenericAPIView) :
-    serializer_class = OwnerRegisterSerializer
+# class RegisterOwnerView(GenericAPIView) :
+#     serializer_class = OwnerRegisterSerializer
 
-    def post(self, request) :
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid(raise_exception=True) :
-            serializer.save()
-            owner = serializer.data
-            sent_otp_to_owner(owner['email'])
-            return Response({
-                'data':owner,
-                'message':f"hi thanks for singing up a OTP has be sent to your email"
-            },status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     def post(self, request) :
+#         serializer = self.serializer_class(data=request.data)
+#         if serializer.is_valid(raise_exception=True) :
+#             serializer.save()
+#             owner = serializer.data
+#             sent_otp_to_owner(owner['email'])
+#             return Response({
+#                 'data':owner,
+#                 'message':f"hi thanks for singing up a OTP has be sent to your email"
+#             },status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+            
+
+
+class RegisterCombinedView(APIView):
+
+    def post(self, request):
+        owner_data = request.data.get('owner')
+        venue_data = request.data.get('venue')
+        events = request.data.get('events')
+        facilities = request.data.get('facilities')
+        venue_images = request.data.get('venue_images')
+    
+        id_proof_base64 = owner_data.get('id_proof')
+        venue_license_base64 = venue_data.get('venue_license')
+        venue_terms_and_conditions = venue_data.get('terms_and_conditions')
+        
+        if id_proof_base64 or venue_license_base64 or venue_terms_and_conditions:
+            try:
+                id_proof_file = decode_base64_file(id_proof_base64)
+                venue_license_file = decode_base64_file(venue_license_base64)
+                venue_terms_and_conditions_file = decode_base64_file(venue_terms_and_conditions,'pdf')
+                owner_data['id_proof'] = id_proof_file
+                venue_data['venue_license'] = venue_license_file
+                venue_data['terms_and_conditions'] = venue_terms_and_conditions_file
+                
+            except ValueError as e:
+                print(f"Error decoding base64 file: {e}")  
+                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        owner_serializer = OwnerRegisterSerializer(data=owner_data)
+        if owner_serializer.is_valid():
+            owner = owner_serializer.save()
+        else:
+            return Response(owner_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        venue_data['owner'] = owner.id 
+        venue_serializer = RegisterVenueSerializer(data=venue_data)
+        if venue_serializer.is_valid():
+            venue = venue_serializer.save()
+        else:
+            return Response(venue_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+        
+        # Handle Facilities
+        if facilities:
+            for facility_data in facilities:
+                facility_serializer = CreatingFacilitySerializer(data={
+                    'facility': facility_data.get('facility'),
+                    'price': facility_data.get('price', 'FREE'),
+                    'venue': venue.id,
+                })
+                if facility_serializer.is_valid():
+                    facility_serializer.save()
+                else:
+                    return Response(facility_serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+            
+        # Handle Events
+        if events:
+            for event_data in events:
+                event_name = event_data.get('name')
+                event_base64_image = event_data.get('image')
+                try:
+                    event_photo_file = decode_base64_file(event_base64_image)
+                except ValueError as e:
+                    return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)     
+                
+                event_serializer = CreatingEventSerializer(data={
+                    'event_name': event_name,
+                    'event_photo': event_photo_file,
+                    'venue': venue.id,
+                })
+                if event_serializer.is_valid():
+                    event_serializer.save()
+                else:
+                    return Response(event_serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+
+        # Handle Venue Images
+        if venue_images:
+            for venue_photo in venue_images:
+                try:
+                    venue_photo_file = decode_base64_file(venue_photo)
+                except ValueError as e:
+                    return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+                
+                venue_photo_serializer = AddVenuePhotoSerializer(data={
+                    'venue_photo': venue_photo_file,
+                    'venue': venue.id,
+                })
+                if venue_photo_serializer.is_valid():
+                    venue_photo_serializer.save()
+                else:
+                    print('eoorr;',venue_photo_serializer.errors)
+                    return Response(venue_photo_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        sent_otp_to_owner(owner['email'])        
+
+        return Response({
+            'message': 'Owner, Venue, Facilities, and Events registered successfully, OTP sent to owner email.',
+            'owner': owner_serializer.data,
+            'venue': venue_serializer.data,
+        }, status=status.HTTP_201_CREATED)
+
+
 
 
 class LoginOwnerView(GenericAPIView) :
@@ -39,6 +144,7 @@ class LoginOwnerView(GenericAPIView) :
         serializer = self.serializer_class(data=request.data, context={'request':request})
         if serializer.is_valid(raise_exception=True) :
             response_data = serializer.validated_data
+            print(response_data)
             return Response(response_data,status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -116,17 +222,17 @@ class VerifyOwerOtp(GenericAPIView) :
 
 # ================== VENUE MANAGEMENT =================
 
-class  VenueRegisterView(GenericAPIView) :
-    serializer_class = RegisterVenueSerializer
-    def post(self, request) :
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid(raise_exception=True) :
-            serializer.save()
-            print(serializer.data)
-            return Response({'data':serializer.data,
-                             'message':'Your Venue is Registerd waiting for admin approval'},
-                               status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+# class  VenueRegisterView(GenericAPIView) :
+#     serializer_class = RegisterVenueSerializer
+#     def post(self, request) :
+#         serializer = self.serializer_class(data=request.data)
+#         if serializer.is_valid(raise_exception=True) :
+#             serializer.save()
+#             print(serializer.data)
+#             return Response({'data':serializer.data,
+#                              'message':'Your Venue is Registerd waiting for admin approval'},
+#                                status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
 
 
@@ -147,8 +253,10 @@ class UpdateVenueView(GenericAPIView) :
             serializer.save()
             return Response(serializer.data,status=status.HTTP_200_OK)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
 
-#============  Facilities ==========
+
+#============  FACILITIES ============
 
 class AddFacilitiesView(GenericAPIView):
     serializer_class = AddFacilitiesSerializer
@@ -156,8 +264,6 @@ class AddFacilitiesView(GenericAPIView):
         venue = get_object_or_404(Venue, id=vid)
         data = request.data.copy()
         data['venue'] = venue.id
-        if 'price' in data and data['price'] == '':
-            data['price'] = None
         serializer = self.serializer_class(data=data)
         if serializer.is_valid(raise_exception=True) :
             serializer.save()
@@ -184,8 +290,6 @@ class UpdateFacilitiesView(GenericAPIView) :
         facility = get_object_or_404(Facility, id=facility_id)
         data = request.data.copy()
         data['venue'] = venue.id
-        if 'price' in data and data['price'] == '':
-            data['price'] = None
         serializer = self.serializer_class(instance=facility, data=data, partial=True)
         if serializer.is_valid(raise_exception=True) :
             serializer.save()
@@ -213,32 +317,37 @@ class UnblockFacilityView(GenericAPIView) :
         return Response(status=status.HTTP_200_OK)    
 
 
-#================ Banner ==============
+#================ VENUE PHOTOS ==============
 
-class AddBannerView(APIView) :
+class AddVenuePhotoView(APIView) :
     def post(self, request, vid) :
         venue = get_object_or_404(Venue, id=vid)
-        serializer = AddBannerSerializer(data=request.data)
+        venue_photo = request.data.get('venue_photo')
+        try:
+             venue_photo_file = decode_base64_file(venue_photo)
+        except ValueError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = AddVenuePhotoSerializer(data={
+            'venue_photo': venue_photo_file,
+            'venue': venue.id,
+        })
         if serializer.is_valid() :
-            serializer.validated_data['venue'] = venue
             serializer.save()
             return Response({"message": "Banner added successfully"}, status=status.HTTP_201_CREATED)
-        
         print(serializer.errors)
-        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-class BannerDetailsView(APIView) :
-    
+class ShowAllVenuePhotosView(APIView) :
     def get(self, request, vid) :
         venue = get_object_or_404(Venue, id=vid)
-        banner_details = VenueImage.objects.filter(venue=venue)
+        banner_details = VenueImage.objects.filter(venue=venue).order_by('-id')
         serializer = BannerDetailsSerializer(banner_details, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class BlockBannerView(APIView) :
+class BlockVenuePhotoView(APIView) :
     def post(self, request, bid) :
         banner_obj = get_object_or_404(VenueImage, id=bid)
         banner_obj.is_active = False 
@@ -246,14 +355,83 @@ class BlockBannerView(APIView) :
         return Response(status=status.HTTP_200_OK)
     
 
-class UnblockBannerView(APIView) :
+class UnblockVenuePhotoView(APIView) :
     def post(self, request, bid) :
         banner_obj = get_object_or_404(VenueImage, id=bid)
         banner_obj.is_active = True 
         banner_obj.save()
         return Response(status=status.HTTP_200_OK)
+
+
+
+# ============= EVENTS ============
+
+
+class GetAllEventsDetails(GenericAPIView) :
+    serializer_class = EventSerializer
+    def get(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        events = Event.objects.filter(venue=venue).order_by('-id')
+        serializer = self.serializer_class(events, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+class AddEventView(GenericAPIView) :
+    serializer_class = CreatingEventSerializer
+    def post(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        print(request.data)
+        event_photo = request.FILES.get('event_photo')
+        event_name  = request.data.get('event_name')
+        data = {
+            'event_photo': event_photo,
+            'event_name': event_name,
+            'venue': venue.id
+        }
+        serializer = self.serializer_class(data=data)
+        if serializer.is_valid(raise_exception=True) :
+            serializer.save()
+            return Response({"message": "New event added successfully"}, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, staus=status.HTTP_400_BAD_REQUEST)
     
 
+class UpdateEventView(GenericAPIView) :
+    serializer_class = UpdateEventSerializer
+    def patch(self, request, vid) :
+        event_id = request.data.get('event_id')
+        venue = get_object_or_404(Venue, id=vid) 
+        event = Event.objects.filter(id=event_id, venue=venue)
+        data = request.data.copy()
+        data['venue'] = venue.id
+        serializer = self.serializer_class(isinstance=event, data=data, many=True)
+        if serializer.is_valid(raise_exception=True) :
+            return Response({"message":"Event details updated successfully"}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class BlockEventView(APIView) :
+    def patch(self, request, vid) :
+        event_id = request.data.get('event_id')
+        venue = get_object_or_404(Venue, id=vid)
+        event_obj = get_object_or_404(Event, id=event_id, venue=venue)
+        event_obj.is_active = False
+        event_obj.save()
+        return Response({"message":"Event is blocked successfully"})
+    
+
+class UnblockEventView(APIView) :
+    def patch(self, request, vid) :
+        event_id = request.data.get('event_id')
+        venue = get_object_or_404(Venue, id=vid)
+        event_obj = get_object_or_404(Event, id=event_id, venue=venue)
+        event_obj.is_active = True
+        event_obj.save()
+        return Response({"message":"Event is unblocked successfully"})
+    
+
+#============== BOOKING ============
 
 class AllBookingDetailsView(GenericAPIView) :
     serializer_class = AllBookingDetailsSerializer

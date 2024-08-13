@@ -26,7 +26,7 @@ class UserManager(BaseUserManager)  :
         
         user = self.model(first_name=first_name,last_name=last_name,email=email,**extra_fields)
         user.set_password(password)
-        user.save() 
+        user.save(using = self._db) 
         return user
     
 
@@ -45,5 +45,4 @@ class UserManager(BaseUserManager)  :
              first_name, last_name, email, password, **extra_fields
         )
   
-        user.save()
         return user

@@ -4,7 +4,6 @@ import AddFacilitySchema from "../../Validations/Owner/AddFacilitySchema";
 import axios from "axios";
 import { toast } from "react-toastify";
 import ShowFacilityDetails from "./ShowFacilities";
-import AddFacilityModal from "./AddFacilityModal";
 
 export default function Facilities({venueId}) {
     
@@ -196,7 +195,6 @@ export default function Facilities({venueId}) {
                 </div>
             )}
         
-        {/* <AddFacilityModal formik2={formik} isOpen={isEditModalOpen} handleClose={handleCloseEditModal}/> */}
 
         </>
       )

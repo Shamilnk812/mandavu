@@ -174,18 +174,19 @@ export default function  Sidebar () {
                 <span className="flex-1 ms-3 whitespace-nowrap">Venue Management</span>
               </Link>
             </li>
-            <li>
-              <Link to='/owner/banner-management'
-                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
-              >
-                <span className="flex-1 ms-3 whitespace-nowrap">Banner Management</span>
-              </Link>
-            </li>
+           
             <li>
               <Link to='/owner/events-management'
                 className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
-                <span className="flex-1 ms-3 whitespace-nowrap">Events Management</span>
+                <span className="flex-1 ms-3 whitespace-nowrap">Events</span>
+              </Link>
+            </li>
+            <li>
+              <Link to='/owner/facilities-management'
+                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
+              >
+                <span className="flex-1 ms-3 whitespace-nowrap">Facilities </span>
               </Link>
             </li>
             <li>
@@ -194,6 +195,13 @@ export default function  Sidebar () {
                 className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
                 <span className="flex-1 ms-3 whitespace-nowrap">Profile</span>
+              </Link>
+            </li>
+            <li>
+              <Link to='/owner/banner-management'
+                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
+              >
+                <span className="flex-1 ms-3 whitespace-nowrap">Photos</span>
               </Link>
             </li>
             <li>

@@ -3,12 +3,22 @@ import { useNavigate } from "react-router-dom"
 import {  toast } from 'react-toastify';
 import axios from 'axios';
 import OtpSchema from "../../Validations/User/OtpSchema";
+import { useEffect } from "react";
 
 
 export default function OtpVerification() {
 
     const email = localStorage.getItem('email')
     const navigate = useNavigate()
+
+    useEffect(() => {
+      if (!email) {
+          navigate('/owner/register-step-1');
+      }
+  }, [email, navigate]);
+
+
+
     const formik = useFormik({
         initialValues:{
             otp:'',
@@ -19,7 +29,7 @@ export default function OtpVerification() {
             const response = await axios.post('http://127.0.0.1:8000/api/v2/auth/verify-otp/',{...values,email});
             toast.success('OTP verified successfully!');
             localStorage.removeItem('email')
-            navigate('/owner/login'); 
+            navigate('/owner/venue_approval_waiting'); 
           }catch (error) {
             if (error.response && error.response.data) {
                 const errorMessage = error.response.data.message || 'OTP verification failed';

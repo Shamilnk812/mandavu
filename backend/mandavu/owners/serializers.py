@@ -3,7 +3,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
 
-from .models import Owner,Venue,Facility,VenueImage
+from .models import *
 from django.contrib.auth import authenticate
 
 
@@ -25,7 +25,7 @@ class OwnerRegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Owner
-        fields = ['id','first_name', 'last_name', 'email', 'convention_center_name', 'password', 'password2']
+        fields = ['id','first_name', 'last_name', 'email', 'id_proof', 'phone', 'phone2' ,'password', 'password2']
 
     def validate(self, attrs):
         password = attrs.get('password', '')
@@ -38,9 +38,11 @@ class OwnerRegisterSerializer(serializers.ModelSerializer):
         owner = Owner.objects.create_user(
             first_name=validated_data.get('first_name'),
             last_name=validated_data.get('last_name'),
-            email=validated_data['email'],
+            email=validated_data.get('email'),
+            phone=validated_data.get('phone'),
+            phone2=validated_data.get('phone2'),
+            id_proof=validated_data.get('id_proof'),
             password=validated_data.get('password'),
-            convention_center_name=validated_data['convention_center_name'],
             is_owner = True
         )        
         return owner
@@ -70,8 +72,8 @@ class OwnerLoginSerializer(serializers.ModelSerializer) :
             raise AuthenticationFailed("You not a venue user")
         if not owner.is_active :
             raise AuthenticationFailed("Your Account is blocked")
-        if not owner.is_verified :
-            raise AuthenticationFailed(" Your Acooutn is not verified")
+        # if not owner.is_verified :
+        #     raise AuthenticationFailed(" Your Acooutn is not verified")
         
         owner_token = owner.token()
 
@@ -139,7 +141,7 @@ class RegisterVenueSerializer(serializers.ModelSerializer) :
     
     class Meta:
         model = Venue
-        fields = ['owner', 'name', 'email', 'phone', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'state', 'district', 'pincode', 'address', 'latitude', 'longitude']
+        fields = ['owner', 'convention_center_name', 'short_description' ,'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'state', 'district', 'city', 'pincode', 'address', 'latitude', 'longitude', 'terms_and_conditions', 'venue_license']
 
     def create(self, validated_data):
         venue = Venue(**validated_data)
@@ -149,7 +151,7 @@ class RegisterVenueSerializer(serializers.ModelSerializer) :
     
     def geocode_address(self,venue):
         geocoder = OpenCageGeocode(settings.OPENCAGE_API_KEY)
-        full_address = f"{venue.address}, {venue.district}, {venue.state}, {venue.pincode}, {settings.BASE_COUNTRY}"
+        full_address = f"{venue.address}, {venue.district}, {venue.city}, {venue.state}, {venue.pincode}, {settings.BASE_COUNTRY}"
         try:
             results = geocoder.geocode(full_address)
             if results and len(results):
@@ -174,7 +176,7 @@ class VenueDetailsSerializer(serializers.ModelSerializer):
 class UpdateVenueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Venue
-        fields = ['owner', 'name', 'email', 'phone', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'state', 'district', 'pincode', 'address', 'latitude', 'longitude']
+        fields = ['owner', 'convention_center_name' , 'short_description', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'state', 'district','city', 'pincode', 'address', 'latitude', 'longitude']
 
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
@@ -201,20 +203,21 @@ class UpdateVenueSerializer(serializers.ModelSerializer):
             print(f"Geocoding error for address '{full_address}': {str(e)}")
             raise ValidationError(f"Geocoding error: {str(e)}")
 
+#=================== FACILITIES ====================
 
 
-class AddFacilitiesSerializer(serializers.ModelSerializer) :
-    price = serializers.IntegerField(required=False, allow_null=True)
-
+class CreatingFacilitySerializer(serializers.ModelSerializer) :
     class Meta:
         model  = Facility
         fields = '__all__'
 
-    # def to_internal_value(self, data):
-    #     data = super().to_internal_value(data)
-    #     if data.get('price') == '':
-    #         data['price'] = None
-    #     return data
+
+
+class AddFacilitiesSerializer(serializers.ModelSerializer) :
+
+    class Meta:
+        model  = Facility
+        fields = '__all__'
         
     def validate(self, attrs):
         facility_name = attrs.get('facility')
@@ -234,8 +237,7 @@ class GetFacilitiesSerializer(serializers.ModelSerializer) :
 
 
 class UpdateFacilitiesSerializer(serializers.ModelSerializer) :
-    price = serializers.IntegerField(required=False, allow_null=True)
-
+    
     class Meta:
         model = Facility
         fields = '__all__'
@@ -257,10 +259,10 @@ class UpdateFacilitiesSerializer(serializers.ModelSerializer) :
 
 #===========  Banner ========
 
-class AddBannerSerializer(serializers.ModelSerializer) :
-    class Meta:
-        model = VenueImage
-        fields = ['venue_photo', 'name']
+# class AddVenuePhotoSerializer(serializers.ModelSerializer) :
+#     class Meta:
+#         model = VenueImage
+#         fields = ['venue_photo']
 
 
 class BannerDetailsSerializer(serializers.ModelSerializer) :
@@ -273,6 +275,49 @@ class BannerDetailsSerializer(serializers.ModelSerializer) :
         photo_url = obj.venue_photo.url
         return request.build_absolute_uri(photo_url)    
     
+
+#============ VENUE PHOTOS ===========
+
+class AddVenuePhotoSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = VenueImage
+        fields = '__all__'
+
+        
+
+    
+#============ EVENTS ============
+
+class CreatingEventSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model  = Event
+        fields = '__all__'
+
+class EventSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model  = Event
+        fields = '__all__'
+    def get_event_photo(self, obj):
+        request = self.context.get('request')
+        photo_url = obj.event_photo.url
+        return request.build_absolute_uri(photo_url)      
+
+
+class UpdateEventSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = Event
+        fields = '__all__'
+
+    def validate(self, attrs):
+        event = attrs.get('event_name')
+        venue = attrs.get('venue')
+        if Event.objects.filter(event_name=event , venue=venue).exclude(id=self.instance.id).exists() :
+            raise serializers.ValidationError("This Event already exists for this venue.")
+        return attrs     
+    
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
+
 
 # =========== booking =========
 
