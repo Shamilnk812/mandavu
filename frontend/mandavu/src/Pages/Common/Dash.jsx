@@ -27,7 +27,7 @@ export default function Dash() {
     </div>
     
     <div class="text-center mt-6">
-      <button class="w-full py-2 text-xl text-white bg-teal-500 rounded-lg hover:bg-teal-600 transition-all" onClick={()=>navigate('owner/signup')}>Create Account</button>
+      <button class="w-full py-2 text-xl text-white bg-teal-500 rounded-lg hover:bg-teal-600 transition-all" onClick={()=>navigate('owner/register-step-1')}>Create Account</button>
       <p class="mt-4 text-sm">Already Have An Account? <span class="underline  cursor-pointer"> <Link to={'/owner/login'}>Login</Link></span></p>
     </div>
   </div>

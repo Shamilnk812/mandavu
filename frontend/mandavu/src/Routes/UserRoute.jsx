@@ -15,6 +15,8 @@ import ShowBookingDetails from "../Pages/User/ShowBookingDetails";
 import PaymentSuccess from "../Pages/User/PaymentSuccess";
 import PaymentCanclled from "../Pages/User/PaymentCanclled";
 import ShowSingleBookingDetails from "../Pages/User/ViewSingleBookingDetails";
+import UserProfile from "../Pages/User/UserProfile";
+import UserChat from "../Pages/User/UserChat";
 
 export default function UserRoute() {
     return(
@@ -24,6 +26,7 @@ export default function UserRoute() {
             <Route path="/home" element={<UserLoginAuth> <Home/> </UserLoginAuth>} />
             <Route path="/otp" element={<UserLogoutAuth><OtpVerification/> </UserLogoutAuth>} />
             <Route path="/profile" element={ <UserLoginAuth> <Profile/> </UserLoginAuth>} />
+            <Route path="/profile2" element={ <UserLoginAuth> <UserProfile/> </UserLoginAuth>} />
             <Route path="/show-booking-details" element={ <UserLoginAuth> <ShowBookingDetails/> </UserLoginAuth>} />
             <Route path="/view-booking-details/:bookingId" element={ <UserLoginAuth> <ShowSingleBookingDetails/> </UserLoginAuth>} />
             <Route path="/payment-success" element={ <UserLoginAuth> <PaymentSuccess/> </UserLoginAuth>} />
@@ -32,6 +35,7 @@ export default function UserRoute() {
             <Route path="/show-single-venue/:venueId" element={ <UserLoginAuth> <ShowSingleVenueDetails/> </UserLoginAuth>} />
             <Route path="/venue-booking/:venueId" element={ <UserLoginAuth> <VenueBooking/> </UserLoginAuth>} />
             <Route path="/view-slot/:venueId" element={ <UserLoginAuth> <ViewSlote/> </UserLoginAuth>} />
+            <Route path="/chat" element={ <UserLoginAuth> <UserChat/> </UserLoginAuth>} />
 
             
             

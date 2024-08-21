@@ -70,16 +70,18 @@ class UserListSerializer(serializers.ModelSerializer) :
 
 
 
-class OwnerListSerializer(serializers.ModelSerializer) :
-    class Meta:
-        model = Owner
-        fields = ['id', 'convention_center_name', 'first_name', 'last_name', 'email', 'is_active', 'date_joined']
-
-
-
-
 class VenueDetailsSeriallizer(serializers.ModelSerializer) :
     class Meta:
         model = Venue
         fields = '__all__'
+
+
+class OwnerListSerializer(serializers.ModelSerializer) :
+    venue = VenueDetailsSeriallizer(read_only=True)
+    class Meta:
+        model = Owner
+        fields = ['id', 'first_name', 'last_name', 'email', 'phone', 'phone2', 'is_active', 'date_joined','venue']
+
+
+
 

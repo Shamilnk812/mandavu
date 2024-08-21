@@ -3,17 +3,25 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Navb from '../../Components/User/Navb';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function ShowSingleVenueDetails() {
+    const navigate = useNavigate();
     const { venueId } = useParams();
     const [venue, setVenue] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(0);
+
+    const userId = useSelector((state) => state.user.user?.id);
+    console.log('sondfdj',userId)
 
     useEffect(() => {
         const fetchVenueDetails = async () => {
             try {
                 const response = await axios.get(`http://127.0.0.1:8000/api/v1/auth/single-venue-details/${venueId}/`);
                 setVenue(response.data);
+                console.log(response.data)
             } catch (error) {
                 console.error('Error fetching venue details:', error);
             }
@@ -29,6 +37,26 @@ export default function ShowSingleVenueDetails() {
     const handleNext = () => {
         setCurrentIndex((prevIndex) => (prevIndex === venue.images.length - 1 ? 0 : (prevIndex + 1)));
     };
+
+
+    const handleChat = async (venueOwnerId) => {
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/chat/add_chat_rooms/', {
+                user_id1: userId,
+                user_id2: venueOwnerId,
+            });
+
+            if (response.status === 200 || response.status === 201) {
+                const chatRoomId = response.data.id; // Assuming `id` is the field representing the chat room's ID
+                // navigate(`/chat/${chatRoomId}`);
+                navigate('/user/chat')
+
+                
+            }
+        } catch (error) {
+            console.error('Error starting chat:', error);
+        }
+    }
 
     if (!venue) {
         return <div>Loading...</div>;
@@ -138,43 +166,20 @@ export default function ShowSingleVenueDetails() {
                         <p className="text-gray-700 pl-4">{venue.address}</p>
                         </div>   
 
-                        <div className="flex justify-end px-8 pb-5">
+                        <div className="flex justify-end px-8 pb-5 gap-2">
                             <Link to={`/user/venue-booking/${venue.id}`} className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800">
                                 book your venue
                             </Link>
+                            <button 
+                            onClick={()=> handleChat(venue.owner_id)}
+                            className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800">
+                                Chat with venue owner
+                            </button>
                         </div>
                     </div>
 
                 </div>
 
-
-                {/* <div className="mt-8  rounded-lg bg-customColor8   h-[400px]">
-                    <div className="text-center rounded-tl-lg rounded-tr-lg  py-3 bg-gradient-to-r from-teal-500 to-gray-800 ">
-                          <p className="text-2xl font-bold text-white">Welcome to {venue.name}</p>
-
-                    </div>
-                    <div className='flex px-10 py-10' >
-                        <div className='w-2/5  bg-customColor8'>
-                            <div>
-                            {venue.images && venue.images.length > 0 ? (
-                                <img
-                                    src={venue.images[0].venue_photo}  // Ensure the path is correct
-                                    alt="Venue"
-                                    className="w-full h-64 object-cover rounded-lg shadow-md"
-                                />
-                            ) : (
-                                <p>No image available</p>
-                            )}
-                            </div>
-                        </div>
-                        <div className='w-3/5 '>
-                          <h1 className='text-gray-500 text-center text-xl font-semi-bold'>{venue.name}</h1>
-                          <p className='text-gray-800 px-10 py-5'>{venue.description}</p>
-                            
-                        </div>
-
-                    </div>
-                </div> */}
 
 
             </div>

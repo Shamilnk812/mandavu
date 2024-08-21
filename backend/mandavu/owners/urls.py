@@ -11,7 +11,7 @@ urlpatterns = [
     path('update/<int:uid>/',UpdateOwnerView.as_view(),name='update'),
     path('change-password/<int:uid>/',ChangeOwnerPassword.as_view(),name='change-password'),
     path('verify-otp/',VerifyOwerOtp.as_view(),name='verify-otp'),
-
+    path('resend-owner-otp/',ResendOwnerOtp.as_view(),name='resend-owner-otp'),
     # path('register-venue/',VenueRegisterView.as_view(),name='register-venue'),
     path('venue-details/<int:uid>/',VenueDetailsView.as_view(),name='venue-details'),
     path('update-venue/<int:vid>/',UpdateVenueView.as_view(),name='update-venue'),
@@ -33,6 +33,8 @@ urlpatterns = [
 
     path('all-booking-details/<int:vid>/',AllBookingDetailsView.as_view(),name='all-booking-details'),
     path('booking-cancelling/<int:bid>/',CancellingBookingView.as_view(),name='booking-cancelling'),
+    
 
+    path('get-owner-venue-details/<int:uid>/',OwnerAndVenueDetailsView.as_view(),name='get-owner-venue-details'),
     
 ]

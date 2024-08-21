@@ -13,7 +13,7 @@ from users.models import Booking
 from .utils import sent_otp_to_owner,decode_base64_file
 import base64
 from django.core.files.base import ContentFile
-
+from users.utils import decrypt_otp
 # Create your views here.
 
 
@@ -127,7 +127,7 @@ class RegisterCombinedView(APIView):
                     print('eoorr;',venue_photo_serializer.errors)
                     return Response(venue_photo_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        sent_otp_to_owner(owner['email'])        
+        sent_otp_to_owner(owner.email)        
 
         return Response({
             'message': 'Owner, Venue, Facilities, and Events registered successfully, OTP sent to owner email.',
@@ -169,6 +169,19 @@ class OwnerDetailsView(GenericAPIView) :
         owner = get_object_or_404(Owner, id=uid)
         serializer = self.serializer_class(owner)
         return Response(serializer.data,status=status.HTTP_200_OK)
+
+
+
+#==========================================
+
+class OwnerAndVenueDetailsView(GenericAPIView) :
+    serializer_class = OwnerAndVenueDetailsSerializer
+    
+
+    def get(self,request,uid) :
+        owner = get_object_or_404(Owner, id=uid)
+        serializer = self.serializer_class(owner,context={'request': request})
+        return Response(serializer.data,status=status.HTTP_200_OK)
         
 
 
@@ -201,24 +214,78 @@ class ChangeOwnerPassword(GenericAPIView) :
 
 
 
+# class VerifyOwerOtp(GenericAPIView) :
+#     def post(self, request) :
+#         opt_code = request.data.get('otp')
+#         email = request.data.get('email')
+
+#         try :
+#             owner = Owner.objects.get(email=email)
+#             owner_code_obj = OneTimePasswordForOwner.objects.get(owner=owner)
+#             owner = owner_code_obj.owner
+#             if not owner.is_verified :
+#                 owner.is_verified = True
+#                 owner.save()
+#                 return Response({'message':'account email verified successfully'},status=status.HTTP_200_OK)
+#             return Response({
+#                      'message' : 'OTP is invlid user already verified'
+#                      },status=status.HTTP_204_NO_CONTENT) 
+#         except OneTimePasswordForOwner.DoesNotExist :
+#             Response({'message':'OTP not provided '},status=status.HTTP_400_BAD_REQUEST)
+
+
+   
 class VerifyOwerOtp(GenericAPIView) :
     def post(self, request) :
-        opt_code = request.data.get('otp')
+        otp_code = request.data.get('otp')
+        email = request.data.get('email')
+        print(email,otp_code)
         try :
-            owner_code_obj = OneTimePasswordForOwner.objects.get(code=opt_code)
-            owner = owner_code_obj.owner
-            if not owner.is_verified :
-                owner.is_verified = True
-                owner.save()
-                return Response({'message':'account email verified successfully'},status=status.HTTP_200_OK)
-            return Response({
-                     'message' : 'OTP is invlid user already verified'
-                     },status=status.HTTP_204_NO_CONTENT) 
+            owner = Owner.objects.get(email=email)
+            otp_entry = OneTimePasswordForOwner.objects.get(owner=owner)
+
+            decrypted_otp_code = decrypt_otp(otp_entry.code)
+            print(decrypted_otp_code)
+            if decrypted_otp_code == otp_code :
+                print(otp_code)
+
+                if otp_entry.is_expired() :
+                    return Response({'message': 'OTP has expired'}, status=status.HTTP_400_BAD_REQUEST)
+
+          
+                if not owner.is_verified :
+                    owner.is_verified = True
+                    owner.save()
+                    return Response({
+                        'message':'Account email verified successfully'
+                    },status=status.HTTP_200_OK)
+        
+                return Response({
+                        'message' : 'User already verified'
+                        },status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+            
+
+        except Owner.DoesNotExist:
+                return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)    
+        
         except OneTimePasswordForOwner.DoesNotExist :
-            Response({'message':'OTP not provided '},status=status.HTTP_400_BAD_REQUEST)
+            Response({'message':'Invalid OTP'},status=status.HTTP_400_BAD_REQUEST)
 
 
 
+class ResendOwnerOtp(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        try:
+            owner = Owner.objects.get(email=email)
+            sent_otp_to_owner(email)
+            return Response({'message': 'OTP has been resent successfully'}, status=status.HTTP_200_OK)
+        except Owner.DoesNotExist:
+            return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'message': f'Failed to resend OTP: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # ================== VENUE MANAGEMENT =================
 

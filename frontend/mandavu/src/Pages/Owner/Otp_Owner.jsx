@@ -3,13 +3,15 @@ import { useNavigate } from "react-router-dom"
 import {  toast } from 'react-toastify';
 import axios from 'axios';
 import OtpSchema from "../../Validations/User/OtpSchema";
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 
 
 export default function OtpVerification() {
 
     const email = localStorage.getItem('email')
     const navigate = useNavigate()
+    const [timeLeft, setTimeLeft] = useState(120); // 2 minutes in seconds
+    const [isResendVisible, setIsResendVisible] = useState(false);
 
     useEffect(() => {
       if (!email) {
@@ -18,6 +20,26 @@ export default function OtpVerification() {
   }, [email, navigate]);
 
 
+  useEffect(() => {
+    if (timeLeft > 0) {
+        const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+        return () => clearTimeout(timer);
+    } else {
+        setIsResendVisible(true);
+    }
+  }, [timeLeft]);
+
+
+  const handleOwnerResendOtp = async () => {
+    try {
+        const response = await axios.post('http://127.0.0.1:8000/api/v2/auth/resend-owner-otp/', { email });
+        toast.success(response.data.message);
+        setTimeLeft(120); // Reset the timer
+        setIsResendVisible(false);
+    } catch (error) {
+        toast.error('Failed to resend OTP. Please try again.');
+    }
+  };
 
     const formik = useFormik({
         initialValues:{
@@ -32,7 +54,7 @@ export default function OtpVerification() {
             navigate('/owner/venue_approval_waiting'); 
           }catch (error) {
             if (error.response && error.response.data) {
-                const errorMessage = error.response.data.message || 'OTP verification failed';
+                const errorMessage = error.response.data.error || 'OTP verification failed';
                 toast.error(errorMessage);
             }
              else {
@@ -70,9 +92,23 @@ export default function OtpVerification() {
             
              
               <div className="text-center mt-6">
-                <button type="submit" className="w-full py-2 text-xl text-white bg-teal-500 rounded-lg hover:bg-teal-600 transition-all">Submit</button>
+                <button type="submit" className="w-1/2 py-2 text-xl text-white bg-teal-500 rounded-lg hover:bg-teal-600 transition-all">Submit</button>
               </div>
             </form>
+            <div className="mt-4 text-center">
+                        {timeLeft > 0 ? (
+                            <p>Resend OTP in {timeLeft} seconds</p>
+                        ) : (
+                            isResendVisible && (
+                                <button
+                                    onClick={handleOwnerResendOtp}
+                                    className="w-1/2 py-2 text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all"
+                                >
+                                    Resend OTP
+                                </button>
+                            )
+                        )}
+                  </div>
           </div>
           <div className="w-40 h-40 absolute bg-teal-500 rounded-full top-0 right-12 hidden md:block"></div>
           <div className="w-20 h-40 absolute bg-teal-500 rounded-full bottom-20 left-10 transform rotate-45 hidden md:block"></div>

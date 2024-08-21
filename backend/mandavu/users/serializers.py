@@ -69,12 +69,6 @@ class UserLoginSerializer(serializers.ModelSerializer) :
         user_token = user.token()
         print(f"User ID: {user.id}")
 
-        # return {
-        #     'user_id':user,
-        #     'email':user.email,
-        #     'access_token':str(user_token.get('access')),
-        #     'refresh_token':str(user_token.get('refresh')),     
-        # }
         attrs.pop('password', None)
         attrs['user_id'] = user.id    
         attrs['email'] = user.email   
@@ -188,17 +182,18 @@ class VenuesListSerializer(serializers.ModelSerializer) :
 
     class Meta:
         model = Venue
-        fields = ['id','name', 'price', 'images']
+        fields = ['id','convention_center_name', 'price', 'images']
 
 
 class SingleVenueDetailsSerializer(serializers.ModelSerializer) :
     images = BannerDetailsSerializer(many=True, read_only=True)
     facilities = GetFacilitiesSerializer(many=True, read_only=True)
+    owner_id = serializers.IntegerField(source='owner.id', read_only=True) 
 
 
     class Meta:
         model = Venue
-        fields = ['id','name', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'address', 'latitude', 'longitude', 'images', 'facilities']
+        fields = ['id','convention_center_name', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'address', 'latitude', 'longitude', 'images', 'facilities','owner_id']
 
 
 
@@ -222,3 +217,9 @@ class ShowBookingListSerializer(serializers.ModelSerializer) :
         model = Booking
         fields = '__all__'
     
+#===========CUSTOMUSER ===========
+
+class CustomUserSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = CustomUser
+        fields = '__all__'

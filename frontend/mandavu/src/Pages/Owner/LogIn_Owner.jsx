@@ -5,7 +5,7 @@ import axios from "axios"
 import { useDispatch } from 'react-redux';
 import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom"
-import { OwnerLogin } from "../../Redux/Slices/Owner";
+import { OwnerLogin,SetVenueId } from "../../Redux/Slices/Owner";
 
 
 
@@ -25,13 +25,14 @@ export default function LogIn() {
       try{
         const response = await axios.post('http://127.0.0.1:8000/api/v2/auth/login/',values);
         console.log(response.data)
-        const { access_token, refresh_token, owner_id} = response.data
-
+        const { access_token, refresh_token, owner_id, venue_id} = response.data
+        
         dispatch(OwnerLogin({
           owner: {id: owner_id},
           access_token,
           refresh_token
         }))
+        dispatch(SetVenueId(venue_id))
 
         localStorage.setItem('access_token', access_token);
         localStorage.setItem('refresh_token', refresh_token);

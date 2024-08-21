@@ -167,13 +167,13 @@ export default function  Sidebar () {
                 <span className="ms-3">Dashboard</span>
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link to='/owner/venue-management'
                 className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
                 <span className="flex-1 ms-3 whitespace-nowrap">Venue Management</span>
               </Link>
-            </li>
+            </li> */}
            
             <li>
               <Link to='/owner/events-management'
@@ -189,8 +189,16 @@ export default function  Sidebar () {
                 <span className="flex-1 ms-3 whitespace-nowrap">Facilities </span>
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link to='/owner/details'
+                
+                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
+              >
+                <span className="flex-1 ms-3 whitespace-nowrap">Profile</span>
+              </Link>
+            </li> */}
+            <li>
+              <Link to='/owner/details2'
                 
                 className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
@@ -205,12 +213,11 @@ export default function  Sidebar () {
               </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link to='/owner/chat'
                 className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
                 <span className="flex-1 ms-3 whitespace-nowrap">Inbox</span>
-              </a>
+              </Link>
             </li>
             <li>
               <a

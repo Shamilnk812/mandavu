@@ -88,7 +88,7 @@ export default  function Navb() {
               <Link to='/user/home'  className="block py-2 px-3 md:p-0 text-black rounded hover:bg-orange-600 md:hover:bg-transparent md:border-0 md:hover:text-orange-600 dark:text-black md:dark:hover:text-orange-500 dark:hover:bg-black-700 dark:hover:text-black md:dark:hover:bg-transparent">Home</Link>
             </li>
             <li>
-              <Link to='/user/profile' className="block py-2 px-3 md:p-0 text-black rounded hover:black md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-black md:dark:hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-black md:dark:hover:bg-transparent">Profile</Link>
+              <Link to='/user/profile2' className="block py-2 px-3 md:p-0 text-black rounded hover:black md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-black md:dark:hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-black md:dark:hover:bg-transparent">Profile</Link>
             </li>
             <li>
               <Link className="block py-2 px-3 md:p-0 text-black rounded hover:black md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-black md:dark:hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-black md:dark:hover:bg-transparent">Contact Us</Link>

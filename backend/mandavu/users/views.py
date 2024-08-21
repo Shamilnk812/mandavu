@@ -129,8 +129,8 @@ class VerifyUserOtp(GenericAPIView) :
             if decrypted_otp_code == otp_code :
                 print(otp_code)
 
-            # if user_code_obj.is_expired() :
-            #     return Response({'message': 'OTP has expired'}, status=status.HTTP_400_BAD_REQUEST)
+                if otp_entry.is_expired() :
+                    return Response({'message': 'OTP has expired'}, status=status.HTTP_400_BAD_REQUEST)
 
           
                 if not user.is_verified :
@@ -154,6 +154,18 @@ class VerifyUserOtp(GenericAPIView) :
             Response({'message':'Invalid OTP'},status=status.HTTP_400_BAD_REQUEST)
 
 
+
+class ResendUserOtp(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        try:
+            user = User.objects.get(email=email)
+            sent_otp_to_user(email)
+            return Response({'message': 'OTP has been resent successfully'}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'message': f'Failed to resend OTP: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # ============= Password Reset ==================
 

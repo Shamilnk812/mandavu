@@ -9,8 +9,9 @@ export default function Sidebar() {
             <div className="mt-12">
             <nav>
                 <a href="#" class="block text-white  py-2.5 px-4 rounded transition duration-200 text-white hover:bg-teal-500">Dashboard</a>
-                <Link to='/user/show-booking-details' href="#" class="block text-white py-2.5 px-4 rounded transition duration-200 text-white hover:bg-teal-500">Bookings</Link>
-                <a href="#" class="block text-white py-2.5 px-4 rounded transition duration-200 text-white hover:bg-teal-500">Messages</a>
+                <Link to='/user/profile2'  class="block text-white py-2.5 px-4 rounded transition duration-200 text-white hover:bg-teal-500">Profile</Link>
+                <Link to='/user/show-booking-details'  class="block text-white py-2.5 px-4 rounded transition duration-200 text-white hover:bg-teal-500">Bookings</Link>
+                <Link to='/user/chat' class="block text-white py-2.5 px-4 rounded transition duration-200 text-white hover:bg-teal-500">Messages</Link>
                 <a href="#" class="block text-white py-2.5 px-4 rounded transition duration-200 text-white hover:bg-teal-500">Logout</a>
             </nav>
             </div>

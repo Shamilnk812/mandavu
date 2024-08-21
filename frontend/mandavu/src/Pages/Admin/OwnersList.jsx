@@ -92,7 +92,7 @@ export default function OwnersList() {
                      {owner.first_name} {owner.last_name}
                  </th>
                  <td className="px-6 py-4">
-                     {owner.convention_center_name}
+                     {owner.venue.convention_center_name}
                  </td>
                  <td className="px-6 py-4">
                      {owner.email}

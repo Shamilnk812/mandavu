@@ -47,7 +47,7 @@ class User(CustomUser) :
 
 class OneTimePassword(models.Model) :
     user = models.OneToOneField(User,on_delete=models.CASCADE)
-    code = models.CharField(max_length=6,unique=True)
+    code = models.CharField(max_length=225,unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def is_expired(self):

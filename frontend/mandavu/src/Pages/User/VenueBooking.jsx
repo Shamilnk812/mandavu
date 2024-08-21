@@ -100,7 +100,7 @@ export default function VenueBooking() {
                 ...values,
                 totalAmount,
                 bookingAmount,
-                venueName: venue?.name,
+                venueName: venue?.convention_center_name,
                 venueId: venue?.id,
                 userId: userId,
                 facilities: updatedFacilities
@@ -124,17 +124,39 @@ export default function VenueBooking() {
         }
     });
 
+    // const handleFacilityChange = (e, facility) => {
+    //     const { checked } = e.target;
+
+    //     let updatedFacilities;
+    //     if (checked) {
+    //         updatedFacilities = [...formik.values.facilities, facility];
+    //         const newTotal = totalAmount + (facility.price || 0);
+    //         setTotalAmount(newTotal);
+    //         setBookingAmount(newTotal * 0.15);
+    //     } else {
+    //         updatedFacilities = formik.values.facilities.filter(f => f.id !== facility.id);
+    //         const newTotal = totalAmount - (facility.price || 0);
+    //         setTotalAmount(newTotal);
+    //         setBookingAmount(newTotal * 0.15);
+    //     }
+    //     formik.setFieldValue('facilities', updatedFacilities);
+    // };
+
     const handleFacilityChange = (e, facility) => {
         const { checked } = e.target;
+    
+        // Convert the facility price to a number; if "FREE", treat it as 0
+        const facilityPrice = facility.price === "FREE" ? 0 : parseFloat(facility.price);
+    
         let updatedFacilities;
         if (checked) {
             updatedFacilities = [...formik.values.facilities, facility];
-            const newTotal = totalAmount + (facility.price || 0);
+            const newTotal = totalAmount + (facilityPrice || 0);
             setTotalAmount(newTotal);
             setBookingAmount(newTotal * 0.15);
         } else {
             updatedFacilities = formik.values.facilities.filter(f => f.id !== facility.id);
-            const newTotal = totalAmount - (facility.price || 0);
+            const newTotal = totalAmount - (facilityPrice || 0);
             setTotalAmount(newTotal);
             setBookingAmount(newTotal * 0.15);
         }

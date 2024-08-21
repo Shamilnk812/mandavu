@@ -11,7 +11,7 @@ from owners.models import Owner,Venue
 from .serializers import *
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
-from .utils import send_approval_email
+from .utils import *
 # Create your views here.
 
 
@@ -140,7 +140,7 @@ class VenueListView(APIView):
 
         venue_list = [{
             'id': venue.id,
-            'name': venue.name,
+            'name': venue.convention_center_name,
             'is_verified': venue.is_verified,
             'is_active': venue.is_active,
             'created_at': venue.created_at
@@ -156,7 +156,23 @@ class VenueVerifyView(APIView) :
         send_approval_email(venue)
         print('venue approved ')
         return Response(status=status.HTTP_200_OK)
-    
+
+
+class RejectVenueView(APIView) :
+    def post(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        reason = request.data.get('reason')
+        if not reason:
+            return Response({'error': 'Rejection reason is required'}, status=400)
+
+        send_rejection_email(venue, reason)
+        # venue.is_verified = False
+        # venue.save()
+
+        return Response({'message': 'Venue rejected successfully'})
+        
+
+
 
 # class VenueUnVerifyView(APIView) :
 #     def post(self, request, vid) :
@@ -185,9 +201,10 @@ class UnblockVenueView(APIView) :
 
 
 class VenueDetailsView(APIView) :
-    serializer_class = VenueDetailsSeriallizer
+    serializer_class = OwnerListSerializer
     def get(self, request, vid) :
         venue = get_object_or_404(Venue, id=vid)
-        serializer = self.serializer_class(venue)
+        owner = get_object_or_404(Owner, venue=venue)
+        serializer = self.serializer_class(owner, context={'request':request})
         return Response(serializer.data , status=status.HTTP_200_OK)
         

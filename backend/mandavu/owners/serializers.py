@@ -56,10 +56,11 @@ class OwnerLoginSerializer(serializers.ModelSerializer) :
     password= serializers.CharField(max_length=60, write_only=True)
     access_token = serializers.CharField(max_length=225, read_only=True)
     refresh_token = serializers.CharField(max_length=225, read_only=True)
+    venue_id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Owner
-        fields = ['email', 'password', 'access_token', 'refresh_token']
+        fields = ['email', 'password', 'access_token', 'refresh_token', 'venue_id']
         
     def validate(self, attrs):
         email = attrs.get('email')
@@ -67,15 +68,22 @@ class OwnerLoginSerializer(serializers.ModelSerializer) :
         request = self.context.get('request')
         owner = authenticate(request, email=email, password=password)
         if not owner :
-            raise AuthenticationFailed("Invalid credentials try again")
+            raise AuthenticationFailed("Invalid credentials, try again")
+        # if not owner.is_approved :
+        #      raise AuthenticationFailed("Your venue is not approved")
         if not owner.is_owner :
             raise AuthenticationFailed("You not a venue user")
         if not owner.is_active :
             raise AuthenticationFailed("Your Account is blocked")
-        # if not owner.is_verified :
-        #     raise AuthenticationFailed(" Your Acooutn is not verified")
+        if not owner.is_verified :
+            raise AuthenticationFailed(" Your Acooutn is not verified")
         
         owner_token = owner.token()
+
+        venue = Venue.objects.filter(owner=owner).first()
+
+        if not venue:
+            raise AuthenticationFailed("No venue associated with this owner")
 
         # return {
         #     'owner_id': owner.id,
@@ -89,6 +97,7 @@ class OwnerLoginSerializer(serializers.ModelSerializer) :
         attrs['email'] = owner.email   
         attrs['access_token'] = str(owner_token.get('access'))
         attrs['refresh_token'] = str(owner_token.get('refresh'))
+        attrs['venue_id'] = venue.id
         return attrs
     # def create(self, validated_data):
     #     # Do not create a new owner; instead, just return the validated data
@@ -123,18 +132,22 @@ class OwnerDetailsSerializer(serializers.ModelSerializer) :
 class UpdateOwnerSerializer(serializers.ModelSerializer) :
     class Meta:
         model = Owner
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['first_name', 'last_name', 'phone', 'phone2']
 
     def update(self, instance, validated_data):
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.last_name = validated_data.get('last_name', instance.last_name)
-        instance.email = validated_data.get('email', instance.email)
+        instance.phone = validated_data.get('phone', instance.phone)
+        instance.phone2 = validated_data.get('phone2', instance.phone2)
         instance.save()
         return  instance
 
 
 
 # ============= VENUE HANDLING ===========
+
+
+
 
 
 class RegisterVenueSerializer(serializers.ModelSerializer) :
@@ -173,6 +186,8 @@ class VenueDetailsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
+
 class UpdateVenueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Venue
@@ -202,6 +217,17 @@ class UpdateVenueSerializer(serializers.ModelSerializer):
         except Exception as e:
             print(f"Geocoding error for address '{full_address}': {str(e)}")
             raise ValidationError(f"Geocoding error: {str(e)}")
+
+
+#========================================================
+
+class OwnerAndVenueDetailsSerializer(serializers.ModelSerializer) :
+    venue = VenueDetailsSerializer(read_only=True)
+    
+    class Meta:
+        model = Owner
+        fields = '__all__'
+    
 
 #=================== FACILITIES ====================
 

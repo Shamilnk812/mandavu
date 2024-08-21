@@ -102,7 +102,7 @@ export default function ShowBookingDetails() {
                                     {bookedDetails.map((booking) => (
                                         <tr key={booking.id} className="bg-customColor7 border-b border-gray-300 dark:bg-customColor7 dark:border-gray-400">
                                             <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-gray-900">
-                                                {booking.venue.name}
+                                                {booking.venue.convention_center_name}
                                             </td>
                                             <td className="px-6 py-4 text-gray-900">{booking.date}</td>
                                             <td className="px-6 py-4 text-gray-900 ">{booking.time}</td>

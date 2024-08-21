@@ -42,12 +42,12 @@ export default function Login() {
                 navigate('/user/home');
 
             }catch (error) {
-                if (error.response && error.response.data) {
-                  const errorMessage = error.response.data.message || 'Invalid credentials try again';
-                  toast.error(errorMessage);
-                } else {
-                  toast.error('Login failed');
-                }
+              if (error.response && error.response.data) {
+                const errorMessage = error.response.data.detail || 'Invalid credentials, try again';
+                toast.error(errorMessage);  // Displaying backend error message
+            } else {
+                toast.error('Login failed');
+            }
               }
         },
     });

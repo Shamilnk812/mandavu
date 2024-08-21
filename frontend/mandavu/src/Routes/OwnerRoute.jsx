@@ -20,6 +20,8 @@ import RegisterationStep4 from "../Pages/Owner/RegisterStep4";
 import VenueApprovalWaiting from "../Pages/Owner/VenueApprovalWaiting";
 import FacilitesManagement from "../Pages/Owner/FacilitiesManagement";
 import VenuePhotosManagement from "../Pages/Owner/VenuePhotosManagement";
+import OwnerDetails2 from "../Pages/Owner/Profile2";
+import OwnerChat from "../Pages/Owner/OwnerChat";
 
 
 export default function OwnerRoute() {
@@ -37,6 +39,9 @@ export default function OwnerRoute() {
             <Route path="/events-management" element={<OwnerLoginAuth> <EventsManagement/> </OwnerLoginAuth>} />
             <Route path="/facilities-management" element={<OwnerLoginAuth> <FacilitesManagement/> </OwnerLoginAuth>} />
             <Route path="/booking-management" element={<OwnerLoginAuth> <BookingManagement/> </OwnerLoginAuth>} />
+            <Route path="/chat" element={<OwnerLoginAuth> <OwnerChat/> </OwnerLoginAuth>} />
+
+            <Route path="/details2" element={<OwnerDetails2/>}/>
 
             <Route path="/register-step-1" element={ <RegisterationStep1/> } />
             <Route path="/register-step-2" element={ <RegisterationStep2/> } />

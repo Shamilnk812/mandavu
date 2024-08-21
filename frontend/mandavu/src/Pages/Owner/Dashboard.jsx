@@ -8,7 +8,7 @@ export default function Dashboard_Owner() {
         <>
     
           <Sidebar/>
-          <OwnerDetails/>
+          {/* <OwnerDetails/> */}
         </>
     )
 }
