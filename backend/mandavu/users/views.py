@@ -46,7 +46,7 @@ class RegisterUserView(GenericAPIView) :
                 'data' :user,
                 'message' :f"hi thanks for singing up a OTP has be sent to your email "
             },status=status.HTTP_201_CREATED)
-        
+        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
@@ -185,8 +185,9 @@ class PasswordResetConfirm(GenericAPIView) :
             user = User.objects.get(id=user_id)
             if not PasswordResetTokenGenerator().check_token(user, token) :
                 return Response({'message':'token is invalid or has expired'}, status=status.HTTP_401_UNAUTHORIZED)
-            return Response({'success':True,'message':'credentials is valid','uidb64':uidb64,'token':token},status=status.HTTP_200_OK)
-
+            # return Response({'success':True,'message':'credentials is valid','uidb64':uidb64,'token':token},status=status.HTTP_200_OK)
+            reset_url = f"http://localhost:5173/user/set-new-passwod?uidb64={uidb64}&token={token}"
+            return redirect(reset_url)
         except DjangoUnicodeDecodeError :
                 return Response({'message':'token is invalid or has expired'}, status=status.HTTP_401_UNAUTHORIZED)
 

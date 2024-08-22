@@ -11,7 +11,9 @@ export default function ChatMessages({text,send,sender}) {
             >
                 <p className="text-gray-700">{text}</p>
             </div>
+            
         </div>
+        
     );
 
 

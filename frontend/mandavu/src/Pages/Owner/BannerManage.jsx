@@ -43,7 +43,7 @@ export default function BannerManage() {
           {venueDetails && venueDetails.is_verified === true && <BannerManagement/>}
           {venueDetails && venueDetails.is_verified === false && <SuccessMessageForVenueRegister/> }
          
-        
+         
         </>
     )
 }

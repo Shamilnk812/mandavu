@@ -122,6 +122,7 @@ export default function ShowSingleVenueDetails() {
                           <h1 className='text-gray-500 text-center text-xl font-semi-bold'>{venue.name}</h1>
                           <p className='text-gray-800 px-10 py-5'>{venue.description}</p>
                             
+                          
                         </div>
 
                     </div>

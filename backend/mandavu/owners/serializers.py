@@ -2,6 +2,12 @@ from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
+from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
+from django.utils.encoding import smart_bytes,force_str
+from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.urls import reverse
+from .utils import send_owner_password_reset_email
 
 from .models import *
 from django.contrib.auth import authenticate
@@ -142,6 +148,68 @@ class UpdateOwnerSerializer(serializers.ModelSerializer) :
         instance.save()
         return  instance
 
+
+
+
+#============== PASSWORD RESET ============
+
+class OwnerPasswordResetSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(max_length=225)
+
+    class Meta:
+        model = Owner
+        fields = ['email']
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        if Owner.objects.filter(email=email).exists():
+            owner = Owner.objects.get(email=email)
+            uidb64 = urlsafe_base64_encode(smart_bytes(owner.id))
+            token = PasswordResetTokenGenerator().make_token(owner)
+            request = self.context.get('request')
+            site_domain = get_current_site(request).domain
+            relative_link = reverse('owner-password-reset-confirm', kwargs={'uidb64': uidb64, 'token': token})
+            abslink = f"http://{site_domain}{relative_link}"
+            email_body = f"Hi, use the link below to reset your password: {abslink}"
+            data = {
+                'email_body': email_body,
+                'email_subject': "Reset your Password",
+                'to_email': owner.email
+            }
+            send_owner_password_reset_email(data)
+        return super().validate(attrs)
+    
+
+
+
+class OwnerSetNewPasswordSerializer(serializers.ModelSerializer) :
+    password = serializers.CharField(max_length=60, write_only=True) 
+    confirm_password = serializers.CharField(max_length=60, write_only=True)
+    uidb64 = serializers.CharField(write_only=True)
+    token = serializers.CharField(write_only=True)
+
+    class Meta :
+        model = Owner
+        fields = ['password', 'confirm_password', 'uidb64', 'token']
+
+    def validate(self, attrs):
+        try :
+            token = attrs.get('token')
+            uidb64 = attrs.get('uidb64')
+            password = attrs.get('password')
+            confirm_password = attrs.get('confirm_password')
+
+            owner_id = force_str(urlsafe_base64_decode(uidb64))
+            owner = Owner.objects.get(id=owner_id)
+            if not PasswordResetTokenGenerator().check_token(owner, token) :
+                raise AuthenticationFailed('Reset link is invalid or has expired', 401)
+            if password  != confirm_password :
+                raise AuthenticationFailed('passwords do not match')
+            owner.set_password(password)
+            owner.save()
+            return owner
+        except Exception as e :
+            return AuthenticationFailed("link is  invalid or has expired")
 
 
 # ============= VENUE HANDLING ===========

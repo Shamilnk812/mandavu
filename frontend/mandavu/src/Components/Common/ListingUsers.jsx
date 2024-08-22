@@ -22,6 +22,7 @@ export default function ChatUsersList({Chat}) {
                         `http://127.0.0.1:8000/chat/chat_users/${userId}/`
                     );
                     setChatUsers(response.data);
+                    console.log(response.data)
                 } catch (error) {
                     console.error("Error while fetching users", error);
                 }
@@ -56,10 +57,11 @@ const ChatUserItem = ({user, userId, Chat, index}) => {
     return (
         <button
         onClick={()=> Chat({id:displayUser.id, username: displayUser.first_name})}
+        className="w-full bg-teal-500"
         >
-             <li key={index} className="flex items-center p-3 hover:bg-gray-200 cursor-pointer">
-                 <img src={`https://via.placeholder.com/40?text=U${index + 1}`} alt="User" className="rounded-full mr-3" />
-                <span className="font-medium">User {user.first_name}</span>
+             <li key={index} className="flex items-center p-3 hover:bg-teal-600 cursor-pointer">
+                 <img src="/user/user_avatar.png" alt="User" className="rounded-full mr-3 w-12 h-12" />
+                <span className="font-medium ">{displayUser.first_name} {displayUser.last_name}</span>
             </li>
         </button>
     )

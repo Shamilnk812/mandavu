@@ -25,5 +25,6 @@ urlpatterns = [
     path('api/v2/auth/',include('owners.urls')),
     path('api/admin_dash/auth/',include('admin_dash.urls')),
     path('chat/',include('chat.urls')),
+    path('notification/',include('notifications.urls')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

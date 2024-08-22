@@ -22,6 +22,8 @@ import FacilitesManagement from "../Pages/Owner/FacilitiesManagement";
 import VenuePhotosManagement from "../Pages/Owner/VenuePhotosManagement";
 import OwnerDetails2 from "../Pages/Owner/Profile2";
 import OwnerChat from "../Pages/Owner/OwnerChat";
+import OwnerResetPasswordRequest from "../Pages/Owner/OwnerResetPasswordRequest";
+import OwnerSetNewPassword from "../Pages/Owner/OwnerSetNewPassword";
 
 
 export default function OwnerRoute() {
@@ -31,6 +33,8 @@ export default function OwnerRoute() {
             <Route path="/signup" element={<OwnerLogoutAuth> <SignUp/> </OwnerLogoutAuth>} />
             <Route path="/login" element={<OwnerLogoutAuth> <LogIn/> </OwnerLogoutAuth>} />
             <Route path="/otp" element={<OwnerLogoutAuth> <OtpVerification/> </OwnerLogoutAuth>} />
+            <Route path="/reset-password-request" element={<OwnerLogoutAuth> <OwnerResetPasswordRequest/> </OwnerLogoutAuth>} />
+            <Route path="/set-new-passwod" element={<OwnerLogoutAuth> <OwnerSetNewPassword/> </OwnerLogoutAuth>} />
             <Route path="/dashboard" element={<OwnerLoginAuth> <Dashboard_Owner/> </OwnerLoginAuth>} />
             <Route path="/details" element={<OwnerLoginAuth> <OwnerDetails/> </OwnerLoginAuth>} />
             <Route path="/venue-management" element={<OwnerLoginAuth> <VenueManagement/> </OwnerLoginAuth>} />

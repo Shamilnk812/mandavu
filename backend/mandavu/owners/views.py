@@ -6,7 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import make_password
-
+from django.utils.encoding import smart_str,DjangoUnicodeDecodeError
+from django.shortcuts import redirect
 from .serializers import *
 from .models import *
 from users.models import Booking
@@ -286,6 +287,37 @@ class ResendOwnerOtp(APIView):
             return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'message': f'Failed to resend OTP: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class OwnerPasswordResetRequestView(GenericAPIView):
+    serializer_class = OwnerPasswordResetSerializer
+    def post(self, request) :
+        serializer = self.serializer_class(data= request.data, context={'request':request})
+        serializer.is_valid(raise_exception=True)
+        return Response({'message':"a link has been sent to your email to reset password"},status=status.HTTP_200_OK)  
+
+
+class OwnerPasswordResetConfirmView(GenericAPIView):
+    def get(self, request, uidb64, token) :
+        try :
+            user_id = smart_str(urlsafe_base64_decode(uidb64))
+            user = Owner.objects.get(id=user_id)
+            if not PasswordResetTokenGenerator().check_token(user, token) :
+                return Response({'message':'token is invalid or has expired'}, status=status.HTTP_401_UNAUTHORIZED)
+            # return Response({'success':True,'message':'credentials is valid','uidb64':uidb64,'token':token},status=status.HTTP_200_OK)
+            reset_url = f"http://localhost:5173/owner/set-new-passwod?uidb64={uidb64}&token={token}"
+            return redirect(reset_url)
+
+        except DjangoUnicodeDecodeError :
+                return Response({'message':'token is invalid or has expired'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class OwnerSetNewPasswordView(GenericAPIView):
+    serializer_class = OwnerSetNewPasswordSerializer
+    def patch(self, request) :
+        serializer = self.serializer_class(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response({'message':'password reset successfully '},status=status.HTTP_200_OK)
 
 # ================== VENUE MANAGEMENT =================
 

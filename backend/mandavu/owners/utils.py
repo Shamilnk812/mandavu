@@ -57,3 +57,14 @@ def decode_base64_file(base64_data, default_extension='jpg'):
         return ContentFile(file_data, name=file_name)
     except Exception as e:
         raise ValueError(f"Error decoding base64 file: {e}")
+
+
+
+def send_owner_password_reset_email(data):
+    email = EmailMessage(
+        subject=data['email_subject'],
+        body=data['email_body'],
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=[data['to_email']]
+    )
+    email.send(fail_silently=False)

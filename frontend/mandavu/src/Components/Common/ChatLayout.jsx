@@ -5,6 +5,7 @@ import ChatUsersList from "./ListingUsers";
 import { useSelector } from "react-redux";
 import {jwtDecode} from 'jwt-decode'
 import axios from "axios";
+import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 
 export default function ChatLayout() {
     const [user, setUser] = useState('');
@@ -71,6 +72,49 @@ export default function ChatLayout() {
         }
     };
 
+
+    const startAudioCall = () => {
+        if (!user || !userId) {
+            console.error('User or User ID is missing');
+            return;
+        }
+
+        const appID = 1387710959; // Your ZEGOCLOUD App ID
+        const serverSecret = "3b21f678591c4f04ee738ad015fcf82b"; // Your ZEGOCLOUD Server Secret
+
+        // Ensure user is a string and properly formatted
+        const roomID = String(user);
+
+        const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID, Date.now().toString(), userId);
+
+        if (!kitToken) {
+            console.error('Failed to generate ZEGOCLOUD token');
+            return;
+        }
+
+        const zc = ZegoUIKitPrebuilt.create(kitToken);
+
+        const container = document.createElement('div');
+        container.id = 'zego-uikit-container';
+        document.body.appendChild(container);
+
+        zc.joinRoom({
+            container: container,
+            scenario: { mode: ZegoUIKitPrebuilt.OneONoneCall },
+            showScreenSharingButton: true,
+            onLeaveRoom: () => {
+                document.body.removeChild(container); // Clean up the container
+                navigate('/'); // Navigate or perform any action
+            },
+            onError: (error) => {
+                console.error('Error joining room:', error);
+            }
+        });
+    };
+
+    
+    
+
     useEffect(() => {
         return () => {
             if (ws) {
@@ -104,7 +148,17 @@ export default function ChatLayout() {
                             <div className="w-3/5 flex flex-col  h-[500px]">
                                 {/* Header */}
                                 <div className="flex items-center justify-between p-4 bg-gray-300 shadow">
-                                    <h1 className="text-xl font-semibold">Chat with User</h1>
+                                    <h1 className="text-xl font-semibold">
+                                        {username ? `Chat with ${username}` : 'No chats'}
+                                    </h1>
+                                    {user && (
+                                        <button
+                                            onClick={startAudioCall}
+                                            className="bg-teal-500 text-white px-4 py-2 rounded"
+                                        >
+                                            Start Audio Call
+                                        </button>
+                                    )}
                                 </div>
 
                                 {/* Chat messages area */}

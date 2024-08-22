@@ -14,7 +14,7 @@ urlpatterns = [
     path('token/refresh/',TokenRefreshView.as_view(),name='token/refresh'),
     path('verify-otp/',VerifyUserOtp.as_view(),name='verify-otp'),
     path('resend-otp/',ResendUserOtp.as_view(),name='resend-otp'),
-    path('password-reset/',PasswordResetRequestView.as_view(),name='password-reset'),
+    path('password-reset-request/',PasswordResetRequestView.as_view(),name='password-reset'),
     path('password-reset-confirm/<uidb64>/<token>/',PasswordResetConfirm.as_view(),name='password-reset-confirm'),
     path('set-new-password/',SetNewPassword.as_view(),name='set-new-password'),
 

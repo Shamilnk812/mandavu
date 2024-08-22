@@ -123,6 +123,7 @@ class PasswordResetRequestSerializer(serializers.ModelSerializer) :
     email = serializers.EmailField(max_length=225)
 
     class Meta :
+        model = User
         fields=['email']
 
     def validate(self, attrs):
@@ -136,10 +137,10 @@ class PasswordResetRequestSerializer(serializers.ModelSerializer) :
             relative_link= reverse('password-reset-confirm', kwargs={'uidb64':uidb64,'token':token})
             abslink=f"http://{site_domain}{relative_link}"
             email_body=f"Hi use the link below to reset your password {abslink}"
-            data={
-                'email_body':email_body,
-                'email_sbuject': "Reset your Password",
-                'to_email':user.email
+            data = {
+                'email_body': email_body,
+                'email_subject': "Reset your Password",
+                'to_email': user.email
             }
             send_password_reset_email(data)
         return super().validate(attrs)    
@@ -148,12 +149,13 @@ class PasswordResetRequestSerializer(serializers.ModelSerializer) :
 
 
 class SetNewPasswordSerializer(serializers.ModelSerializer) :
-    passwod = serializers.CharField(max_length=60, write_only=True) 
+    password = serializers.CharField(max_length=60, write_only=True) 
     confirm_password = serializers.CharField(max_length=60, write_only=True)
     uidb64 = serializers.CharField(write_only=True)
     token = serializers.CharField(write_only=True)
 
     class Meta :
+        model = User
         fields = ['password', 'confirm_password', 'uidb64', 'token']
 
     def validate(self, attrs):
