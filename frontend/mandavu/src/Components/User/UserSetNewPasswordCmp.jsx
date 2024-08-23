@@ -1,24 +1,36 @@
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-export default function ResetPasswordConfirm() {
+export default function UserSetNewPasswordCmp({uidb64, token}) {
+    const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       password: '',
-      confirmPassword: '',
+      confirm_password: '',
+      uidb64: uidb64 || '',
+      token: token || '',
     },
     validationSchema: Yup.object({
       password: Yup.string()
         .min(8, 'Password must be at least 8 characters long')
         .required('Password is required'),
-      confirmPassword: Yup.string()
+      confirm_password: Yup.string()
         .oneOf([Yup.ref('password'), null], 'Passwords must match')
         .required('Please confirm your password'),
     }),
-    onSubmit: values => {
+    onSubmit: async(values) => {
       console.log(values);
-      // Handle form submission, e.g., sending a request to your backend
+      try{
+        const response = await axios.patch('http://127.0.0.1:8000/api/v1/auth/set-new-password/',values);
+        toast.success(response.data.message)
+        navigate('/user/login')
+      }catch(error) {
+        toast.error('Failed to send password reset link.')
+      }
     },
   });
 
@@ -49,16 +61,16 @@ export default function ResetPasswordConfirm() {
 
           <input
             type="password"
-            name="confirmPassword"
-            id="confirmPassword"
-            value={formik.values.confirmPassword}
+            name="confirm_password"
+            id="confirm_password"
+            value={formik.values.confirm_password}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             placeholder="Confirm your new password"
             className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
           />
-          {formik.errors.confirmPassword && formik.touched.confirmPassword ? (
-            <div className="text-red-500 text-sm">{formik.errors.confirmPassword}</div>
+          {formik.errors.confirm_password && formik.touched.confirm_password ? (
+            <div className="text-red-500 text-sm">{formik.errors.confirm_password}</div>
           ) : null}
 
           <div className="text-center mt-6">

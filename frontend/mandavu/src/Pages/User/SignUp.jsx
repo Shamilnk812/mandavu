@@ -27,10 +27,13 @@ export default function SignUp() {
         localStorage.setItem('email', values.email); 
         toast.success('Account created successfully! Please check your email for the OTP.');
         navigate('/user/otp'); 
-      } catch (error) {
+      }catch (error) {
         if (error.response && error.response.data) {
-          const errorMessage = error.response.data.message || 'Registration failed';
-          toast.error(errorMessage);
+          const errors = error.response.data;
+          if (errors.email) {
+            toast.error('User with this email already exists');
+          } else {
+            toast.error('Registration failed');}
         } else {
           toast.error('Registration failed');
         }

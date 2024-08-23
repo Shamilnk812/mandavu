@@ -38,7 +38,7 @@ class RegisterUserView(GenericAPIView) :
         user_data = request.data
         print(user_data['email'])
         serializer = self.serializer_class(data=user_data)
-        if serializer.is_valid(raise_exception=True) :
+        if serializer.is_valid() :
             serializer.save()
             user = serializer.data
             sent_otp_to_user(user['email'])
@@ -55,9 +55,10 @@ class LoginUserView(GenericAPIView) :
     serializer_class = UserLoginSerializer
     def post(self, request) :
         serializer = self.serializer_class(data=request.data, context={'request':request})
-        if serializer.is_valid(raise_exception=True) :
+        if serializer.is_valid() :
             response_data = serializer.validated_data
             return Response(response_data, status=status.HTTP_200_OK)
+        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
 
 

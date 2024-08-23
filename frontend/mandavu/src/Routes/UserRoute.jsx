@@ -18,7 +18,8 @@ import ShowSingleBookingDetails from "../Pages/User/ViewSingleBookingDetails";
 import UserProfile from "../Pages/User/UserProfile";
 import UserChat from "../Pages/User/UserChat";
 import ResetPasswordRequest from "../Pages/User/ResetPasswordRequest";
-import ResetPasswordConfirm from "../Pages/User/ResetPasswordConfirm";
+import UserSetNewPassword from "../Pages/User/UserSetNewPassword";
+// import ResetPasswordConfirm from "../Pages/User/ResetPasswordConfirm";
 
 export default function UserRoute() {
     return(
@@ -28,7 +29,7 @@ export default function UserRoute() {
             <Route path="/home" element={<UserLoginAuth> <Home/> </UserLoginAuth>} />
             <Route path="/otp" element={<UserLogoutAuth><OtpVerification/> </UserLogoutAuth>} />
             <Route path="/reset-password-request" element={<UserLogoutAuth><ResetPasswordRequest/> </UserLogoutAuth>} />
-            <Route path="/reset-password-confirm" element={<UserLogoutAuth><ResetPasswordConfirm/> </UserLogoutAuth>} />
+            <Route path="/set-new-passwod" element={<UserLogoutAuth><UserSetNewPassword/> </UserLogoutAuth>} />
             <Route path="/profile" element={ <UserLoginAuth> <Profile/> </UserLoginAuth>} />
             <Route path="/profile2" element={ <UserLoginAuth> <UserProfile/> </UserLoginAuth>} />
             <Route path="/show-booking-details" element={ <UserLoginAuth> <ShowBookingDetails/> </UserLoginAuth>} />

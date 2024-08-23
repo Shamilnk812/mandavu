@@ -42,13 +42,21 @@ export default function Login() {
                 navigate('/user/home');
 
             }catch (error) {
+              console.log(error);
               if (error.response && error.response.data) {
-                const errorMessage = error.response.data.detail || 'Invalid credentials, try again';
-                toast.error(errorMessage);  // Displaying backend error message
-            } else {
+                const errors = error.response.data;
+                // Check and display specific authentication error messages
+                if (errors.detail) {
+                  toast.error(errors.detail);
+                }
+                //  else {
+                //   // Display general or unexpected errors
+                //   Object.values(errors).flat().forEach(message => toast.error(message));
+                // }
+              } else {
                 toast.error('Login failed');
-            }
               }
+            }
         },
     });
 
@@ -90,6 +98,7 @@ export default function Login() {
             <div className="text-center mt-6">
               <button type="submit" className="w-full py-2 text-xl text-white bg-teal-500 rounded-lg hover:bg-teal-600 transition-all">Login Account</button>
               <p className="mt-4 text-sm">I don't have an account? <a onClick={() => navigate('/user/signup')} className="underline cursor-pointer">SignUp</a></p>
+              <p className="mt-4 text-sm"> <a onClick={() => navigate('/user/reset-password-request')} className="underline cursor-pointer">Forgot password?</a></p>
             </div>
           </form>
         </div>

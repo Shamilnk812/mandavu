@@ -27,8 +27,12 @@ class UserRegisterSerializer(serializers.ModelSerializer) :
     def validate(self, attrs):
         password = attrs.get('password', '')
         password2 = attrs.get('password2', '')
+        email = attrs.get('email', '')
+        
         if password != password2 :
             raise serializers.ValidationError("Passwords do not match")
+        if User.objects.filter(email=email).exists() :
+            raise serializers.ValidationError("This uesr already Exist")
         return attrs
 
     
@@ -50,7 +54,7 @@ class UserLoginSerializer(serializers.ModelSerializer) :
     refresh_token = serializers.CharField(max_length=225, read_only=True) 
 
     class Meta :
-        model= User
+        model= CustomUser
         fields = ['id','email', 'password', 'access_token', 'refresh_token']
 
     def validate(self, attrs):
@@ -59,9 +63,9 @@ class UserLoginSerializer(serializers.ModelSerializer) :
         request=self.context.get('request')
         user=authenticate(request, email=email, password=password)
         if not user :
-            raise AuthenticationFailed("Invalid credentials try again")
+            raise AuthenticationFailed("Invalid credentials try again!!!!!!!!!")
         if not user.is_user :
-            raise AuthenticationFailed("Your are not a enduser")
+            raise AuthenticationFailed("Your are not a User")
         if not user.is_active :
             raise AuthenticationFailed("Your Account is blocked")
         if not user.is_verified :
