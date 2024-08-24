@@ -1,13 +1,52 @@
-
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Venue Approval</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #4CAF50;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        strong {
+            color: #333;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
 </head>
 <body>
-    <h1>Congratulations!</h1>
-    <p>Your venue <strong>{{ venue_name }}</strong> has been approved.</p>
-    <p>Thank you for using our service.</p>
+    <div class="container">
+        <h1>Congratulations!</h1>
+        <p>Your venue <strong>{{ venue_name }}</strong> has been approved.</p>
+        <p>Thank you for using our service.</p>
+        <div class="footer">
+            <p>Best regards,<br>Mandavu Management Team</p>
+        </div>
+    </div>
 </body>
 </html>

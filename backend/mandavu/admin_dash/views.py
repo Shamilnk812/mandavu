@@ -143,10 +143,14 @@ class VenueListView(APIView):
             'name': venue.convention_center_name,
             'is_verified': venue.is_verified,
             'is_active': venue.is_active,
-            'created_at': venue.created_at
+            'created_at': venue.created_at,
+            'is_rejected': venue.is_rejected
         } for venue in venues]
         print(venue_list)
         return Response(venue_list, status=status.HTTP_200_OK)    
+
+
+
 
 class VenueVerifyView(APIView) :
     def post(self, request, vid) :
@@ -164,10 +168,9 @@ class RejectVenueView(APIView) :
         reason = request.data.get('reason')
         if not reason:
             return Response({'error': 'Rejection reason is required'}, status=400)
-
+        venue.is_rejected = True
+        venue.save()
         send_rejection_email(venue, reason)
-        # venue.is_verified = False
-        # venue.save()
 
         return Response({'message': 'Venue rejected successfully'})
         

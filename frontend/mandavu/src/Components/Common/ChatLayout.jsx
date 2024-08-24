@@ -5,7 +5,7 @@ import ChatUsersList from "./ListingUsers";
 import { useSelector } from "react-redux";
 import {jwtDecode} from 'jwt-decode'
 import axios from "axios";
-import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
+// import AudioCall from "./AudioCall";
 
 export default function ChatLayout() {
     const [user, setUser] = useState('');
@@ -72,45 +72,11 @@ export default function ChatLayout() {
         }
     };
 
-
     const startAudioCall = () => {
-        if (!user || !userId) {
-            console.error('User or User ID is missing');
-            return;
-        }
-
-        const appID = 1387710959; // Your ZEGOCLOUD App ID
-        const serverSecret = "3b21f678591c4f04ee738ad015fcf82b"; // Your ZEGOCLOUD Server Secret
-
-        // Ensure user is a string and properly formatted
-        const roomID = String(user);
-
-        const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID, Date.now().toString(), userId);
-
-        if (!kitToken) {
-            console.error('Failed to generate ZEGOCLOUD token');
-            return;
-        }
-
-        const zc = ZegoUIKitPrebuilt.create(kitToken);
-
-        const container = document.createElement('div');
-        container.id = 'zego-uikit-container';
-        document.body.appendChild(container);
-
-        zc.joinRoom({
-            container: container,
-            scenario: { mode: ZegoUIKitPrebuilt.OneONoneCall },
-            showScreenSharingButton: true,
-            onLeaveRoom: () => {
-                document.body.removeChild(container); // Clean up the container
-                navigate('/'); // Navigate or perform any action
-            },
-            onError: (error) => {
-                console.error('Error joining room:', error);
-            }
-        });
-    };
+      
+        console.log('butoo cilikk')
+    }
+    
 
     
     
@@ -179,9 +145,15 @@ export default function ChatLayout() {
 
                             </div>
                         </div>
+
+                      
                     </div>
                 </div>
+              
             </div>
+
+
+              
         </>
     )
 }

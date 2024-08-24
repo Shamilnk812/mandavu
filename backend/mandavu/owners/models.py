@@ -55,7 +55,10 @@ class Venue(models.Model) :
     terms_and_conditions = models.FileField(upload_to='terms_conditions/', verbose_name="Terms and Conditions PDF", null=True, blank=True)
     venue_license = models.ImageField(upload_to='venue_license/', verbose_name="Venue License")
     is_verified = models.BooleanField(default=False)
-    is_active  = models.BooleanField(default=False)
+    is_rejected = models.BooleanField(default=False)
+    is_active  = models.BooleanField(default=True)
+    is_under_maintenance = models.BooleanField(default=False)
+    maintenance_reason = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 

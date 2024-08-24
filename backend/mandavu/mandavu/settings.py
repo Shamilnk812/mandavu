@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'admin_dash',
     'chat',
     'notifications',
+    'audio_call',
 ]
 
 MIDDLEWARE = [

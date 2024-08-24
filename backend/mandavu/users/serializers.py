@@ -54,22 +54,30 @@ class UserLoginSerializer(serializers.ModelSerializer) :
     refresh_token = serializers.CharField(max_length=225, read_only=True) 
 
     class Meta :
-        model= CustomUser
+        model= User
         fields = ['id','email', 'password', 'access_token', 'refresh_token']
 
     def validate(self, attrs):
         email=attrs.get('email')
         password=attrs.get('password')
         request=self.context.get('request')
-        user=authenticate(request, email=email, password=password)
-        if not user :
-            raise AuthenticationFailed("Invalid credentials try again!!!!!!!!!")
-        if not user.is_user :
-            raise AuthenticationFailed("Your are not a User")
-        if not user.is_active :
-            raise AuthenticationFailed("Your Account is blocked")
-        if not user.is_verified :
-            raise AuthenticationFailed("Email not verified")
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise AuthenticationFailed("Invalid credentials. Please try again!")
+        
+        # Now, check all the conditions
+        if not user.is_user:
+            raise AuthenticationFailed("You are not a User.")
+        if not user.is_active:
+            raise AuthenticationFailed("Your Account is blocked.")
+        if not user.is_verified:
+            raise AuthenticationFailed("Email not verified.")
+        
+        # Finally, authenticate the user
+        user = authenticate(request, email=email, password=password)
+        if not user:
+            raise AuthenticationFailed("Invalid credentials. Please try again!")
         user_token = user.token()
         print(f"User ID: {user.id}")
 

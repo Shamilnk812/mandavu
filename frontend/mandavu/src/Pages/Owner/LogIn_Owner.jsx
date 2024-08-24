@@ -40,9 +40,17 @@ export default function LogIn() {
         toast.success('Your successfully loggedin')
         navigate('/owner/dashboard')
     }catch (error) {
+      console.log(error);
       if (error.response && error.response.data) {
-        const errorMessage = error.response.data.message || 'Invalid credentials try again';
-        toast.error(errorMessage);
+        const errors = error.response.data;
+        // Check and display specific authentication error messages
+        if (errors.detail) {
+          toast.error(errors.detail);
+        }
+        //  else {
+        //   // Display general or unexpected errors
+        //   Object.values(errors).flat().forEach(message => toast.error(message));
+        // }
       } else {
         toast.error('Login failed');
       }

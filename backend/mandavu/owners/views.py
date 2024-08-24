@@ -142,8 +142,9 @@ class RegisterCombinedView(APIView):
 class LoginOwnerView(GenericAPIView) :
     serializer_class = OwnerLoginSerializer
     def post(self, request) :
+        print(request.data)
         serializer = self.serializer_class(data=request.data, context={'request':request})
-        if serializer.is_valid(raise_exception=True) :
+        if serializer.is_valid() :
             response_data = serializer.validated_data
             print(response_data)
             return Response(response_data,status=status.HTTP_200_OK)

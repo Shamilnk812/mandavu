@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { Link,useNavigate} from "react-router-dom";
 import { OwnerLogout } from "../../Redux/Slices/Owner";
 import { toast } from "react-toastify";
+import CommonNotification from "../Common/Notifications2";
 
 
 export default function  Sidebar () {
@@ -80,8 +81,11 @@ export default function  Sidebar () {
                   alt="Mandavu Logo"
                 />
               </a>
+            
             </div>
+          
             <div className="flex items-center">
+              <CommonNotification/>
               <div className="flex items-center ms-3">
                 <div>
                   <button

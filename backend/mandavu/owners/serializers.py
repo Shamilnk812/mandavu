@@ -72,11 +72,11 @@ class OwnerLoginSerializer(serializers.ModelSerializer) :
         email = attrs.get('email')
         password = attrs.get('password')
         request = self.context.get('request')
-        owner = authenticate(request, email=email, password=password)
-        if not owner :
-            raise AuthenticationFailed("Invalid credentials, try again")
-        # if not owner.is_approved :
-        #      raise AuthenticationFailed("Your venue is not approved")
+        try :
+            owner = Owner.objects.get(email=email)
+        except Owner.DoesNotExist :
+            raise AuthenticationFailed("Invalid credentials. Please try again!")    
+        
         if not owner.is_owner :
             raise AuthenticationFailed("You not a venue user")
         if not owner.is_active :
@@ -84,19 +84,21 @@ class OwnerLoginSerializer(serializers.ModelSerializer) :
         if not owner.is_verified :
             raise AuthenticationFailed(" Your Acooutn is not verified")
         
-        owner_token = owner.token()
+        owner = authenticate(request, email=email, password=password)
 
+        if not owner :
+            raise AuthenticationFailed("Invalid credentials, try again")
+       
         venue = Venue.objects.filter(owner=owner).first()
-
         if not venue:
-            raise AuthenticationFailed("No venue associated with this owner")
+            raise AuthenticationFailed("No venue associated with this owner.")
 
-        # return {
-        #     'owner_id': owner.id,
-        #     'email':owner.email,
-        #     'access_token':str(owner_token.get('access')),
-        #     'refresh_token':str(owner_token.get('refresh'))
-        # }
+        # Check if the venue is verified
+        if not venue.is_verified:
+           raise AuthenticationFailed("Your venue is not approved yet. You will receive an email when it is approved.")
+        
+        owner_token = owner.token()
+       
         print(owner.id)
         attrs.pop('password', None)
         attrs['owner_id'] = owner.id    
@@ -105,9 +107,7 @@ class OwnerLoginSerializer(serializers.ModelSerializer) :
         attrs['refresh_token'] = str(owner_token.get('refresh'))
         attrs['venue_id'] = venue.id
         return attrs
-    # def create(self, validated_data):
-    #     # Do not create a new owner; instead, just return the validated data
-    #     return validated_data
+  
 
         
 

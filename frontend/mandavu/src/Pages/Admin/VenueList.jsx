@@ -146,7 +146,7 @@ export default function VenueList() {
                     Status
                 </th>
                 <th scope="col" className="px-6 py-3">
-                    Verification
+                    Approval Status
                 </th>
                 <th scope="col" className="px-6 py-3">
                     Action
@@ -180,9 +180,13 @@ export default function VenueList() {
                     
                 </td>
                 <td className="px-6 py-4">
-                    <span className={venue.is_verified ? 'text-green-500' : 'text-pink-500'}>
-                        {venue.is_verified ? 'Verified' : 'Pending'}
-                    </span>
+                {venue.is_verified ? (
+                    <span className="text-green-500">Verified</span>
+                ) : venue.is_rejected ? (
+                    <span className="text-orange-500">Rejected</span>
+                ) : (
+                    <span className="text-purple-500">Pending</span>
+                )}
                 </td>
                 <td className="px-6 py-4">
                 {venue.is_active ? (
@@ -203,23 +207,25 @@ export default function VenueList() {
                 <td className="px-6 py-4">
                     
                 {venue.is_verified ? (
-        <span className="text-green-500">Approved</span>
-    ) : (
-        <>
-            <button
-                onClick={() => handleVerifyVenue(venue.id)}
-                className="px-4 py-2 ml-2 text-white bg-green-600 rounded hover:bg-green-700"
-            >
-                Verify
-            </button>
-            <button
-                onClick={() => handleOpenModal(venue.id)}
-                className="px-4 py-2 ml-2 text-white bg-orange-600 rounded hover:bg-orange-700"
-            >
-                Reject
-            </button>
-        </>
-    )}
+                    <span className="text-green-500">Approved</span>
+                ) : venue.is_rejected ? (
+                    <span className="text-orange-500">Rejected</span>
+                ) : (
+                    <>
+                        <button
+                            onClick={() => handleVerifyVenue(venue.id)}
+                            className="px-4 py-2 ml-2 text-white bg-green-600 rounded hover:bg-green-700"
+                        >
+                            Verify
+                        </button>
+                        <button
+                            onClick={() => handleOpenModal(venue.id)}
+                            className="px-4 py-2 ml-2 text-white bg-orange-600 rounded hover:bg-orange-700"
+                        >
+                            Reject
+                        </button>
+                    </>
+                )}
                 </td>
             </tr>
             ))}
