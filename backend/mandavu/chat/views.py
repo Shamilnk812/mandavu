@@ -6,6 +6,8 @@ from rest_framework.exceptions import NotFound
 from .models import *
 from .serializers import *
 import traceback
+from django.utils.crypto import get_random_string
+
 # Create your views here.
 
 
@@ -76,3 +78,19 @@ class ListChatUsersView(APIView) :
         except ChatRooms.DoesNotExist :
             return ChatRooms.objects.none()
 
+
+
+class CreateMeetingView(APIView):
+    def post(self, request):
+        print('Request data:', request.data)
+        user_id = request.data.get('userId')
+        recipient_id = request.data.get('recipientId')
+        print('User ID:', user_id)
+        print('Recipient ID:', recipient_id)
+
+        meeting_id = get_random_string(length=10)  # Generate a random meeting ID
+        print('Generated Meeting ID:', meeting_id)
+
+        # Save meeting ID to database or in-memory storage if needed
+
+        return Response({'meetingId': meeting_id})

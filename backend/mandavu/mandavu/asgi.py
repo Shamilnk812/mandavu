@@ -7,7 +7,6 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from chat.channels_middleware import JWTwebsocketMiddleware
 from chat.routing import websocket_urlpatterns
 from notifications.route import notification_urlpatterns
-from audio_call.routing import audio_call_urlpatterns
 from django.core.asgi import get_asgi_application
 
 # Set default Django settings module
@@ -20,7 +19,7 @@ application = ProtocolTypeRouter({
     'http': django_asgi_app,
     'websocket': JWTwebsocketMiddleware(
         AuthMiddlewareStack(
-            URLRouter(websocket_urlpatterns + notification_urlpatterns + audio_call_urlpatterns)
+            URLRouter(websocket_urlpatterns + notification_urlpatterns )
         )
     ),
 })

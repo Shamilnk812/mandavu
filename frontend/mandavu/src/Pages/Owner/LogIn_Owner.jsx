@@ -81,7 +81,7 @@ export default function LogIn() {
 
     <div class="text-center mt-6">
       <button type="submit" class="w-full py-2 text-xl text-white bg-teal-500 rounded-lg hover:bg-teal-600 transition-all">Login Account</button>
-      <p class="mt-4 text-sm">I don't have an account ?<span class="underline  cursor-pointer"><Link to={'/owner/signup'}>SignUp</Link> </span></p>
+      <p class="mt-4 text-sm">I don't have an account ?<span class="underline  cursor-pointer"><Link to={'/owner/register-step-1'}>SignUp</Link> </span></p>
       <p class="mt-4 text-sm"><span class="underline  cursor-pointer"><Link to={'/owner/reset-password-request'}>Forgot password?</Link> </span></p>
     </div>
     </form>

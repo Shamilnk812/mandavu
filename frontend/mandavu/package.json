@@ -10,11 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
     "@fullcalendar/multimonth": "^6.1.15",
     "@fullcalendar/react": "^6.1.15",
+    "@mui/material": "^5.16.7",
+    "@mui/x-charts": "^7.14.0",
     "@reduxjs/toolkit": "^2.2.6",
     "@stripe/stripe-js": "^4.1.0",
     "@zegocloud/zego-uikit-prebuilt": "^2.8.0",
@@ -32,6 +36,7 @@
     "react-sweetalert2": "^0.6.0",
     "react-toastify": "^10.0.5",
     "redux-persist": "^6.0.0",
+    "simple-peer": "^9.11.1",
     "styled-components": "^6.1.12",
     "sweetalert2": "^11.12.3",
     "yup": "^1.4.0"
