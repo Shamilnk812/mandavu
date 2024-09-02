@@ -5,6 +5,8 @@ import ChatUsersList from "./ListingUsers";
 import { useSelector } from "react-redux";
 import { jwtDecode } from 'jwt-decode';
 import axios from "axios";
+// import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
+import { ZIM } from "zego-zim-web";
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,6 +25,8 @@ export default function ChatLayout() {
     const access = User_token || Owner_token;
     const userId = access ? jwtDecode(access).user_id : null;
 
+    const videoCallContainerRef = useRef(null);
+
     const Chat = async ({ id, username }) => {
         setUser(id);
         setUsername(username);
@@ -30,6 +34,7 @@ export default function ChatLayout() {
 
         try {
             const response = await axios.get(`http://127.0.0.1:8000/chat/user_messages/${userId}/${id}/`);
+            console.log('messgessssssis',response.data)
             setMessages(response.data);
         } catch (error) {
             console.error('Error fetching messages:', error);
@@ -75,66 +80,58 @@ export default function ChatLayout() {
         }
     };
 
-    const startVideoCall = async () => {
-        if (!user) return;
+    const generateRandomUserID = () => {
+        return Math.floor(10000000 + Math.random() * 90000000);
+    };
+
     
-        const appID = 1387710959;
-        const serverSecret = "3b21f678591c4f04ee738ad015fcf82b";
-        const meetingId = `${userId}-${user}`;
-    
-        // Generate a unique token for the current user for this specific meetingId
-        const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, meetingId, Date.now().toString(), userId);
-        const zc = ZegoUIKitPrebuilt.create(kitToken);
-    
-        zc.joinRoom({
-            container: document.getElementById('video-call-container'),
-            scenario: {
-                mode: ZegoUIKitPrebuilt.OneONoneCall,
-            },
-            showScreenSharingButton: true,
-            onLeaveRoom:()=>{
-                window.location.reload(); 
-            }
-        });
-    
-        const meetingLink = `http://127.0.0.1:8000/chat/join_call/${meetingId}/?token=${kitToken}`;
-    
-        setShowVideoCall(true);
-    
-        if (ws) {
-            ws.send(JSON.stringify({ type: 'video_call', link: meetingLink }));
-        }
-    }
-    
-    const joinVideoCall = async () => {
-        if (videoCallLink) {
-            // Extract the meeting ID from the link (ensure both users use the same meeting ID)
-            const appID = 1387710959;
-            const serverSecret = "3b21f678591c4f04ee738ad015fcf82b";
-            const meetingId = videoCallLink.split('/join_call/')[1].split('/?token=')[0];
-            const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, meetingId, Date.now().toString(), userId);
-            const zc = ZegoUIKitPrebuilt.create(kitToken);
-    
-            zc.joinRoom({
-                container: document.getElementById('video-call-container'),
-                scenario: {
-                    mode: ZegoUIKitPrebuilt.OneONoneCall,
-                },
-                showScreenSharingButton: true,
-                onLeaveRoom:()=>{
-                    window.location.reload(); 
-                }  
+
+    const startVideoCall = () => {
+        const appID = 1387710959;  // Replace with your actual appID
+        const serverSecret = "3b21f678591c4f04ee738ad015fcf82b";  // Replace with your actual serverSecret
+        const userID = generateRandomUserID(); // Generate a random 8-digit user ID
+        const userName = `user_${userID}`; // Generate the username using the random user ID
+
+        console.log('Generated userID is :', userID)
+        console.log('Generated username is :', userName)
+
+        try {
+            // Generate the Kit Token
+            const TOKEN = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, null, userID, userName);
+            console.log('Generated TOKEN:', TOKEN);
+
+            // Initialize the ZegoUIKitPrebuilt instance with the generated token
+            const zp = ZegoUIKitPrebuilt.create(TOKEN);
+            zp.addPlugins({ ZIM });
+
+            // Set up the call invitation
+            const targetUser = {
+                userID: generateRandomUserID(),  // Generate a random ID for the target user
+                userName: `user_${generateRandomUserID()}`, // Generate a random username for the target user
+            };
+            console.log('Target User:', targetUser);
+
+            // Send the call invitation
+            zp.sendCallInvitation({
+                callees: [targetUser],
+                callType: ZegoUIKitPrebuilt.InvitationTypeVideoCall,
+                timeout: 60,  // Timeout duration (in seconds)
+            }).then((res) => {
+                console.warn('Call invitation sent:', res);
+            }).catch((err) => {
+                console.error('Error sending call invitation:', err);
             });
-    
-            setShowVideoCall(true);
-            setVideoCallLink('');
+        } catch (error) {
+            console.error('Error during video call setup:', error);
         }
     };
+    
+
     const handleClosePopup = () => {
         setVideoCallLink('');
         setShowVideoCall(false);
-        const videoCallContainer = document.getElementById('video-call-container');
-        videoCallContainer.innerHTML = '';  // Clear the container
+        // const videoCallContainer = document.getElementById('video-call-container');
+        // videoCallContainer.innerHTML = '';  // Clear the container
     }
 
     useEffect(() => {
@@ -150,6 +147,8 @@ export default function ChatLayout() {
             chatArea.current.scrollTop = chatArea.current.scrollHeight;
         }
     }, [messages]);
+
+
 
     return (
         <>
@@ -171,15 +170,18 @@ export default function ChatLayout() {
                 <div className="relative w-full max-w-4xl h-4/5 bg-white shadow-lg rounded-lg">
                     <div className="absolute top-0 w-full bg-teal-600 p-4 rounded-t-lg">
                         <h1 className="text-white text-center text-2xl font-semibold">Video Call</h1>
+                    </div>
+                    <div id="root" >
+                        {/* Zego UI Kit Prebuilt interface will be injected here */}
+                    </div>
+                    {/* Close Button */}
+                    <div className="absolute top-4 right-4 border-2 border-gray-300 rounded-md p-1 bg-white">
                         <button
                             onClick={handleClosePopup}
-                            className="absolute top-2 right-2 bg-red-600 text-white px-4 py-2 rounded"
+                            className="text-red-600 font-bold text-lg"
                         >
-                            Close
+                            X
                         </button>
-                    </div>
-                    <div id="video-call-container" className="w-full h-full pt-16">
-                        {/* Zego UI Kit Prebuilt interface will be injected here */}
                     </div>
                 </div>
             </div>
@@ -219,13 +221,15 @@ export default function ChatLayout() {
                                                 .slice()
                                                 .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
                                                 .map((msg, index) => (
-                                                    <ChatMessages key={index} text={msg.content} send={msg.user} sender={userId} />
+                                                    <ChatMessages key={index} text={msg.content} send={msg.user} sender={userId}  timestamp={msg.timestamp} />
                                                 ))
                                             }
                                         </div>
                                     </div>
                                     {/* Input area */}
+                                    {user && (
                                     <SendMessage sendMessage={sendMessage} />
+                                )}
                                 </div>
                             </div>
                         </div>

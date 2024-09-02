@@ -1,15 +1,20 @@
 
 
-export default function ChatMessages({text,send,sender}) {
+export default function ChatMessages({text,send,sender,timestamp}) {
     const isSender = send === sender;
     return (
         <div className={`flex ${isSender ? 'justify-end' : 'justify-start'}`}>
             <div
                 className={`${
-                    isSender ? 'bg-green-100' : 'bg-blue-100'
+                    isSender ? 'bg-green-500' : 'bg-blue-500'
                 } p-3 rounded-lg max-w-xs`}
             >
-                <p className="text-gray-700">{text}</p>
+               <p className="text-white flex justify-between items-center">
+                    <span>{text}</span>
+                    <span className="text-gray-900 ml-4 mt-2 whitespace-nowrap" style={{ fontSize: '10px' }}>
+                        {new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                </p>
             </div>
             
         </div>

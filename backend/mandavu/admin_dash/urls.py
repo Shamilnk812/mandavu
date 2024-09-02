@@ -5,6 +5,11 @@ from .views import *
 urlpatterns  =[
     path('login/',AdminLoginView.as_view(),name='login'),
     path('logout/',AdminLogoutView.as_view(),name='logout'),
+
+    path('get-all-bookings/',GetAllBookingDetailsview.as_view(),name='get-all-bookings'),
+    path('get-booking-status/',GetAllBookingsStatusView.as_view(),name='get-booking-status'),
+    path('get-allusers-status/',GetAllUsersCountView.as_view(),name='get-allusers-status'),
+    path('get-revenue/',GetTotalRevenueView.as_view(),name='get-revenue'),
     path('user-list/',UserListView.as_view(),name='user-list'),
     path('block-user/<int:uid>/',BlockUserView.as_view(),name='block-user'),
     path('unblock-user/<int:uid>/',UnblockUserView.as_view(),name='unblock-user'),

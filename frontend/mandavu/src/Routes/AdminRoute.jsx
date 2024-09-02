@@ -9,6 +9,7 @@ import AdminLoginAuth from "../Utils/AuthCheck/AdminLoginAuth";
 import AdminLogoutAuth from "../Utils/AuthCheck/AdminLogoutAuth";
 import VenueList from "../Pages/Admin/VenueList";
 import ShowVenueDetails from "../Pages/Admin/ShowVenueDetails";
+import AdminViewAllBookings from "../Pages/Admin/AdminViewAllBookings";
 
 
 export default function AdminRoute() {
@@ -22,6 +23,7 @@ export default function AdminRoute() {
             <Route path="/sidebar" element={<AdminLoginAuth> <Sidebar/> </AdminLoginAuth>}/>
             <Route path="/venuelist" element={<AdminLoginAuth> <VenueList/> </AdminLoginAuth>}/>
             <Route path="/show-venue-details/:venueId" element={<AdminLoginAuth> <ShowVenueDetails/> </AdminLoginAuth>}/>
+            <Route path="/view-all-bookings" element={<AdminLoginAuth> <AdminViewAllBookings/> </AdminLoginAuth>}/>
             {/* <Route path="/notifications" element={<AdminLoginAuth> <AdminNotification/> </AdminLoginAuth>}/> */}
             
            </Routes>

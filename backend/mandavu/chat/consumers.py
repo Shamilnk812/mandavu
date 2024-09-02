@@ -44,13 +44,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             video_call_link = data.get("link")
 
             if message:
-                message_id = await self.save_message(message)
+                result = await self.save_message(message)
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
                         "type": "chat_message",
-                        "message_id": message_id,
-                        "message": message
+                        "message_id": result['message_id'],
+                        "content": message,
+                        "user": self.request_user.id,  # Send user ID with the message
+                        "timestamp": result['timestamp'],  # Send the timestamp
                     }
                 )
             elif video_call_link:
@@ -73,7 +75,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             content=message_content
         )
 
-        return message.id
+        return {
+        'message_id': message.id,
+        'timestamp': message.timestamp.isoformat(),  # Return the timestamp
+    }
 
     async def disconnect(self, code):
         try:
@@ -88,7 +93,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             "type": "message",
             "message_id": event['message_id'],
-            "message": event['message']
+            "content": event['content'],
+            "user": self.request_user.id, 
+            "timestamp": event['timestamp'], 
         }))
 
     async def video_call(self, event):
