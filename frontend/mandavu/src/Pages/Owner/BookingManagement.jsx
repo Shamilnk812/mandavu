@@ -3,7 +3,9 @@ import Navbar from "../../Components/Owner/Navbar";
 import Sidebar from "../../Components/Owner/Sidebar";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";  // Ensure toast is imported
+import { toast } from "react-toastify";  
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 
 export default function BookingManagement() {
     const venueId = useSelector((state) => state.owner.venueId);
@@ -12,23 +14,62 @@ export default function BookingManagement() {
     const [cancelReason, setCancelReason] = useState("");
     const [bookingId, setBookingId] = useState(null);
 
-    const fetchBookingDetails = async () => {
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
+    const fetchBookingDetails = async (startDate = '', endDate = '', page = 1) => {
         if (!venueId) {
             console.error('Venue ID is not available');
             return;
         }
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/v2/auth/all-booking-details/${venueId}/`);
-            setBookingDetails(response.data);
+            const response = await axios.get(`http://127.0.0.1:8000/api/v2/auth/all-booking-details/${venueId}/`, {
+                params: {
+                    start_date: startDate,
+                    end_date: endDate,
+                    page: page,
+                },
+            });
+
+            setBookingDetails(response.data.results);
+            setTotalPages(response.data.total_pages);
         } catch (error) {
             console.error('Error fetching booking details:', error);
         }
     };
 
-    useEffect(() => {    
-        fetchBookingDetails();
-    }, [venueId]);
+    // Fetch booking details when the component mounts or venueId, currentPage, startDate, or endDate changes
+    useEffect(() => {
+        fetchBookingDetails(startDate, endDate, currentPage);
+    }, [venueId, currentPage]);
 
+    const handleSearch = (e) => {
+        e.preventDefault();
+
+        const today = new Date().toISOString().split('T')[0];
+        if (!startDate) {
+            toast.warning('Starting date is required.');
+            return;
+        }
+        if (!endDate) {
+            toast.warning('Ending date is required.');
+            return;
+        }
+        if (startDate && startDate > endDate) {
+            toast.error('Please enter a valid starting date.');
+            return;
+        }
+        if (endDate && endDate < startDate) {
+            toast.error('Please enter a valid ending date.');
+            return;
+        }
+        
+        // Reset the current page to 1 when searching for a new date range
+        setCurrentPage(1);
+        fetchBookingDetails(startDate, endDate, 1);
+    };
     const handleCancelClick = (bookingId) => {
         setBookingId(bookingId);
         setIsModalOpen(true);
@@ -47,7 +88,7 @@ export default function BookingManagement() {
             handleCloseModal();
             toast.success('Booking Cancelled successfully');
             // Refresh the booking details after canceling
-            fetchBookingDetails();
+            fetchBookingDetails(startDate, endDate, currentPage);
         } catch (error) {
             console.error('Something went wrong:', error);
             toast.error('Failed to cancel booking');
@@ -61,8 +102,39 @@ export default function BookingManagement() {
                 <div className="flex-1 p-10 text-2xl ml-64">
                     <div className="bg-customColor8 rounded-lg shadow-lg pb-10 mt-16">
                         <h3 className="text-2xl bg-gradient-to-r from-teal-500 to-gray-800 font-semibold mb-4 py-3 text-center text-white rounded-tl-lg rounded-tr-lg">Booking Details</h3>
-                        <div className="p-8">
-                            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <div className="px-10">
+                            <div className="flex justify-end">
+                            <form onSubmit={handleSearch} className="flex gap-4">
+                        <div className="flex flex-col">
+                        <label htmlFor="startDate" className="mb-1 text-gray-800">Starting Date</label>
+                        <input
+                            id="startDate"
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="px-4 py-2 border rounded text-sm"
+                        />
+                    </div>
+                    <div className="flex flex-col">
+                        <label htmlFor="endDate" className="mb-1 text-gray-800">Ending Date</label>
+                        <input
+                            id="endDate"
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            className="px-4 py-2 border rounded text-sm"
+                        />
+                    </div>
+                         <div className="mt-6">
+                            <button type="submit" className="px-4 py-2 bg-purple-600 text-white rounded transition-colors duration-300 hover:bg-purple-500 text-sm">search</button>
+                        </div>
+                        </form>
+                            </div>
+                            {bookingDetails.length === 0 ? (
+                            <div className=" p-4 my-10 text-center text-gray-500 ">No records found.</div>
+                        ) : (
+                            
+                            <table className="w-full mt-5 text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                 <thead className="text-xs text-white uppercase bg-gradient-to-r from-teal-500 to-gray-800 dark:bg-gradient-to-r from-teal-500 to-gray-800 dark:text-white">
                                     <tr>
                                         <th scope="col" className="px-6 py-3">User Name</th>
@@ -115,6 +187,34 @@ export default function BookingManagement() {
                                     ))}
                                 </tbody>
                             </table>
+                          )}
+
+                         {bookingDetails.length > 0 && (
+                            <div className="flex justify-center mt-10 mb-5">
+                                <div className="p-4 flex items-center">
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                        disabled={currentPage === 1}
+                                        className={`p-2 rounded-full text-white transition-colors duration-300 text-sm
+                                        ${currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'}`}
+                                    >
+                                        <NavigateBeforeIcon/>
+                                    </button>
+                                    <span className="mx-4 text-sm">Page <span className="bg-blue-300 p-1.5">{currentPage}</span>  of {totalPages}</span>
+                                    <button
+                                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                        disabled={currentPage === totalPages}
+                                        className={`p-2 rounded-full text-white transition-colors duration-300 text-sm
+                                        ${currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'}`}
+                                    >
+                                        <NavigateNextIcon/>
+                                    </button>
+                                </div>
+                            </div>
+
+                          )}
+
+
                         </div>
                     </div>
                 </div>

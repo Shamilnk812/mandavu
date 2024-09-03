@@ -4,8 +4,8 @@ import { useDrawingArea } from '@mui/x-charts/hooks';
 import { styled } from '@mui/material/styles';
 
 const size = {
-  width: 400,
-  height: 200,
+  width: 500,
+  height: 300,
 };
 
 // Styling for the center label
@@ -39,7 +39,7 @@ console.log('adfdsf',allUsersCount)
     series={[
         {
           data: pieData,
-          innerRadius: 50,
+          innerRadius: 70,
           highlightScope: { faded: 'global', highlighted: 'item' },
           faded: { innerRadius: 30, additionalRadius: -30, color: 'gray' },
           arcLabel: (item) => `${item.value} `,

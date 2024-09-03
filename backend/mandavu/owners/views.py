@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.generics import GenericAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -15,6 +16,10 @@ from .utils import sent_otp_to_owner,decode_base64_file
 import base64
 from django.core.files.base import ContentFile
 from users.utils import decrypt_otp
+from django.db.models.functions import TruncDay, TruncWeek, TruncMonth, TruncYear
+from django.db.models import Sum
+from datetime import datetime, timedelta
+
 # Create your views here.
 
 
@@ -165,6 +170,8 @@ class LogoutOwnerView(GenericAPIView) :
 
 
 
+
+
 class OwnerDetailsView(GenericAPIView) :
     serializer_class = OwnerDetailsSerializer
     def get(self,request,uid) :
@@ -174,6 +181,86 @@ class OwnerDetailsView(GenericAPIView) :
 
 
 
+class TotalRevenueView(APIView):
+    def get(self, request):
+        selected_view = request.GET.get('view', 'monthly')
+        venue_id = request.GET.get('venue_id')  # Get venue_id from query params
+        if not venue_id:
+            return Response({'error': 'Venue ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        bookings = Booking.objects.filter(venue=venue_id)
+        revenue_data = None
+        now = datetime.now()
+        
+        if selected_view == 'daily':
+            start_date = now - timedelta(days=7)
+            revenue_data = bookings.filter(
+                status='Booking Completed',
+                created_at__gte=start_date
+            ).annotate(
+                day=TruncDay('created_at')
+            ).values('day').annotate(
+                total_revenue=Sum('total_price')
+            ).order_by('day')
+
+        elif selected_view == 'weekly':
+            start_date = now - timedelta(weeks=7)
+            revenue_data = bookings.filter(
+                status='Booking Completed',
+                created_at__gte=start_date
+            ).annotate(
+                week=TruncWeek('created_at')
+            ).values('week').annotate(
+                total_revenue=Sum('total_price')
+            ).order_by('week')
+
+        elif selected_view == 'monthly':
+            start_date = now.replace(day=1) - timedelta(days=7*30)
+            revenue_data = bookings.filter(
+                status='Booking Completed',
+                created_at__gte=start_date
+            ).annotate(
+                month=TruncMonth('created_at')
+            ).values('month').annotate(
+                total_revenue=Sum('total_price')
+            ).order_by('month')
+
+        elif selected_view == 'yearly':
+            start_date = now.replace(month=1, day=1) - timedelta(days=7*365)
+            revenue_data = bookings.filter(
+                status='Booking Completed',
+                created_at__gte=start_date
+            ).annotate(
+                year=TruncYear('created_at')
+            ).values('year').annotate(
+                total_revenue=Sum('total_price')
+            ).order_by('year')
+
+        else:
+            return Response({'error': 'Invalid view selected'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'data': list(revenue_data)}, status=status.HTTP_200_OK)
+    
+
+
+class GetBookingsStatusView(APIView)  :
+    def get(self, request) :
+        venue = request.GET.get('venue_id')
+        print('veneu id ',venue)
+        confirmed_count = Booking.objects.filter(venue=venue,status='Booking Confirmed').count()
+        completed_count = Booking.objects.filter(venue=venue,status='Booking Completed').count()
+        cancelled_count = Booking.objects.filter(venue=venue,status='Booking Canceled').count()
+        total_revenue = Booking.objects.filter(venue=venue,status='Booking Completed').aggregate(total_revenue=Sum('total_price'))['total_revenue'] or 0
+
+        data = [
+            {"label": "Confirmed", "value": confirmed_count},
+            {"label": "Completed", "value": completed_count},
+            {"label": "Canceled", "value": cancelled_count},
+            {"total_revenue":total_revenue}
+        ]
+
+        return Response(data,status=status.HTTP_200_OK)    
+    
 #==========================================
 
 class OwnerAndVenueDetailsView(GenericAPIView) :
@@ -533,14 +620,40 @@ class UnblockEventView(APIView) :
 
 #============== BOOKING ============
 
-class AllBookingDetailsView(GenericAPIView) :
+
+class OwnerPagination(PageNumberPagination):
+    page_size = 2
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+    def get_paginated_response(self, data):
+        return Response({
+            'total_pages': self.page.paginator.num_pages,
+            'current_page': self.page.number,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'results': data,
+        })
+
+
+class AllBookingDetailsView(GenericAPIView):
     serializer_class = AllBookingDetailsSerializer
-    def get(self, request, vid) :
+    pagination_class = OwnerPagination
+
+    def get(self, request, vid):
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
         venue = get_object_or_404(Venue, id=vid)
         all_bookings = Booking.objects.filter(venue=venue)
-        serializer = self.serializer_class(all_bookings, many=True)
-        print(serializer.data)
-        return Response(serializer.data,status=status.HTTP_200_OK)
+
+        if start_date and end_date:
+            all_bookings = all_bookings.filter(date__range=[start_date, end_date])
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(all_bookings, request)
+
+        serializer = self.serializer_class(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
 
 class CancellingBookingView(GenericAPIView) :

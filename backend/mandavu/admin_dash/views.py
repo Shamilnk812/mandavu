@@ -88,6 +88,8 @@ class GetAllBookingDetailsview(GenericAPIView):
     
 
 
+
+
 class GetAllBookingsStatusView(APIView)  :
     def get(self, request) :
         confirmed_count = Booking.objects.filter(status='Booking Confirmed').count()
@@ -110,6 +112,7 @@ class GetAllUsersCountView(APIView) :
         owners_count = CustomUser.objects.filter(is_owner=True, is_verified=True).count()
         end_users_percentage = (end_users_count / total_users_count * 100) if total_users_count else 0
         owners_percentage = (owners_count / total_users_count * 100) if total_users_count else 0
+        total_revenue = Booking.objects.filter(status='Booking Completed').aggregate(total_revenue=Sum('total_price'))['total_revenue'] or 0
 
         data ={
             'allusers':total_users_count,
@@ -117,6 +120,7 @@ class GetAllUsersCountView(APIView) :
             'owners_count':owners_count,
             'users_percentage':end_users_percentage,
             'owners_percentage':owners_percentage,
+            'total_revenue': total_revenue,
         }
 
         return Response(data,status=status.HTTP_200_OK)

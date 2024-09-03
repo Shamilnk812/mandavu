@@ -16,6 +16,7 @@ export default function Dashboard() {
     
     const [bookingStatus, setBookingStatus] = useState([])
     const [allUsersCount, setAllUsersCount] = useState([])
+    const [totalRevenue,setTotalRevenue] = useState('')
 
     const fetchBookingStatus = async()=> {
         try{
@@ -33,6 +34,8 @@ export default function Dashboard() {
             const response = await axios.get('http://localhost:8000/api/admin_dash/auth/get-allusers-status')
             // console.log(response.data)
             setAllUsersCount(response.data)
+            const tRevenue = response.data.total_revenue
+            setTotalRevenue(tRevenue)
             
         }catch(error) {
             toast.error('Failed to fetch All Users stats. Plase try again later')
@@ -54,7 +57,7 @@ export default function Dashboard() {
            <Sidebar/>
            <div className="p-4 sm:ml-64  ">
            <div className="p-4 border-2 border-gray-200 border-solid  rounded-lg dark:border-gray-700 mt-14">
-          <ChartBox2  icon3={<LeaderboardIcon/>} titel={'Revenue Report'} baarchart={<ShowRevenueChart/>}></ChartBox2> 
+          <ChartBox2  icon3={<LeaderboardIcon/>} titel={'Revenue Report'} baarchart={<ShowRevenueChart/>} totalRevenue={totalRevenue}></ChartBox2> 
           <ChartBox1 
           icon1={<AnalyticsIcon/>} title1={'Bookings Details'} chart1={<ShowBookingStatusChart bookingStatus={bookingStatus}/>} icon2={<GroupIcon/>} title2={'All Users'} chart2={<AllUsersCountChart allUsersCount={allUsersCount}/>}
           
