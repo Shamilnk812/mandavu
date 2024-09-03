@@ -226,14 +226,29 @@ class ShowBookingDetailsForCalandarSerializer(serializers.ModelSerializer) :
 
 class ShowBookingListSerializer(serializers.ModelSerializer) :
     venue = VenueDetailsSerializer(read_only=True)
+    review_added = serializers.SerializerMethodField()
 
     class Meta:
         model = Booking
         fields = '__all__'
+    
+    def get_review_added(self, obj):
+        # Check if a review exists for this booking
+        return Review.objects.filter(booking=obj).exists()
     
 #===========CUSTOMUSER ===========
 
 class CustomUserSerializer(serializers.ModelSerializer) :
     class Meta:
         model = CustomUser
+        fields = '__all__'
+
+
+
+# ----------------- ADD VENUE REVIEWS ----------------
+
+
+class ReviewSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = Review
         fields = '__all__'

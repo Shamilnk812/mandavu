@@ -23,6 +23,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 import json
 from datetime import datetime
+from django.db.models import Avg,Count
 
 
 
@@ -361,7 +362,7 @@ class ShowBookingListView(GenericAPIView) :
     serializer_class = ShowBookingListSerializer
     def get(self, rquest, uid) :
         user = get_object_or_404(User, id=uid)
-        all_bookings = Booking.objects.filter(user=user)
+        all_bookings = Booking.objects.filter(user=user).order_by('-id')
         serializer = self.serializer_class(all_bookings, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -386,7 +387,42 @@ class CancelBookingView(GenericAPIView) :
         return Response(status=status.HTTP_200_OK)
 
 
+
+#-------------- ADD VENUE REVIEWS ----------
+
+
+class AddReviewView(APIView) :
+    def post(self, request) :
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid() :
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors ,status=status.HTTP_400_BAD_REQUEST)
     
+
+class ShowRatingView(APIView) :
+    def get(self, request, vid):
+        reviews = Review.objects.filter(booking__venue_id=vid)
+
+        overall_rating = reviews.aggregate(Avg('rating'))['rating__avg'] or 0
+        total_ratings = reviews.count()
+        rating_distribution = reviews.values('rating').annotate(count=Count('rating')).order_by('-rating')
+
+        response_data = {
+            'overall_rating': round(overall_rating, 2),
+            'total_ratings': total_ratings,
+            'rating_distribution': rating_distribution,
+        }
+        
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
+class GetReviewsView(APIView) :
+    def get(self, request, vid) :
+        reviews = Review.objects.filter(booking__venue_id=vid)
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 

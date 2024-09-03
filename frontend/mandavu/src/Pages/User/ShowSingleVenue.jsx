@@ -5,6 +5,7 @@ import Navb from '../../Components/User/Navb';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import ShowRating from '../../Components/User/ShowRating';
 
 
 export default function ShowSingleVenueDetails() {
@@ -128,7 +129,7 @@ export default function ShowSingleVenueDetails() {
                     </div>
                 </div>
 
-                <div className="mt-12 pb-10 rounded-lg bg-customColor8 flex">
+            <div className="mt-12 pb-10 rounded-lg bg-customColor8 flex">
                     
                 <div className="w-3/5  ">
                     <h2 className="text-xl text-white text-center p-3 rounded-tl-lg bg-gradient-to-r from-teal-500 to-gray-800 font-semibold mb-4">Facilities</h2>
@@ -180,10 +181,14 @@ export default function ShowSingleVenueDetails() {
                     </div>
 
                 </div>
-
-
-
+{/* raitng  */}
+ 
+                  <ShowRating venueId={venue.id}/>
+            {/* <div className="mt-8  rounded-lg bg-customColor8   h-[400px]"></div> */}
+              
             </div>
+
+            
         </>
     );
 }

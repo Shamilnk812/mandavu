@@ -27,4 +27,8 @@ urlpatterns = [
     path('show-booked-details/<int:uid>/',ShowBookingListView.as_view(),name='show-booked-details'),
     path('show-single-booking-details/<int:bid>/',ShowSingleBookingDetails.as_view(),name='show-single-booking-details'),
     path('cancel-booking/<int:bid>/',CancelBookingView.as_view(),name='cancel-booking'),
+
+    path('add-review/',AddReviewView.as_view(),name='add-review'),
+    path('get-ratings/<int:vid>/',ShowRatingView.as_view(),name='get-ratings'),
+    path('get-reviews/<int:vid>/',GetReviewsView.as_view(),name='get-reviews')
 ]

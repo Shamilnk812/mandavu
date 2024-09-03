@@ -90,3 +90,11 @@ class BookingDetails(models.Model):
 
 
 
+class Review(models.Model):
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
+    rating = models.IntegerField()
+    review = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.booking.venue.convention_center_name} - {self.rating} Stars"

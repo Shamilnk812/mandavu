@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import AddReviewModal from "../../Components/User/AddReviewModal";
  // Fixed the typo here
 
 export default function ShowBookingDetails() {
@@ -14,6 +15,11 @@ export default function ShowBookingDetails() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [cancelReason, setCancelReason] = useState("");
     const [selectedBookingId, setSelectedBookingId] = useState(null);
+
+    const [isRatingModalOpen, setIsRatingModalOpen] = useState(false)
+    // const [selectedBookingId, setSelectedBookingId] = useState(null)
+    // const [reting,setRating] = useState(0)
+    // const [reviewText, setReviewText] = useState('')
 
 
     useEffect(() => {
@@ -77,6 +83,37 @@ export default function ShowBookingDetails() {
             console.error('Something went wrong');
         }
     };
+
+
+    const handleReviewClick = (id) => {
+        setSelectedBookingId(id)
+        setIsRatingModalOpen(true)
+    }
+
+    const handleCloseReviewModal = ()=>{
+        setIsRatingModalOpen(false)
+        setSelectedBookingId(null)
+    }
+
+   
+
+    const handleReviewSubmit = async ({ rating, reviewText }) => {
+        console.log('sumittdd ',rating,reviewText)
+        try {
+            await axios.post(`http://127.0.0.1:8000/api/v1/auth/add-review/`, {
+                booking: selectedBookingId,
+                rating: rating,
+                review: reviewText,
+            });
+            handleCloseReviewModal();
+            toast.success("Review submitted successfully");
+            fetchBookingDetails();
+        } catch (error) {
+            console.error("Something went wrong");
+            toast.error("Failed to submit review");
+        }
+    };
+
     
     return (
         <>
@@ -96,6 +133,8 @@ export default function ShowBookingDetails() {
                                         <th scope="col" className="px-6 py-3">Details</th>
                                         <th scope="col" className="px-6 py-3">Status</th>
                                         <th scope="col" className="px-6 py-3">Action</th>
+                                       
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -113,7 +152,7 @@ export default function ShowBookingDetails() {
                                            >View Details</button>
 
                                             </td>
-                                            <td className={`px-6 py-4 ${
+                                            <td className={`px-6 py-4 font-semibold ${
                                                 booking.status === 'Booking Confirmed' ? 'text-blue-500' :
                                                 booking.status === 'Booking Completed' ? 'text-green-500' :
                                                 booking.status === 'Booking Canceled' ? 'text-red-500' : 'text-gray-900'
@@ -121,16 +160,50 @@ export default function ShowBookingDetails() {
                                                 {booking.status}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {booking.status === 'Booking Confirmed' ? (
+                                                {/* {booking.status === 'Booking Confirmed' ? (
                                                     <button class="focus:outline-none text-white bg-red-700 hover:bg-red-800  font-medium rounded-lg text-sm px-5 py-2 dark:bg-red-600 dark:hover:bg-red-700 "
                                                     onClick={()=> handleCancelClick(booking.id)}
                                                     >Cancel</button>
                                                 ) : booking.status === 'Booking Completed' ? (
-                                                    <span className="text-green-500">Booking Completed</span>
+
+                                                    <button className="focus:outline-none text-white bg-teal-700 hover:bg-teal-800 font-medium rounded-lg text-sm px-5 py-2 dark:bg-teal-600 dark:hover:bg-teal-700"
+                                                    onClick={()=> handleReviewClick(booking.id)}
+                                                    >
+                                                        Add Review
+                                                    </button>
+
                                                 ) : booking.status === 'Booking Canceled' ? (
                                                     <span className="text-red-500">Cancelled</span>
-                                                ) : null}
+                                                ) : null} */}
+
+                                                {booking.status === 'Booking Completed' ? (
+                                                    booking.review_added ? (
+                                                        <button className="focus:outline-none text-white bg-teal-900 cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2"
+                                                        disabled
+                                                     >
+                                                        Review Added
+                                                     </button>
+                                                   ) : (
+                                                <button className="focus:outline-none text-white bg-teal-700 hover:bg-teal-800 font-medium rounded-lg text-sm px-5 py-2 dark:bg-teal-600 dark:hover:bg-teal-700"
+                                                    onClick={() => handleReviewClick(booking.id)}
+                                                 >
+                                                    Add Review
+                                                 </button>
+                                                    )
+                                                    ) : booking.status === 'Booking Canceled' ? (
+                                                        <button
+                                                        className="focus:outline-none text-white bg-gray-400 cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2"
+                                                        disabled
+                                                    >
+                                                        Cancelled
+                                                    </button>
+                                                    ) : booking.status === 'Booking Confirmed' ? (
+                                                        <button class="focus:outline-none text-white bg-red-700 hover:bg-red-800  font-medium rounded-lg text-sm px-5 py-2 dark:bg-red-600 dark:hover:bg-red-700 "
+                                                        onClick={()=> handleCancelClick(booking.id)}
+                                                        >Cancel</button>
+                                                    ): null}
                                             </td>
+                                           
                                         </tr>
                                     ))}
                                 </tbody>
@@ -184,6 +257,12 @@ export default function ShowBookingDetails() {
                     </div>
                 </div>
             )}
+
+            <AddReviewModal 
+                isOpen={isRatingModalOpen}
+                onClose={handleCloseReviewModal}
+                onSubmit={handleReviewSubmit}
+            />
         </>   
     );
 }
