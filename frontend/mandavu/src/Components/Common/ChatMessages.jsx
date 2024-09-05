@@ -1,6 +1,6 @@
 
 
-export default function ChatMessages({text,send,sender,timestamp}) {
+export default function ChatMessages({text,send,sender,timestamp,seen}) {
     const isSender = send === sender;
     return (
         <div className={`flex ${isSender ? 'justify-end' : 'justify-start'}`}>
@@ -13,6 +13,9 @@ export default function ChatMessages({text,send,sender,timestamp}) {
                     <span>{text}</span>
                     <span className="text-gray-900 ml-4 mt-2 whitespace-nowrap" style={{ fontSize: '10px' }}>
                         {new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    <span className={`ml-2 mt-1 text-sm ${seen ? 'text-white' : 'text-gray-500'}`}  style={{ fontSize: '14px' }}>
+                        {seen ? '✓✓' : '✓'}
                     </span>
                 </p>
             </div>

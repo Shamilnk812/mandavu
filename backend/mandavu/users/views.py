@@ -216,9 +216,11 @@ class AllVenuesListView(GenericAPIView):
         search_query = request.GET.get('search', '')
         queryset = Venue.objects.filter(is_active=False , is_verified=True)
         if search_query:
-            queryset = queryset.filter(name__icontains=search_query)
+            queryset = queryset.filter(convention_center_name__icontains=search_query)
         serializer = self.serializer_class(queryset, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+ 
     
 
 class SingleVenueDetailsView(GenericAPIView) :
@@ -327,7 +329,8 @@ def strip_webhook_view(request) :
             date=date,
             condition=booking_details['airConditioning'],
             total_price=booking_details['totalAmount'],
-            booking_amount=booking_details['bookingAmount']  # Assuming 15% booking amount
+            booking_amount=booking_details['bookingAmount'],  # Assuming 15% booking amount
+            payment_intent_id=session['payment_intent'] 
             
         )
 
@@ -384,7 +387,19 @@ class CancelBookingView(GenericAPIView) :
         booking_obj.cancel_reason = cancel_reason
         booking_obj.status = 'Booking Canceled'
         booking_obj.save()
-        return Response(status=status.HTTP_200_OK)
+
+        try :
+            if booking_obj.payment_intent_id :
+                refund = stripe.Refund.create(
+                    payment_intent=booking_obj.payment_intent_id,
+                    amount=int(booking_obj.booking_amount * 100)
+                )
+                return Response({"message": "Booking canceled and refund processed successfully."}, status=status.HTTP_200_OK)
+            else:
+                 return Response({"error": "No payment information found."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        except stripe.error.StripeError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -393,7 +408,7 @@ class CancelBookingView(GenericAPIView) :
 
 class AddReviewView(APIView) :
     def post(self, request) :
-        serializer = ReviewSerializer(data=request.data)
+        serializer = AddReviewSerializer(data=request.data)
         if serializer.is_valid() :
             serializer.save()
             return Response(serializer.data,status=status.HTTP_201_CREATED)
@@ -420,7 +435,7 @@ class ShowRatingView(APIView) :
 class GetReviewsView(APIView) :
     def get(self, request, vid) :
         reviews = Review.objects.filter(booking__venue_id=vid)
-        serializer = ReviewSerializer(reviews, many=True)
+        serializer = GetReviewSerializer(reviews, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

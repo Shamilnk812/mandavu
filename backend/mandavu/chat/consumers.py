@@ -3,7 +3,6 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from users.models import CustomUser
 from .models import *
-
 class ChatConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
@@ -51,8 +50,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         "type": "chat_message",
                         "message_id": result['message_id'],
                         "content": message,
-                        "user": self.request_user.id,  # Send user ID with the message
+                        "user": self.request_user.id,  # Pass the sender's user ID
                         "timestamp": result['timestamp'],  # Send the timestamp
+                        "seen": result['seen'],
                     }
                 )
             elif video_call_link:
@@ -63,8 +63,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         "link": video_call_link
                     }
                 )
+
+            # await self.mark_messages_as_seen()    
         except Exception as e:
             await self.send(text_data=json.dumps({"error": str(e)}))
+
+
+    
+    
+
+
 
     @database_sync_to_async
     def save_message(self, message_content):
@@ -72,13 +80,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = Messages.objects.create(
             chat_room=chat_room,
             user=self.request_user,
-            content=message_content
+            content=message_content,
+            seen=False
         )
 
         return {
-        'message_id': message.id,
-        'timestamp': message.timestamp.isoformat(),  # Return the timestamp
-    }
+            'message_id': message.id,
+            'timestamp': message.timestamp.isoformat(),  # Return the timestamp
+            'seen': message.seen ,
+        }
+    
+
+    # @database_sync_to_async
+    # def mark_messages_as_seen(self):
+    #     chat_room = self.chat_room[0]
+    #     Messages.objects.filter(
+    #         chat_room=chat_room,
+    #         user=self.request_user
+    #     ).update(seen=True)
 
     async def disconnect(self, code):
         try:
@@ -94,8 +113,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "type": "message",
             "message_id": event['message_id'],
             "content": event['content'],
-            "user": self.request_user.id, 
-            "timestamp": event['timestamp'], 
+            "user": event['user'],  # Use the sender's user ID from the event
+            "timestamp": event['timestamp'],
+            "seen": event['seen'],
         }))
 
     async def video_call(self, event):
@@ -103,3 +123,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "type": "video_call",
             "link": event['link']
         }))
+

@@ -14,7 +14,7 @@ export default function OwnerChartBox1({title,icon,bchart,totalRevenue}){
           <Box sx={{ marginRight: '10px' }}>{icon}</Box>
           <Box>{title}</Box>
         </Box>
-        <Box sx={{ padding: '15px', backgroundColor: 'yellow'}}>
+        <Box sx={{ padding: '15px', backgroundColor: '#f0f5f5', boxShadow:1}}>
           {bchart}
         </Box>
       </Grid>

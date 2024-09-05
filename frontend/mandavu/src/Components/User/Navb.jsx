@@ -4,6 +4,7 @@ import axios from "axios";
 import {toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { UserLogout } from "../../Redux/Slices/User";
+import CommonNotification from '../Common/Notifications2';
 
 
 
@@ -95,6 +96,10 @@ export default  function Navb() {
             </li>
             <li>
               <a onClick={handleLogout} className="block py-2 px-3 md:p-0 text-black rounded hover:black md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-black md:dark:hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-black md:dark:hover:bg-transparent cursor-pointer">Logout</a>
+            </li>
+            <li className="block py-2 px-3 md:p-0 text-black rounded hover:black md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-black md:dark:hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-black md:dark:hover:bg-transparent cursor-pointer"
+            >
+              <CommonNotification/>
             </li>
           </ul>
         </div>

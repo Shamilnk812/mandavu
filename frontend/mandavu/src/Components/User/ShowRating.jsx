@@ -1,6 +1,7 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export default function ShowRating({venueId}) {
     const [reviews, setReviews] = useState([])
@@ -38,14 +39,17 @@ export default function ShowRating({venueId}) {
 
     return (
         <> 
-            <div className="mt-8 rounded-lg bg-customColor8 h-[400px]">
+            <div className="mt-16 rounded-lg bg-customColor8 h-[400px]">
                 <div className="text-center rounded-tl-lg rounded-tr-lg py-3 bg-gradient-to-r from-teal-500 to-gray-800">
                     <p className="text-xl font-semibold text-white">Review & Ratings</p>
                 </div>
 
-                <div className="p-5 flex justify-between">
-                    <div className="w-2/5 bg-red-100">
-                        <div className="flex items-center mb-2">
+                <div className="pl-10 py-5 flex justify-between">
+                    <div className="w-2/5 bg-white p-4 rounded shadow-lg ">
+                        <div className="flex justify-center mb-6">
+                            <h2 className="font-semibold text-gray-800 text-xl">Overall Rating </h2>
+                        </div>
+                        <div className="flex items-center mb-2"> 
                             {/* Display overall rating */}
                             {Array.from({ length: 5 }).map((_, index) => (
                                 <svg key={index} className={`w-4 h-4 ${index < Math.round(ratingData.overall_rating) ? 'text-yellow-300' : 'text-gray-300'} me-1`} xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
@@ -58,8 +62,8 @@ export default function ShowRating({venueId}) {
 
                         {/* Display rating distribution */}
                         {ratingData.rating_distribution.map((item) => (
-                            <div key={item.rating} className="flex items-center mt-4">
-                                <a href="#" className="text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">{item.rating} star</a>
+                            <div key={item.rating} className="flex items-center ml-4 mt-4">
+                                <a href="#" className="text-sm font-medium text-blue-600 dark:text-blue-500 ">{item.rating} star</a>
                                 <div className="w-2/4 h-5 mx-4 bg-gray-200 rounded dark:bg-gray-700">
                                     <div className="h-5 bg-yellow-300 rounded" style={{ width: `${(item.count / ratingData.total_ratings) * 100}%` }}></div>
                                 </div>
@@ -68,10 +72,10 @@ export default function ShowRating({venueId}) {
                         ))}
                     </div>
 
-                    <div className="w-3/5 bg-yellow-100 flex justify-center">
+                    <div className="py-5 px-10 ">
                     {reviews.length > 0 ? (
                             reviews.map((review) => (
-                                <div key={review.id} className="w-3/4 mb-4 p-4 bg-white rounded shadow">
+                                <div key={review.id} className="mb-4 p-4 bg-white rounded shadow-lg">
                                     <div className="flex items-center mb-2">
                                         {Array.from({ length: 5 }).map((_, index) => (
                                             <svg key={index} className={`w-4 h-4 ${index < review.rating ? 'text-yellow-300' : 'text-gray-300'} me-1`} xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
@@ -79,12 +83,12 @@ export default function ShowRating({venueId}) {
                                             </svg>
                                         ))}
                                     </div>
-                                    <p className="font-bold text-sm mb-1">{review.user_name}</p>
-                                    <p className="text-sm text-gray-600">{review.review}</p>
+                                    <p className="font-bold text-md mb-1"><AccountCircleIcon/> {review.user_first_name} {review.user_last_name}</p>
+                                    <p className="ml-8 text-sm text-gray-600">{review.review}</p>
                                 </div>
                             ))
                         ) : (
-                            <p className="text-sm text-gray-500">No reviews available.</p>
+                            <p className="text-sm  text-gray-500">No reviews available.</p>
                         )}
                     </div>
                 </div>

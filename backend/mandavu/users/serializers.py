@@ -248,7 +248,15 @@ class CustomUserSerializer(serializers.ModelSerializer) :
 # ----------------- ADD VENUE REVIEWS ----------------
 
 
-class ReviewSerializer(serializers.ModelSerializer) :
+class AddReviewSerializer(serializers.ModelSerializer) :
     class Meta:
         model = Review
         fields = '__all__'
+
+class GetReviewSerializer(serializers.ModelSerializer):
+    user_first_name = serializers.CharField(source='booking.user.first_name')
+    user_last_name = serializers.CharField(source='booking.user.last_name')
+
+    class Meta:
+        model = Review
+        fields = ['id', 'rating', 'review', 'created_at', 'user_first_name', 'user_last_name']

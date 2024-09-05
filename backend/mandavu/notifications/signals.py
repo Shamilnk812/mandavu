@@ -29,11 +29,21 @@ def send_booking_notification(sender,instance,created, **kwargs) :
             f"Date: {instance.date.strftime('%B %d, %Y')}\n"
             f"Time: {instance.time}\n"
         )
+        message_for_user = (
+            f"Your booking at {instance.venue.convention_center_name} is confirmed!\n"
+            f"Date: {instance.date.strftime('%B %d, %Y')}\n"
+            f"Time: {instance.time}\n"
+            f"We look forward to hosting you. If you have any questions, feel free to contact us."
+        )
 
         venue_owner = instance.venue.owner
-        admin_user = CustomUser.objects.filter(is_superuser=True).first()
         create_booking_notification(venue_owner,message_for_owners)
+
+        admin_user = CustomUser.objects.filter(is_superuser=True).first()
         create_booking_notification(admin_user,message_for_admin)
+        
+        user = instance.user 
+        create_booking_notification(user,message_for_user)
 
 def create_booking_notification(user,message,link=None) :
     Notification.objects.create(
@@ -42,6 +52,41 @@ def create_booking_notification(user,message,link=None) :
         link=link
     )
     send_real_time_notification(user.id,message)
+
+
+
+# --------------  BOOKING CANCELLATION --------------
+
+@receiver(post_save,sender=Booking)
+def send_booking_cancellation_notification(sender, instance, **kwargs):
+    if instance.status == 'Booking Canceled':
+
+        message_for_owner = (
+            f"The booking for {instance.name} on {instance.date.strftime('%B %d, %Y')} "
+            f"at {instance.time} has been canceled."
+        )
+        message_for_user = (
+            f"Your booking on {instance.date.strftime('%B %d, %Y')} "
+            f"at {instance.time} has been canceled. If you have any questions, feel free to contact us."
+        )
+        message_for_admin = (
+            f"Booking for venue {instance.venue.convention_center_name} has been canceled.\n"
+            f"Customer: {instance.name}\n"
+            f"Date: {instance.date.strftime('%B %d, %Y')}\n"
+            f"Time: {instance.time}"
+        )
+
+
+        venue_owner = instance.venue.owner
+        create_booking_notification(venue_owner,message_for_owner)
+
+        user = instance.user
+        create_booking_notification(user,message_for_user)
+
+        admin_user = CustomUser.objects.filter(is_superuser=True).first()
+        create_booking_notification(admin_user,message_for_admin)
+
+        
 
 
 

@@ -8,13 +8,22 @@ from .serializers import *
 import traceback
 from django.utils.crypto import get_random_string
 
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import NotAuthenticated
+
+
 # Create your views here.
 
 
 class MessageListView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, user_id1, user_id2):
         print('uerid',user_id1)
         print('uerid',user_id2)
+
+        if not request.user.is_authenticated:
+            raise NotAuthenticated('User must be authenticated to view messages')
         try:
             chat_room = ChatRooms.objects.filter(
                 Q(user1_id=user_id1, user2_id=user_id2) | Q(user1_id=user_id2, user2_id=user_id1)
@@ -24,6 +33,9 @@ class MessageListView(APIView):
                 raise NotFound('Room not found')
             
             messages = Messages.objects.filter(chat_room=chat_room).order_by('-timestamp')
+            messages.filter(seen=False).exclude(user=request.user).update(seen=True)
+
+            
             serializer = MessageSerializer(messages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         

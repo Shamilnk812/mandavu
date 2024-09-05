@@ -82,6 +82,7 @@ class Booking(models.Model):
     status = models.CharField(max_length=150, choices=booking_status, default='Booking Confirmed')
     cancel_reason = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    payment_intent_id = models.CharField(max_length=255, blank=True, null=True)
 
 
 class BookingDetails(models.Model):

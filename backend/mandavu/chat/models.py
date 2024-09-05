@@ -32,6 +32,7 @@ class Messages(models.Model) :
     user = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    seen = models.BooleanField(default=False)
 
 
     class Meta:
