@@ -5,6 +5,13 @@ import { Link,useNavigate} from "react-router-dom";
 import { OwnerLogout } from "../../Redux/Slices/Owner";
 import { toast } from "react-toastify";
 import CommonNotification from "../Common/Notifications2";
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import CelebrationIcon from '@mui/icons-material/Celebration';
+import TableViewIcon from '@mui/icons-material/TableView';
+import ChatIcon from '@mui/icons-material/Chat';
+import CollectionsIcon from '@mui/icons-material/Collections';
+import LogoutIcon from '@mui/icons-material/Logout';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 
 export default function  Sidebar () {
@@ -168,7 +175,7 @@ export default function  Sidebar () {
               <Link to='/owner/dashboard'
                 className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
-                <span className="ms-3">Dashboard</span>
+                <span className="ms-3"> <DashboardIcon/> Dashboard</span>
               </Link>
             </li>
             {/* <li>
@@ -183,14 +190,14 @@ export default function  Sidebar () {
               <Link to='/owner/events-management'
                 className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
-                <span className="flex-1 ms-3 whitespace-nowrap">Events</span>
+                <span className="flex-1 ms-3 whitespace-nowrap"><CelebrationIcon/> Events</span>
               </Link>
             </li>
             <li>
               <Link to='/owner/facilities-management'
                 className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
-                <span className="flex-1 ms-3 whitespace-nowrap">Facilities </span>
+                <span className="flex-1 ms-3 whitespace-nowrap"><TableViewIcon/> Facilities </span>
               </Link>
             </li>
             {/* <li>
@@ -206,30 +213,30 @@ export default function  Sidebar () {
                 
                 className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
-                <span className="flex-1 ms-3 whitespace-nowrap">Profile</span>
+                <span className="flex-1 ms-3 whitespace-nowrap"><AccountBoxIcon/> Profile</span>
               </Link>
             </li>
             <li>
               <Link to='/owner/banner-management'
                 className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
-                <span className="flex-1 ms-3 whitespace-nowrap">Photos</span>
+                <span className="flex-1 ms-3 whitespace-nowrap"><CollectionsIcon/> Photos</span>
               </Link>
             </li>
             <li>
               <Link to='/owner/chat'
                 className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
-                <span className="flex-1 ms-3 whitespace-nowrap">Inbox</span>
+                <span className="flex-1 ms-3 whitespace-nowrap"><ChatIcon/> Inbox</span>
               </Link>
             </li>
             <li>
-              <a
+              <Link
                 onClick={handleOwnerLogout}
                 className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
               >
-                <span className="flex-1 ms-3 whitespace-nowrap">Log Out</span>
-              </a>
+                <span className="flex-1 ms-3 whitespace-nowrap"><LogoutIcon/> Log Out</span>
+              </Link>
             </li>
           </ul>
         </div>

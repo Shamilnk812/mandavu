@@ -4,15 +4,19 @@ import Sidebar from "../../Components/Owner/Sidebar";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";  
+import { useNavigate } from "react-router-dom";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import SearchIcon from '@mui/icons-material/Search';
 
 export default function BookingManagement() {
     const venueId = useSelector((state) => state.owner.venueId);
+    const navigate = useNavigate();
     const [bookingDetails, setBookingDetails] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [cancelReason, setCancelReason] = useState("");
     const [bookingId, setBookingId] = useState(null);
+
 
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -84,7 +88,7 @@ export default function BookingManagement() {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`http://127.0.0.1:8000/api/v2/auth/booking-cancelling/${bookingId}/`, { reason: cancelReason });
+            await axios.post(`http://127.0.0.1:8000/api/v1/auth/cancel-booking/${bookingId}/`, { reason: cancelReason });
             handleCloseModal();
             toast.success('Booking Cancelled successfully');
             // Refresh the booking details after canceling
@@ -94,6 +98,18 @@ export default function BookingManagement() {
             toast.error('Failed to cancel booking');
         }
     };
+
+    const handleUpdateStatus = async (bookingId)=> {
+        try{
+             await axios.post(`http://127.0.0.1:8000/api/v2/auth/update-booking-status/${bookingId}/`)
+             fetchBookingDetails(startDate, endDate, currentPage);
+             toast.success('Booking Completed Successfully')
+
+        }catch(error){
+            toast.error('Failed to update booking status. Please try again later')
+        }
+    }
+
 
     return (
         <>
@@ -126,7 +142,7 @@ export default function BookingManagement() {
                         />
                     </div>
                          <div className="mt-6">
-                            <button type="submit" className="px-4 py-2 bg-purple-600 text-white rounded transition-colors duration-300 hover:bg-purple-500 text-sm">search</button>
+                            <button type="submit" className="px-4 py-2 bg-purple-600 text-white rounded transition-colors duration-300 hover:bg-purple-500 text-sm"><SearchIcon/></button>
                         </div>
                         </form>
                             </div>
@@ -157,7 +173,7 @@ export default function BookingManagement() {
                                                 <button
                                                     type="button"
                                                     className="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700"
-                                                    // onClick={() => navigate(`/user/view-booking-details/${booking.id}`)}
+                                                    onClick={() => navigate(`/owner/view-single-booking-details/${booking.id}`)}
                                                 >
                                                     View Details
                                                 </button>
@@ -169,19 +185,40 @@ export default function BookingManagement() {
                                             }`}>
                                                 {booking.status}
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-6 py-4 ">
                                                 {booking.status === 'Booking Confirmed' ? (
+                                                    <>
                                                     <button
-                                                        className="focus:outline-none text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-2 dark:bg-red-600 dark:hover:bg-red-700"
+                                                        className="focus:outline-none text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-2  dark:bg-red-600 dark:hover:bg-red-700"
                                                         onClick={() => handleCancelClick(booking.id)}
                                                     >
                                                         Cancel
                                                     </button>
-                                                ) : booking.status === 'Booking Completed' ? (
-                                                    <span className="text-green-500">Booking Completed</span>
-                                                ) : booking.status === 'Booking Canceled' ? (
-                                                    <span className="text-red-500">Cancelled</span>
-                                                ) : null}
+
+                                                    <button
+                                                        className="focus:outline-none text-white bg-teal-700 hover:bg-teal-800 font-medium rounded-lg text-sm px-5 py-2 ml-2 dark:bg-teal-600 dark:hover:bg-teal-700"
+                                                        onClick={() => handleUpdateStatus(booking.id)}
+                                                    >
+                                                        Update Status
+                                                    </button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <button
+                                                            className="focus:outline-none text-white bg-gray-400 font-medium rounded-lg text-sm px-5 py-2 cursor-not-allowed"
+                                                            disabled
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                            
+                                                        <button
+                                                            className="focus:outline-none text-white bg-gray-400 font-medium rounded-lg text-sm px-5 py-2 ml-2 cursor-not-allowed"
+                                                            disabled
+                                                        >
+                                                            Update Status
+                                                        </button>
+                                                    </>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}

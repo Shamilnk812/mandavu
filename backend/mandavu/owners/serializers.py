@@ -417,8 +417,13 @@ class UpdateEventSerializer(serializers.ModelSerializer) :
 
 
 class AllBookingDetailsSerializer(serializers.ModelSerializer) :
+    venue_name = serializers.SerializerMethodField()
+    
     class Meta:
         model = Booking
         fields = '__all__'
+
+    def get_venue_name(self, obj):
+        return obj.venue.convention_center_name      
 
 

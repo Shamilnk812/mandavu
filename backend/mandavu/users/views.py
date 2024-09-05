@@ -387,19 +387,21 @@ class CancelBookingView(GenericAPIView) :
         booking_obj.cancel_reason = cancel_reason
         booking_obj.status = 'Booking Canceled'
         booking_obj.save()
+        return Response({"message": "Booking canceled and refund processed successfully."}, status=status.HTTP_200_OK)
 
-        try :
-            if booking_obj.payment_intent_id :
-                refund = stripe.Refund.create(
-                    payment_intent=booking_obj.payment_intent_id,
-                    amount=int(booking_obj.booking_amount * 100)
-                )
-                return Response({"message": "Booking canceled and refund processed successfully."}, status=status.HTTP_200_OK)
-            else:
-                 return Response({"error": "No payment information found."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # try :
+        #     if booking_obj.payment_intent_id :
+        #         refund = stripe.Refund.create(
+        #             payment_intent=booking_obj.payment_intent_id,
+        #             amount=int(booking_obj.booking_amount * 100)
+        #         )
+        #         return Response({"message": "Booking canceled and refund processed successfully."}, status=status.HTTP_200_OK)
+        #     else:
+        #          return Response({"error": "No payment information found."}, status=status.HTTP_400_BAD_REQUEST)
         
-        except stripe.error.StripeError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        # except stripe.error.StripeError as e:
+        #     return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

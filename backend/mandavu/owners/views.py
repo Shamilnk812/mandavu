@@ -644,7 +644,7 @@ class AllBookingDetailsView(GenericAPIView):
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
         venue = get_object_or_404(Venue, id=vid)
-        all_bookings = Booking.objects.filter(venue=venue)
+        all_bookings = Booking.objects.filter(venue=venue).order_by('-id')
 
         if start_date and end_date:
             all_bookings = all_bookings.filter(date__range=[start_date, end_date])
@@ -656,11 +656,28 @@ class AllBookingDetailsView(GenericAPIView):
         return paginator.get_paginated_response(serializer.data)
 
 
+
+class GetSingleBookingDetailsView(GenericAPIView) :
+    serializer_class = AllBookingDetailsSerializer
+    def get(self, request, b_id):
+        booking_obj = Booking.objects.filter(id=b_id)
+        serializer = self.serializer_class(booking_obj, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class CancellingBookingView(GenericAPIView) :
     def post(self, request, bid) :
         cancel_reason = request.data.get('reason')
         booking_obj = get_object_or_404(Booking, id=bid)
         booking_obj.cancel_reason = cancel_reason
         booking_obj.status = 'Booking Canceled'
+        booking_obj.save()
+        return Response(status=status.HTTP_200_OK)
+
+
+class UpdateBookingStatusview(APIView):
+    def post(self, request, b_id):
+        booking_obj = get_object_or_404(Booking, id=b_id)
+        booking_obj.status = 'Booking Completed'
         booking_obj.save()
         return Response(status=status.HTTP_200_OK)

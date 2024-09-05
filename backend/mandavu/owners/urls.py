@@ -37,7 +37,9 @@ urlpatterns = [
     path('unblock-event/<int:vid>/',UnblockEventView.as_view(),name='unblock-event'),
 
     path('all-booking-details/<int:vid>/',AllBookingDetailsView.as_view(),name='all-booking-details'),
+    path('get-single-booking-details/<int:b_id>/',GetSingleBookingDetailsView.as_view(),name='get-single-booking-details'),
     path('booking-cancelling/<int:bid>/',CancellingBookingView.as_view(),name='booking-cancelling'),
+    path('update-booking-status/<int:b_id>/',UpdateBookingStatusview.as_view(),name='update-booking-status'),
     
 
     path('get-owner-venue-details/<int:uid>/',OwnerAndVenueDetailsView.as_view(),name='get-owner-venue-details'),

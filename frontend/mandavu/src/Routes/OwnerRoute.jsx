@@ -24,6 +24,7 @@ import OwnerDetails2 from "../Pages/Owner/Profile2";
 import OwnerChat from "../Pages/Owner/OwnerChat";
 import OwnerResetPasswordRequest from "../Pages/Owner/OwnerResetPasswordRequest";
 import OwnerSetNewPassword from "../Pages/Owner/OwnerSetNewPassword";
+import OwnerViewSingleBookingDetails from "../Pages/Owner/OwnerViewSingleBookingDetails";
 
 
 export default function OwnerRoute() {
@@ -43,6 +44,7 @@ export default function OwnerRoute() {
             <Route path="/events-management" element={<OwnerLoginAuth> <EventsManagement/> </OwnerLoginAuth>} />
             <Route path="/facilities-management" element={<OwnerLoginAuth> <FacilitesManagement/> </OwnerLoginAuth>} />
             <Route path="/booking-management" element={<OwnerLoginAuth> <BookingManagement/> </OwnerLoginAuth>} />
+            <Route path="/view-single-booking-details/:id" element={<OwnerLoginAuth> <OwnerViewSingleBookingDetails/> </OwnerLoginAuth>} />
             <Route path="/chat" element={<OwnerLoginAuth> <OwnerChat/> </OwnerLoginAuth>} />
 
             <Route path="/details2" element={<OwnerDetails2/>}/>
