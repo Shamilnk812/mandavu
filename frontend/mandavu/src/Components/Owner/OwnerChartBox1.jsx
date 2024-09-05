@@ -1,5 +1,6 @@
 import { Grid,Box } from "@mui/material"
 import { useNavigate } from "react-router-dom";
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 
 export default function OwnerChartBox1({title,icon,bchart,totalRevenue}){
     const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function OwnerChartBox1({title,icon,bchart,totalRevenue}){
         
         <Box sx={{display:"flex", justifyContent:'end'}}>
           <button onClick={() => navigate('/owner/booking-management')} className="bg-purple-600 text-white  py-2 px-4 rounded">
-            View All Details
+            View All Details <ArrowRightAltIcon/>
           </button>
         </Box>
 
