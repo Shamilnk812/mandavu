@@ -73,6 +73,7 @@ class RegisterCombinedView(APIView):
         if owner_serializer.is_valid():
             owner = owner_serializer.save()
         else:
+            print('error is ',owner_serializer.errors)
             return Response(owner_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         venue_data['owner'] = owner.id 

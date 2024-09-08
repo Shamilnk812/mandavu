@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Navb from "../../Components/User/Navb";
 import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
+import Footer from '../../Components/User/Footer';
 
 export default function Home() {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -82,7 +83,7 @@ export default function Home() {
     initial={{ scale: 0.8, opacity: 0 }} 
     animate={{ scale: 1, opacity: 1 }} 
     transition={{ duration: 0.8, delay: 1.5 }}
->
+>       
     <Link 
         className="mt-2 bg-teal-600 text-white py-3 px-8 rounded-full shadow-lg hover:bg-teal-800 hover:shadow-xl transition-colors duration-300 transform hover:scale-105"
         to='/user/show-all-venues'
@@ -93,6 +94,7 @@ export default function Home() {
                     </div>
                 </main>
             </div>
+                {/* <Footer/> */}
         </>
     );
 }

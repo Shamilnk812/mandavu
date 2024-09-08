@@ -7,6 +7,7 @@ import axios from "axios";
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import VideoCallIcon from '@mui/icons-material/VideoCall';
 
 import { useSelector } from "react-redux";
 export default function ChatLayout() {
@@ -177,7 +178,7 @@ export default function ChatLayout() {
                                                 onClick={startVideoCall}
                                                 className="bg-teal-500 text-white px-4 py-2 rounded"
                                             >
-                                                Start Video Call
+                                               <VideoCallIcon/> Video Call
                                             </button>
                                         )}
                                     </div>

@@ -14,6 +14,8 @@ from django.contrib.auth.hashers import make_password
 
 from rest_framework import generics
 from rest_framework.views import APIView
+from rest_framework.pagination import PageNumberPagination
+
 
 import stripe
 from django.conf import settings
@@ -208,17 +210,62 @@ class SetNewPassword(GenericAPIView) :
 
 # =================  ================
 
+class UserPagination(PageNumberPagination):
+    page_size = 12
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+    def get_paginated_response(self, data):
+        return Response({
+            'total_pages': self.page.paginator.num_pages,
+            'current_page': self.page.number,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'results': data,
+        })
+
+# class AllVenuesListView(GenericAPIView):
+#     serializer_class = VenuesListSerializer
+#     pagination_class = UserPagination
+
+#     def get(self, request):
+#         search_query = request.GET.get('search', '')
+#         queryset = Venue.objects.filter(is_active=False , is_verified=True)
+#         if search_query:
+#             queryset = queryset.filter(convention_center_name__icontains=search_query)
+
+#         paginator = self.pagination_class()
+#         result_page = paginator.paginate_queryset(queryset,request)    
+#         serializer = self.serializer_class(result_page, many=True, context={'request': request})
+#         return paginator.get_paginated_response(serializer.data)
 
 class AllVenuesListView(GenericAPIView):
     serializer_class = VenuesListSerializer
+    pagination_class = UserPagination
 
     def get(self, request):
         search_query = request.GET.get('search', '')
-        queryset = Venue.objects.filter(is_active=False , is_verified=True)
+        dining_seat_count = request.GET.get('dining_seat_count')
+        auditorium_seat_count = request.GET.get('auditorium_seat_count')
+        min_price = request.GET.get('min_price')
+        max_price = request.GET.get('max_price')
+
+        print(dining_seat_count)
+        print(auditorium_seat_count)
+        queryset = Venue.objects.filter(is_active=True, is_verified=True)
         if search_query:
             queryset = queryset.filter(convention_center_name__icontains=search_query)
-        serializer = self.serializer_class(queryset, many=True, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if dining_seat_count:
+            queryset = queryset.filter(dining_seat_count__lte=dining_seat_count)
+        if auditorium_seat_count:
+            queryset = queryset.filter(auditorium_seat_count__lte=auditorium_seat_count)
+        if min_price and max_price:
+            queryset = queryset.filter(price__gte=min_price, price__lte=max_price)    
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(queryset, request)
+        serializer = self.serializer_class(result_page, many=True, context={'request': request})
+        return paginator.get_paginated_response(serializer.data)
 
  
     
@@ -387,21 +434,21 @@ class CancelBookingView(GenericAPIView) :
         booking_obj.cancel_reason = cancel_reason
         booking_obj.status = 'Booking Canceled'
         booking_obj.save()
-        return Response({"message": "Booking canceled and refund processed successfully."}, status=status.HTTP_200_OK)
+        # return Response({"message": "Booking canceled and refund processed successfully."}, status=status.HTTP_200_OK)
 
 
-        # try :
-        #     if booking_obj.payment_intent_id :
-        #         refund = stripe.Refund.create(
-        #             payment_intent=booking_obj.payment_intent_id,
-        #             amount=int(booking_obj.booking_amount * 100)
-        #         )
-        #         return Response({"message": "Booking canceled and refund processed successfully."}, status=status.HTTP_200_OK)
-        #     else:
-        #          return Response({"error": "No payment information found."}, status=status.HTTP_400_BAD_REQUEST)
+        try :
+            if booking_obj.payment_intent_id :
+                refund = stripe.Refund.create(
+                    payment_intent=booking_obj.payment_intent_id,
+                    amount=int(booking_obj.booking_amount * 100)
+                )
+                return Response({"message": "Booking canceled and refund processed successfully."}, status=status.HTTP_200_OK)
+            else:
+                 return Response({"error": "No payment information found."}, status=status.HTTP_400_BAD_REQUEST)
         
-        # except stripe.error.StripeError as e:
-        #     return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except stripe.error.StripeError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

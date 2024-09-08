@@ -6,6 +6,8 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import AddReviewModal from "../../Components/User/AddReviewModal";
+import ForumIcon from '@mui/icons-material/Forum';
+import { useChat } from "../../Utils/ChatContext/CreateChat";
  // Fixed the typo here
 
 export default function ShowBookingDetails() {
@@ -20,7 +22,8 @@ export default function ShowBookingDetails() {
     // const [selectedBookingId, setSelectedBookingId] = useState(null)
     // const [reting,setRating] = useState(0)
     // const [reviewText, setReviewText] = useState('')
-
+    
+    const {handleChat} = useChat()
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -46,7 +49,7 @@ export default function ShowBookingDetails() {
             }
         }
        
-   
+     
     
     useEffect(()=> {
         fetchBookingDetails();
@@ -132,6 +135,7 @@ export default function ShowBookingDetails() {
                                         <th scope="col" className="px-6 py-3">Time</th>
                                         <th scope="col" className="px-6 py-3">Details</th>
                                         <th scope="col" className="px-6 py-3">Status</th>
+                                        <th scope="col" className="px-6 py-3">Connect</th>
                                         <th scope="col" className="px-6 py-3">Action</th>
                                        
 
@@ -159,6 +163,14 @@ export default function ShowBookingDetails() {
                                             }`}>
                                                 {booking.status}
                                             </td>
+                                            <td className="px-6 py-4 text-gray-900 ">
+                                                <button 
+                                                onClick={()=> handleChat(userId,booking.venue.owner)}
+                                                className="focus:outline-none text-white bg-orange-700 hover:bg-orange-800 font-medium rounded-lg text-sm px-5 py-2 dark:bg-orange-600 dark:hover:bg-orange-700">
+                                                    <ForumIcon/> Chat
+                                                </button>
+                                            </td>
+
                                             <td className="px-6 py-4">
                                                 {/* {booking.status === 'Booking Confirmed' ? (
                                                     <button class="focus:outline-none text-white bg-red-700 hover:bg-red-800  font-medium rounded-lg text-sm px-5 py-2 dark:bg-red-600 dark:hover:bg-red-700 "

@@ -43,8 +43,9 @@ export default function ShowRating({venueId}) {
                 <div className="text-center rounded-tl-lg rounded-tr-lg py-3 bg-gradient-to-r from-teal-500 to-gray-800">
                     <p className="text-xl font-semibold text-white">Review & Ratings</p>
                 </div>
-
+                 
                 <div className="pl-10 py-5 flex justify-between">
+                {reviews.length > 0 ? (
                     <div className="w-2/5 bg-white p-4 rounded shadow-lg ">
                         <div className="flex justify-center mb-6">
                             <h2 className="font-semibold text-gray-800 text-xl">Overall Rating </h2>
@@ -70,7 +71,9 @@ export default function ShowRating({venueId}) {
                                 <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{Math.round((item.count / ratingData.total_ratings) * 100)}%</span>
                             </div>
                         ))}
-                    </div>
+                    </div> ) : (
+                            <p className="text-md text-gray-500">No reviews added yet.</p>
+                        )}
 
                     <div className="py-5 px-10 ">
                     {reviews.length > 0 ? (
@@ -88,7 +91,7 @@ export default function ShowRating({venueId}) {
                                 </div>
                             ))
                         ) : (
-                            <p className="text-sm  text-gray-500">No reviews available.</p>
+                            <p className="text-sm  text-gray-500"></p>
                         )}
                     </div>
                 </div>

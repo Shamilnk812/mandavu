@@ -19,10 +19,12 @@ import UserProfile from "../Pages/User/UserProfile";
 import UserChat from "../Pages/User/UserChat";
 import ResetPasswordRequest from "../Pages/User/ResetPasswordRequest";
 import UserSetNewPassword from "../Pages/User/UserSetNewPassword";
+import { ChatProvider } from "../Utils/ChatContext/CreateChat";
 // import ResetPasswordConfirm from "../Pages/User/ResetPasswordConfirm";
 
 export default function UserRoute() {
     return(
+        <ChatProvider>
         <Routes>
             <Route path="/signup" element={<UserLogoutAuth> <SignUp/> </UserLogoutAuth> }/>
             <Route path="/login" element={ <UserLogoutAuth> <Login/> </UserLogoutAuth>} />
@@ -45,5 +47,6 @@ export default function UserRoute() {
             
             
         </Routes>
+        </ChatProvider>
     )
 }

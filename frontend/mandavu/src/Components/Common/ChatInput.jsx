@@ -1,5 +1,5 @@
 import { useState } from "react"
-
+import SendIcon from '@mui/icons-material/Send';
 
 export default function SendMessage({sendMessage}) {
 
@@ -22,7 +22,7 @@ export default function SendMessage({sendMessage}) {
         <button 
         onClick={handleSendMessage}
         className="ml-2 bg-teal-500 text-white rounded-lg px-4 py-2">
-            Send
+            <SendIcon/>
         </button>
     </div>
     )

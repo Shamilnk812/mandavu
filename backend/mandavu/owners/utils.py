@@ -40,6 +40,7 @@ def sent_otp_to_owner(email) :
         s_email = EmailMessage(subject=subject, body=email_body, from_email=from_email, to=[email])
         s_email.send(fail_silently=False)
         print('emial sented success')
+        print(otp_code)
     except Exception as e :
         print(f"Failed to send email: {e}")    
 
