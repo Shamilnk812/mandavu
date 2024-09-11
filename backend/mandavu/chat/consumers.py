@@ -124,3 +124,57 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "link": event['link']
         }))
 
+
+
+
+# class VideoCallConsumer(AsyncWebsocketConsumer):
+#     async def connect(self):
+#         try:
+#             self.request_user = self.scope['user']
+#             if self.request_user.is_authenticated:
+#                 self.call_with_user = self.scope["url_route"]["kwargs"]["id"]
+#                 user_ids = [int(self.request_user.id), int(self.call_with_user)]
+#                 user_ids = sorted(user_ids)
+#                 self.room_group_name = f"video_call_{user_ids[0]}-{user_ids[1]}"
+
+#                 # Add the current user to the video call group
+#                 await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+
+#                 # Accept the connection
+#                 await self.accept()
+#             else:
+#                 await self.close()
+#         except Exception as e:
+#             print(f"Error in connect: {str(e)}")
+#             await self.close()
+
+#     async def receive(self, text_data):
+#         try:
+#             data = json.loads(text_data)
+#             video_call_link = data.get("link")
+
+#             if video_call_link:
+#                 # Broadcast the video call link to the other participant
+#                 await self.channel_layer.group_send(
+#                     self.room_group_name,
+#                     {
+#                         "type": "video_call",
+#                         "link": video_call_link
+#                     }
+#                 )
+#         except Exception as e:
+#             await self.send(text_data=json.dumps({"error": str(e)}))
+
+#     async def disconnect(self, code):
+#         try:
+#             # Remove the user from the video call group
+#             await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+#         except Exception as e:
+#             print(f"Error in disconnect: {str(e)}")
+
+#     # Handler to send video call data to the other participant
+#     async def video_call(self, event):
+#         await self.send(text_data=json.dumps({
+#             "type": "video_call",
+#             "link": event['link']
+#         }))

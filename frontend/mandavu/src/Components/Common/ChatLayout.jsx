@@ -2,33 +2,41 @@ import { useState, useEffect, useRef } from "react";
 import SendMessage from "./ChatInput";
 import ChatMessages from "./ChatMessages";
 import ChatUsersList from "./ListingUsers";
-import { useWebSocket } from "../../Utils/ChatContext/ChatContext";
+// import { useWebSocket } from "../../Utils/ChatContext/ChatContext";
 import axios from "axios";
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
-import { useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 
 import { useSelector } from "react-redux";
+import { useVideoCallWebSocket } from "../../Utils/VideoCallContext/VideoCallContext";
+
+
 export default function ChatLayout() {
     const [user, setUser] = useState('');
     const [username, setUsername] = useState('');
-    // const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState([]);
+    const [ws, setWs] = useState(null);
+
     const [showVideoCall, setShowVideoCall] = useState(false);
     const chatArea = useRef(null);
     const videoCallContainerRef = useRef(null);
     const navigate = useNavigate();
-    const { ws, videoCallLink, setVideoCallLink, startChat,messages, setMessages} = useWebSocket();
+    
+    const {vws} = useVideoCallWebSocket()
 
     const User_token = useSelector((state) => state.user.access_token);
     const Owner_token = useSelector((state) => state.owner.access_token);
     const access = User_token || Owner_token;
     const userId = access ? jwtDecode(access).user_id : null;
-    console.log('messages', messages)
+
+
+
     const Chat = async ({ id, username }) => {
         setUser(id);
         setUsername(username);
-        startChat(id); // Initialize WebSocket with the user ID
+        setupWebSocket(id, access);
     
         try {
             const response = await axios.get(`http://127.0.0.1:8000/chat/user_messages/${userId}/${id}/`,{
@@ -50,20 +58,58 @@ export default function ChatLayout() {
         }
     };
 
+
+
+    const setupWebSocket = (chatWithUserId, access) => {
+        if (ws) {
+            ws.close();
+        }
+
+        const socketUrl = `ws://127.0.0.1:8000/ws/chat/${chatWithUserId}/?token=${access}`;
+        const newWs = new WebSocket(socketUrl);
+
+        newWs.onopen = () => {
+            console.log('WebSocket connection opened');
+        };
+
+        newWs.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log('Received message:', data);
+            setMessages((prevMessages) => [...prevMessages, data]);
+            
+        };
+
+        newWs.onclose = () => {
+            console.log('WebSocket connection closed');
+        };
+
+        newWs.onerror = (event) => {
+            console.error('WebSocket error:', event);
+        };
+
+        setWs(newWs);
+    }
+
+
+
+
+
     const sendMessage = (message) => {
         if (ws && message.trim() !== "") {
             ws.send(JSON.stringify({ message }));
         }
     };
 
-    const startVideoCall = async () => {
-        if (!user) return;
 
+
+   const startVideoCall = async () => {
+    if (!user) return;
+
+    if (vws.readyState === WebSocket.OPEN) {  // Ensure WebSocket is open
         const appID = 1387710959;
         const serverSecret = "3b21f678591c4f04ee738ad015fcf82b";
         const meetingId = `${user}-${userId}`;
 
-        // Generate a unique token for the current user for this specific meetingId
         const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, meetingId, Date.now().toString(), userId);
         const zc = ZegoUIKitPrebuilt.create(kitToken);
 
@@ -80,43 +126,18 @@ export default function ChatLayout() {
 
         const meetingLink = `http://127.0.0.1:8000/chat/join_call/${meetingId}/?token=${kitToken}`;
         setShowVideoCall(true);
+        
+        vws.send(JSON.stringify({ 
+            type: 'video_call', 
+            link: meetingLink,
+            recipient_id: user  // Recipient's user ID
+        }));
+    } else {
+        console.error('WebSocket is not open');
+    }
+};
 
-        if (ws) {
-            ws.send(JSON.stringify({ type: 'video_call', link: meetingLink }));
-        }
-    };
-
-    const joinVideoCall = async () => {
-        if (videoCallLink) {
-            const appID = 1387710959;
-            const serverSecret = "3b21f678591c4f04ee738ad015fcf82b";
-            const meetingId = videoCallLink.split('/join_call/')[1].split('/?token=')[0];
-            const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, meetingId, Date.now().toString(), userId);
-            const zc = ZegoUIKitPrebuilt.create(kitToken);
-            const videoCallContainer = document.getElementById('video-call-container');
-            if (videoCallContainer) {
-                videoCallContainer.innerHTML = '';  // Clear any previous content
-            }
-
-            zc.joinRoom({
-                scenario: {
-                    mode: ZegoUIKitPrebuilt.OneONoneCall,
-                },
-                showScreenSharingButton: true,
-                onLeaveRoom: () => {
-                    window.location.reload(); 
-                }  
-            });
-
-            setShowVideoCall(true);
-            setVideoCallLink('');
-        }
-    };
-
-    const handleClosePopup = () => {
-        setVideoCallLink('');
-        setShowVideoCall(false);
-    };
+   
 
     useEffect(() => {
         return () => {
@@ -135,25 +156,25 @@ export default function ChatLayout() {
     return (
         <>
             {showVideoCall ? (
-                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-                    <div className="relative w-full max-w-4xl h-4/5 bg-white shadow-lg rounded-lg">
-                        <div className="absolute top-0 w-full bg-teal-600 p-4 rounded-t-lg">
-                            <h1 className="text-white text-center text-2xl font-semibold">Video Call</h1>
-                        </div>
-                        <div id="root" ref={videoCallContainerRef}>
-                            {/* Zego UI Kit Prebuilt interface will be injected here */}
-                        </div>
-                        {/* Close Button */}
-                        <div className="absolute top-4 right-4 border-2 border-gray-300 rounded-md p-1 bg-white">
-                            <button
-                                onClick={handleClosePopup}
-                                className="text-red-600 font-bold text-lg"
-                            >
-                                X
-                            </button>
-                        </div>
-                    </div>
-                </div>
+               <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+               <div className="relative w-full max-w-4xl h-4/5 bg-white shadow-lg rounded-lg">
+                   <div className="absolute top-0 w-full bg-teal-600 p-4 rounded-t-lg">
+                       <h1 className="text-white text-center text-2xl font-semibold">Video Call</h1>
+                   </div>
+                   <div className="w-1/2" id="root" ref={videoCallContainerRef}>
+                       {/* Zego UI Kit Prebuilt interface will be injected here */}
+                   </div>
+                   {/* Close Button */}
+                   <div className="absolute top-4 right-4 border-2 border-gray-300 rounded-md p-1 bg-white">
+                       <button
+                           // onClick={handleClosePopup}
+                           className="text-red-600 font-bold text-lg"
+                       >
+                           X
+                       </button>
+                   </div>
+               </div>
+           </div>
             ) : (
                 <div className="flex flex-col flex-1 ml-64 mt-10 bg-customColor7 min-h-screen">
                     <div className="p-10">
@@ -220,29 +241,7 @@ export default function ChatLayout() {
                 </div>
             )}
 
-            {/* Video Call Link Popup */}
-            {videoCallLink && (
-                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center">
-                    <div className="bg-white w-1/2 p-6 rounded-lg shadow-lg">
-                        <h2 className="text-xl font-semibold mb-4">Video Call Invitation</h2>
-                        <p className="mb-4">
-                            You have been invited to join a video call.
-                        </p>
-                        <button
-                            onClick={joinVideoCall}
-                            className="bg-teal-500 text-white px-4 py-2 rounded mr-2"
-                        >
-                            Join the Video Call
-                        </button>
-                        <button
-                            onClick={handleClosePopup}
-                            className="bg-red-600 text-white px-4 py-2 rounded"
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
-            )}
+           
         </>
     );
 }
