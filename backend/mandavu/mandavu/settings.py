@@ -131,15 +131,26 @@ OPENCAGE_API_KEY = env('OPENCAGE_API_KEY')
 #     }
 # }
 
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'mandavu',
+#        'USER': 'postgres',
+#        'PASSWORD': '2445057',
+#        'HOST': 'localhost',
+#        'PORT': '5432',
+#    }
+# }
+
 DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.postgresql',
-       'NAME': 'mandavu',
-       'USER': 'postgres',
-       'PASSWORD': '2445057',
-       'HOST': 'localhost',
-       'PORT': '5432',
-   }
+'default': {
+'ENGINE': 'django.db.backends.postgresql_psycopg2',
+'NAME': 'mandavu',
+'USER': 'shamil',
+'PASSWORD': '2445057',
+'HOST': 'localhost',
+'PORT': '',
+}
 }
 
 AUTH_USER_MODEL="users.CustomUser"
