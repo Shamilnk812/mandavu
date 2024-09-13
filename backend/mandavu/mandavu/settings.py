@@ -144,12 +144,12 @@ OPENCAGE_API_KEY = env('OPENCAGE_API_KEY')
 
 DATABASES = {
 'default': {
-'ENGINE': 'django.db.backends.postgresql_psycopg2',
+'ENGINE': 'django.db.backends.postgresql',
 'NAME': 'mandavu',
 'USER': 'shamil',
 'PASSWORD': '2445057',
 'HOST': 'localhost',
-'PORT': '',
+'PORT': '5432',
 }
 }
 
