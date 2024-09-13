@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import Navb from "../../Components/User/Navb"
 import Sidebar from "../../Components/User/Sidebar"
 import axios from "axios"
+import { axiosUserInstance } from "../../Utils/Axios/axiosInstance"
 import { useSelector } from "react-redux"
 import { toast } from "react-toastify"
 import { useFormik } from "formik"
@@ -21,7 +22,7 @@ export default function UserProfile() {
     
     const fetchUserDetails = async () => {
         try{
-            const response = await axios.get(`http://127.0.0.1:8000/api/v1/auth/user-details/${userId}/`)
+            const response = await axiosUserInstance.get(`user-details/${userId}/`)
             setUser(response.data)
             console.log(response.data)
         }catch(error) {
@@ -40,7 +41,7 @@ export default function UserProfile() {
         validationSchema:ChangeUserDetailsSchema,
         onSubmit: async (updatedUser)=> {
             try{
-                const response = await axios.put(`http://127.0.0.1:8000/api/v1/auth/update/${userId}/`, updatedUser);
+                const response = await axiosUserInstance.put(`update/${userId}/`, updatedUser);
                 fetchUserDetails();
                 handleCloseUserDetailsEditModal();
                 toast.success('User details updated successfully')
@@ -74,7 +75,7 @@ export default function UserProfile() {
             };
 
             try {
-                const response = await axios.post(`http://127.0.0.1:8000/api/v1/auth/change-password/${userId}/`, payload);
+                const response = await axiosUserInstance.post(`change-password/${userId}/`, payload);
                 // Display success message
                 handleCloseChangePasswordModal();
                 toast.success(response.data.message);

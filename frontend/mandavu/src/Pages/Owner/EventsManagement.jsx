@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import AddEventSchema from "../../Validations/Owner/AddEventSchema";
 import AddEventModal from "../../Components/Owner/AddEventModal";
+import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
+
 
 
 export default function EventsManagement() {
@@ -26,7 +28,7 @@ export default function EventsManagement() {
             formData.append('event_name', values.eventName)
             
             try{
-                const response = await axios.post(`http://127.0.0.1:8000/api/v2/auth/add-event/${venueId}/`,formData, {
+                const response = await axiosOwnerInstance.post(`add-event/${venueId}/`,formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -47,7 +49,7 @@ export default function EventsManagement() {
 
     const fetchEventsDetails = async ()=> {
         try{
-            const response = await axios.get(`http://127.0.0.1:8000/api/v2/auth/get-all-events/${venueId}/`)
+            const response = await axiosOwnerInstance.get(`get-all-events/${venueId}/`)
             setEventsList(response.data)
         }catch(error) {
             toast.error('Failed to fetch event details. Please try again later.');
@@ -59,7 +61,7 @@ export default function EventsManagement() {
 
     const handleBlockEvent = async (event_id)=> {
           try{
-            const response = await axios.patch(`http://127.0.0.1:8000/api/v2/auth/block-event/${venueId}/`,{event_id})
+            const response = await axiosOwnerInstance.patch(`block-event/${venueId}/`,{event_id})
             toast.success('Event successfully blocked!');
             fetchEventsDetails()
 
@@ -71,7 +73,7 @@ export default function EventsManagement() {
 
     const handleUnblockEvent = async (event_id) => {
         try{
-            const response = await axios.patch(`http://127.0.0.1:8000/api/v2/auth/unblock-event/${venueId}/`,{event_id})
+            const response = await axiosOwnerInstance.patch(`unblock-event/${venueId}/`,{event_id})
             toast.success('Event successfullt unblocked !')
             fetchEventsDetails()
         }catch(error) {

@@ -3,6 +3,9 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Sidebar from "../../Components/Admin/Sidebar"
 import { toast } from "react-toastify"
+import { axiosAdminInstance } from "../../Utils/Axios/axiosInstance"
+
+
 
 export default function OwnersList() {
     const navigate = useNavigate()
@@ -24,7 +27,7 @@ export default function OwnersList() {
 
     const fetchOwnerslist = async () =>{
         try{
-            const response = await axios.get('http://localhost:8000/api/admin_dash/auth/owner-list')
+            const response = await axiosAdminInstance.get('owner-list')
             setOwners(response.data)
             console.log(response.data)
         }catch (error) {
@@ -39,7 +42,7 @@ export default function OwnersList() {
 
     const handleBlockOwner = async (uid) => {
         try{
-            const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/block-owner/${uid}/`)
+            const response = await axiosAdminInstance.post(`block-owner/${uid}/`)
             toast.success('Owner Account is bloked ')
             fetchOwnerslist()
         }catch (error) {
@@ -49,7 +52,7 @@ export default function OwnersList() {
 
     const handleUnblockOwner = async (uid) =>{
         try{
-            const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/unblock-owner/${uid}/`)
+            const response = await axiosAdminInstance.post(`unblock-owner/${uid}/`)
             console.log('unbloked',response.data)
             toast.success('Owner Account is unblocked')
             fetchOwnerslist()

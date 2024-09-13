@@ -6,7 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import { axiosUserInstance } from "../../Utils/Axios/axiosInstance";
 
 
 
@@ -17,7 +17,7 @@ export default function ViewSlote() {
 
 
     const fetchBookingDetails = () => {
-        axios.get(`http://127.0.0.1:8000/api/v1/auth/booking-details/${venueId}`)
+        axiosUserInstance.get(`booking-details/${venueId}`)
             .then((res) => {
                 const bookings = res.data.map((booking) => ({
                     id: booking.id,

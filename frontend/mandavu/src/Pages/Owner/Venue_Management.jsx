@@ -6,6 +6,7 @@ import VenueDetails from "./VenueDetails";
 import { useSelector,useDispatch } from "react-redux";
 import axios from "axios";
 import { SetVenueId } from "../../Redux/Slices/Owner";
+import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
 
 
 
@@ -20,7 +21,7 @@ export default function VenueManagement() {
   const fetchVenueDetails = async ()=>{
     if (ownerId) {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/api/v2/auth/venue-details/${ownerId}/`);
+        const response = await axiosOwnerInstance.get(`venue-details/${ownerId}/`);
         console.log(response.data)
         setVenueDetails(response.data)
         if (response.data.is_verified) {

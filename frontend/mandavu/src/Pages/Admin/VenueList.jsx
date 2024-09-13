@@ -3,6 +3,7 @@ import Sidebar from "../../Components/Admin/Sidebar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { axiosAdminInstance } from "../../Utils/Axios/axiosInstance";
 
 
 export default function VenueList() {
@@ -30,7 +31,7 @@ export default function VenueList() {
 
     const fetchVenueList = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/admin_dash/auth/venue-list/?search=${searchTerm}`);
+            const response = await axiosAdminInstance.get(`venue-list/?search=${searchTerm}`);
             setVenues(response.data);
             console.log(response.data);
         } catch (error) {
@@ -49,7 +50,7 @@ export default function VenueList() {
 
     const handleBlockVenue = async (venueId) => {
         try{
-            const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/block-venue/${venueId}/`)
+            const response = await axiosAdminInstance.post(`block-venue/${venueId}/`)
              toast.success('Venue is blocked')
              fetchVenueList();
            
@@ -60,7 +61,7 @@ export default function VenueList() {
 
     const handleUnblockVenue = async (venueId) =>{
         try{
-            const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/unblock-venue/${venueId}/`)
+            const response = await axiosAdminInstance.post(`unblock-venue/${venueId}/`)
              toast.success('venue is unbloked')
              fetchVenueList();
         }catch (error) {
@@ -70,7 +71,7 @@ export default function VenueList() {
 
     const handleVerifyVenue = async (venueId) =>{
         try{
-            const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/verify-venue/${venueId}/`);
+            const response = await axiosAdminInstance.post(`verify-venue/${venueId}/`);
             console.log(response.data)
             toast.success('venue is verified successfully')
             fetchVenueList()
@@ -98,7 +99,7 @@ export default function VenueList() {
         }
 
         try{
-             const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/reject-venue/${selectedVenueId}/`,{ reason: rejectionReason })
+             const response = await axiosAdminInstance.post(`reject-venue/${selectedVenueId}/`,{ reason: rejectionReason })
              toast.success('Venues is rejected successfully')
              fetchVenueList()
              handleCloseModal()

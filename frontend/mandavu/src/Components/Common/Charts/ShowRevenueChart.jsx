@@ -2,6 +2,8 @@ import { BarChart } from '@mui/x-charts/BarChart';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import moment from 'moment'; // Import moment.js for date manipulation
+import { axiosAdminInstance } from '../../../Utils/Axios/axiosInstance';
+
 
 export default function ShowRevenueChart() {
   const [revenueData, setRevenueData] = useState([]);
@@ -10,7 +12,7 @@ export default function ShowRevenueChart() {
   
   const fetchRevenueData = async (view) => {
     try {
-      const response = await axios.get('http://localhost:8000/api/admin_dash/auth/get-revenue', {
+      const response = await axiosAdminInstance.get('get-revenue', {
         params: { view }
       });
 

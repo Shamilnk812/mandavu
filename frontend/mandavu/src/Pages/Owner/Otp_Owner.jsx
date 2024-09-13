@@ -4,6 +4,8 @@ import {  toast } from 'react-toastify';
 import axios from 'axios';
 import OtpSchema from "../../Validations/User/OtpSchema";
 import { useEffect,useState } from "react";
+import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
+
 
 
 export default function OtpVerification() {
@@ -32,7 +34,7 @@ export default function OtpVerification() {
 
   const handleOwnerResendOtp = async () => {
     try {
-        const response = await axios.post('http://127.0.0.1:8000/api/v2/auth/resend-owner-otp/', { email });
+        const response = await axiosOwnerInstance.post('resend-owner-otp/', { email });
         toast.success(response.data.message);
         setTimeLeft(120); // Reset the timer
         setIsResendVisible(false);
@@ -48,7 +50,7 @@ export default function OtpVerification() {
         validationSchema:OtpSchema,
         onSubmit: async (values) => {
           try{
-            const response = await axios.post('http://127.0.0.1:8000/api/v2/auth/verify-otp/',{...values,email});
+            const response = await axiosOwnerInstance.post('verify-otp/',{...values,email});
             toast.success('OTP verified successfully!');
             localStorage.removeItem('email')
             navigate('/owner/venue_approval_waiting'); 

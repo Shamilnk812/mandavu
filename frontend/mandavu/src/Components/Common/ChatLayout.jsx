@@ -4,6 +4,8 @@ import ChatMessages from "./ChatMessages";
 import ChatUsersList from "./ListingUsers";
 // import { useWebSocket } from "../../Utils/ChatContext/ChatContext";
 import axios from "axios";
+import { axiosChatInstance } from "../../Utils/Axios/axiosInstance";
+import { SOCKET,ChatUrl } from "../../Utils/Axios/EndPoints";
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import {  useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
@@ -11,6 +13,7 @@ import VideoCallIcon from '@mui/icons-material/VideoCall';
 
 import { useSelector } from "react-redux";
 import { useVideoCallWebSocket } from "../../Utils/VideoCallContext/VideoCallContext";
+
 
 
 export default function ChatLayout() {
@@ -39,7 +42,7 @@ export default function ChatLayout() {
         setupWebSocket(id, access);
     
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/chat/user_messages/${userId}/${id}/`,{
+            const response = await axiosChatInstance.get(`user_messages/${userId}/${id}/`,{
                 headers: {
                     'Authorization': `Bearer ${access}`
                 }
@@ -65,7 +68,7 @@ export default function ChatLayout() {
             ws.close();
         }
 
-        const socketUrl = `ws://127.0.0.1:8000/ws/chat/${chatWithUserId}/?token=${access}`;
+        const socketUrl = `${SOCKET}chat/${chatWithUserId}/?token=${access}`;
         const newWs = new WebSocket(socketUrl);
 
         newWs.onopen = () => {
@@ -124,7 +127,7 @@ export default function ChatLayout() {
             }
         });
 
-        const meetingLink = `http://127.0.0.1:8000/chat/join_call/${meetingId}/?token=${kitToken}`;
+        const meetingLink = `${ChatUrl}join_call/${meetingId}/?token=${kitToken}`;
         setShowVideoCall(true);
         
         vws.send(JSON.stringify({ 

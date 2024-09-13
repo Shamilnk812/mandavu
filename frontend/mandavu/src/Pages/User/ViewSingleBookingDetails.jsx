@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Navb from "../../Components/User/Navb";
 import Sidebar from "../../Components/User/Sidebar";
 import axios from "axios";
+import { axiosUserInstance } from "../../Utils/Axios/axiosInstance";
 import { useParams } from "react-router-dom";
 
 
@@ -17,7 +18,7 @@ export default function ShowSingleBookingDetails() {
         const fetchSingleBookingDetails = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`http://127.0.0.1:8000/api/v1/auth/show-single-booking-details/${bookingId}/`);
+                const response = await axiosUserInstance.get(`show-single-booking-details/${bookingId}/`);
                 setBookedDetails(response.data);
                 console.log('Fetched data:', response.data);
             } catch (error) {

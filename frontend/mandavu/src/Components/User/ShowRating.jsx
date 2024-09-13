@@ -1,4 +1,5 @@
 import axios from "axios"
+import { axiosUserInstance } from "../../Utils/Axios/axiosInstance";
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -13,7 +14,7 @@ export default function ShowRating({venueId}) {
 
     const fetchRatings = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/v1/auth/get-ratings/${venueId}/`)
+            const response = await axiosUserInstance.get(`get-ratings/${venueId}/`)
             setRatingData(response.data)
         } catch(error) {
             console.log(error)
@@ -23,7 +24,7 @@ export default function ShowRating({venueId}) {
 
     const fetchReviews = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/v1/auth/get-reviews/${venueId}/`)
+            const response = await axiosUserInstance.get(`get-reviews/${venueId}/`)
             setReviews(response.data)
             console.log(response.data)
         } catch(error) {

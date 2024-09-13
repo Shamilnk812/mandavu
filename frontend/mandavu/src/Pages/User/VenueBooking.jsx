@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { axiosUserInstance } from '../../Utils/Axios/axiosInstance';
 import Navb from '../../Components/User/Navb';
 import { loadStripe } from '@stripe/stripe-js';
 import { useSelector } from 'react-redux';
@@ -22,7 +23,7 @@ export default function VenueBooking() {
     useEffect(() => {
         const fetchVenueDetails = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/v1/auth/single-venue-details/${venueId}/`);
+                const response = await axiosUserInstance.get(`single-venue-details/${venueId}/`);
                 setVenue(response.data);
                 console.log(response.data)
                 setTotalAmount(response.data.price);
@@ -38,7 +39,7 @@ export default function VenueBooking() {
     useEffect(()=> {
         const fetchBookedDates = async ()=> {
             try{
-                const response = await axios.get(`http://127.0.0.1:8000/api/v1/auth/booking-details/${venueId}`);
+                const response = await axiosUserInstance.get(`booking-details/${venueId}`);
                 const bookedDatesArray = response.data.map(booking => booking.start);
                 setBookedDates(bookedDatesArray);
                 
@@ -107,7 +108,7 @@ export default function VenueBooking() {
             };
 
             try {
-                const response = await axios.post('http://127.0.0.1:8000/api/v1/auth/create-checkout-session/', updatedBookingDetails);
+                const response = await axiosUserInstance.post('create-checkout-session/', updatedBookingDetails);
 
                 const { id } = response.data;
 
@@ -169,7 +170,7 @@ export default function VenueBooking() {
         if (venue.condition === 'Both' || venue.condition === 'AC') {
             options.push(<option key="ac" value="ac">A/C</option>);
         }
-        if (venue.condition === 'Both' || venue.condition === 'NonAC') {
+        if (venue.condition === 'Both' || venue.condition === 'Non AC') {
             options.push(<option key="nonac" value="nonac">Non A/C</option>);
         }
         return options;

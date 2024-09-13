@@ -3,6 +3,7 @@ import Navb from "../../Components/User/Navb";
 import Sidebar from "../../Components/User/Sidebar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { axiosUserInstance } from "../../Utils/Axios/axiosInstance";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import AddReviewModal from "../../Components/User/AddReviewModal";
@@ -41,7 +42,7 @@ export default function ShowBookingDetails() {
    
         const fetchBookingDetails =  async ()=> {
             try{
-                const responce = await axios.get(`http://127.0.0.1:8000/api/v1/auth/show-booked-details/${userId}`);
+                const responce = await axiosUserInstance.get(`show-booked-details/${userId}`);
                 setBookedDetails(responce.data)
                 console.log(responce.data)
             }catch(error) {
@@ -77,7 +78,7 @@ export default function ShowBookingDetails() {
                 toast.error('Please enter a valid reason');
                 return;
             }
-            await axios.post(`http://127.0.0.1:8000/api/v1/auth/cancel-booking/${selectedBookingId}/`, { reason: cancelReason });
+            await axiosUserInstance.post(`cancel-booking/${selectedBookingId}/`, { reason: cancelReason });
             handleCloseModal();
             toast.success('Booking Cancelled successfully')
             // Refresh the booking details after canceling
@@ -103,7 +104,7 @@ export default function ShowBookingDetails() {
     const handleReviewSubmit = async ({ rating, reviewText }) => {
         console.log('sumittdd ',rating,reviewText)
         try {
-            await axios.post(`http://127.0.0.1:8000/api/v1/auth/add-review/`, {
+            await axiosUserInstance.post(`add-review/`, {
                 booking: selectedBookingId,
                 rating: rating,
                 review: reviewText,

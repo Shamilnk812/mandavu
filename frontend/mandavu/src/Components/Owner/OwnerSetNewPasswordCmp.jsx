@@ -3,6 +3,8 @@ import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
+import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
+
 
 export default function OwnerSetNewPasswordCmp({uidb64, token}) {
     const navigate = useNavigate();
@@ -24,7 +26,7 @@ export default function OwnerSetNewPasswordCmp({uidb64, token}) {
         onSubmit: async (values) => {
           console.log(values);
           try{
-            const response = await axios.patch('http://127.0.0.1:8000/api/v2/auth/owner-setnew-password/', values);
+            const response = await axiosOwnerInstance.patch('owner-setnew-password/', values);
             toast.success(response.data.message);
             navigate('/owner/login')
           } catch (error) {

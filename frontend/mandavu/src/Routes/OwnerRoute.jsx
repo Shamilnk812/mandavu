@@ -47,7 +47,7 @@ export default function OwnerRoute() {
             <Route path="/view-single-booking-details/:id" element={<OwnerLoginAuth> <OwnerViewSingleBookingDetails/> </OwnerLoginAuth>} />
             <Route path="/chat" element={<OwnerLoginAuth> <OwnerChat/> </OwnerLoginAuth>} />
 
-            <Route path="/details2" element={<OwnerDetails2/>}/>
+            <Route path="/details2" element={<OwnerLoginAuth> <OwnerDetails2/> </OwnerLoginAuth>}/>
 
             <Route path="/register-step-1" element={ <RegisterationStep1/> } />
             <Route path="/register-step-2" element={ <RegisterationStep2/> } />

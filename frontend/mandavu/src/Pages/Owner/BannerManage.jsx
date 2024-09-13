@@ -5,6 +5,7 @@ import RegisterAlertMessage from "../../Components/Owner/RegisterAlertMessage";
 import SuccessMessageForVenueRegister from "../../Components/Owner/SuccessVenueRegister";
 import Sidebar from "../../Components/Owner/Sidebar";
 import axios from "axios";
+import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
 
 export default function BannerManage() {
 
@@ -18,7 +19,7 @@ export default function BannerManage() {
     const fetchVenueDetails = async ()=>{
       if (ownerId) {
         try {
-          const response = await axios.get(`http://127.0.0.1:8000/api/v2/auth/venue-details/${ownerId}/`);
+          const response = await axiosOwnerInstance.get(`venue-details/${ownerId}/`);
           setVenueDetails(response.data)
           
         }catch(error){

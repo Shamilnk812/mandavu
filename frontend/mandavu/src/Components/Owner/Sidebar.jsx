@@ -12,6 +12,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
 
 
 export default function  Sidebar () {
@@ -27,7 +28,7 @@ export default function  Sidebar () {
     const handleOwnerLogout = async () =>{
         const refresh_token = localStorage.getItem('refresh_token');
         try {
-            const response = await axios.post('http://127.0.0.1:8000/api/v2/auth/logout/', 
+            const response = await axiosOwnerInstance.post('logout/', 
                 { "refresh_token": refresh_token },
                 {
                     headers: {

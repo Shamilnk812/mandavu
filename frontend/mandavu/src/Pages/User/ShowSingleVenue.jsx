@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { axiosUserInstance } from '../../Utils/Axios/axiosInstance';
 import { useParams } from 'react-router-dom';
 import Navb from '../../Components/User/Navb';
 import { Link } from 'react-router-dom';
@@ -8,13 +9,15 @@ import { useNavigate } from 'react-router-dom';
 import ShowRating from '../../Components/User/ShowRating';
 import { useChat } from '../../Utils/ChatContext/CreateChat';
 import ForumIcon from '@mui/icons-material/Forum';
+import { axiosChatInstance } from '../../Utils/Axios/axiosInstance';
+
 
 export default function ShowSingleVenueDetails() {
     const navigate = useNavigate();
     const { venueId } = useParams();
     const [venue, setVenue] = useState(null);
     const [currentIndex, setCurrentIndex] = useState(0);
-    const {handleChat} = useChat()
+    // const {handleChat} = useChat()
 
     const userId = useSelector((state) => state.user.user?.id);
     console.log('sondfdj',userId)
@@ -22,7 +25,7 @@ export default function ShowSingleVenueDetails() {
     useEffect(() => {
         const fetchVenueDetails = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/v1/auth/single-venue-details/${venueId}/`);
+                const response = await axiosUserInstance.get(`single-venue-details/${venueId}/`);
                 setVenue(response.data);
                 console.log(response.data)
             } catch (error) {
@@ -42,24 +45,24 @@ export default function ShowSingleVenueDetails() {
     };
 
 
-    // const handleChat = async (venueOwnerId) => {
-    //     try {
-    //         const response = await axios.post('http://127.0.0.1:8000/chat/add_chat_rooms/', {
-    //             user_id1: userId,
-    //             user_id2: venueOwnerId,
-    //         });
+    const handleChat = async (venueOwnerId) => {
+        try {
+            const response = await axiosChatInstance.post('add_chat_rooms/', {
+                user_id1: userId,
+                user_id2: venueOwnerId,
+            });
 
-    //         if (response.status === 200 || response.status === 201) {
-    //             const chatRoomId = response.data.id; // Assuming `id` is the field representing the chat room's ID
-    //             // navigate(`/chat/${chatRoomId}`);
-    //             navigate('/user/chat')
+            if (response.status === 200 || response.status === 201) {
+                const chatRoomId = response.data.id; // Assuming `id` is the field representing the chat room's ID
+                // navigate(`/chat/${chatRoomId}`);
+                navigate('/user/chat')
 
                 
-    //         }
-    //     } catch (error) {
-    //         console.error('Error starting chat:', error);
-    //     }
-    // }
+            }
+        } catch (error) {
+            console.error('Error starting chat:', error);
+        }
+    }
 
     if (!venue) {
         return <div>Loading...</div>;
@@ -175,7 +178,7 @@ export default function ShowSingleVenueDetails() {
                                 Book your venue
                             </Link>
                             <button 
-                            onClick={()=> handleChat(userId,venue.owner_id)}
+                            onClick={()=> handleChat(venue.owner_id)}
                             className="mt-2 bg-orange-600 text-white py-2 px-4 rounded hover:bg-orange-500 ">
                                 <ForumIcon/> Chat
                             </button>

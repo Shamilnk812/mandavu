@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import moment from 'moment'; // Import moment.js for date manipulation
 import { useSelector } from 'react-redux';
+import { axiosOwnerInstance } from '../../Utils/Axios/axiosInstance';
+
+
 
 export default function OwnerRevenueChart() {
   const venueId = useSelector((state) => state.owner?.venueId);
@@ -12,7 +15,7 @@ export default function OwnerRevenueChart() {
   
   const fetchRevenueData = async (view) => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/v2/auth/get-all-revenue', {
+      const response = await axiosOwnerInstance.get('get-all-revenue', {
         params: { 
           view,
           venue_id: venueId 

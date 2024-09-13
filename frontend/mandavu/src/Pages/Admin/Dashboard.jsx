@@ -10,6 +10,8 @@ import ShowRevenueChart from "../../Components/Common/Charts/ShowRevenueChart";
 import GroupIcon from '@mui/icons-material/Group';
 import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import AllUsersCountChart from "../../Components/Common/Charts/ShowUsersCountChart";
+import { axiosAdminInstance } from "../../Utils/Axios/axiosInstance";
+
 
 
 export default function Dashboard() {
@@ -20,7 +22,7 @@ export default function Dashboard() {
 
     const fetchBookingStatus = async()=> {
         try{
-            const response = await axios.get('http://localhost:8000/api/admin_dash/auth/get-booking-status')
+            const response = await axiosAdminInstance.get('get-booking-status')
             // console.log(response.data)
             setBookingStatus(response.data)
         }catch(error) {
@@ -31,7 +33,7 @@ export default function Dashboard() {
 
     const fetchAllUesrsCount = async()=> {
         try{
-            const response = await axios.get('http://localhost:8000/api/admin_dash/auth/get-allusers-status')
+            const response = await axiosAdminInstance.get('get-allusers-status')
             // console.log(response.data)
             setAllUsersCount(response.data)
             const tRevenue = response.data.total_revenue

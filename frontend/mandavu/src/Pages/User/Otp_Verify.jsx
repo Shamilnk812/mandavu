@@ -2,7 +2,7 @@ import { useFormik } from "formik"
 import { useNavigate } from "react-router-dom"
 import { toast } from 'react-toastify';
 import axios from 'axios';
-
+import { axiosUserInstance } from "../../Utils/Axios/axiosInstance";
 import OtpSchema from "../../Validations/User/OtpSchema";
 import { useEffect,useState } from "react";
 export default function OtpVerification() {
@@ -23,7 +23,7 @@ export default function OtpVerification() {
     
     const handleResendOtp = async () => {
       try {
-          const response = await axios.post('http://127.0.0.1:8000/api/v1/auth/resend-otp/', { email });
+          const response = await axiosUserInstance.post('resend-otp/', { email });
           toast.success(response.data.message);
           setTimeLeft(120); // Reset the timer
           setIsResendVisible(false);
@@ -40,7 +40,7 @@ export default function OtpVerification() {
         validationSchema: OtpSchema,
         onSubmit: async (values) => {
             try{
-                const response = await axios.post('http://127.0.0.1:8000/api/v1/auth/verify-otp/',{ ...values, email });
+                const response = await axiosUserInstance.post('verify-otp/',{ ...values, email });
                 toast.success(response.data.message);
                 localStorage.removeItem('email')
                 navigate('/user/login'); 

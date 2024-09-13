@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import AddVenuePhotoModal from "../../Components/Owner/AddVenuePhotoModal";
+import { axiosOwnerFormInstance,axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
 
 
 export default function VenuePhotosManagement() {
@@ -25,11 +26,13 @@ export default function VenuePhotosManagement() {
         const formData = new FormData();
         formData.append('venue_photo', values.venue_photo);
         try {
-            const response = await axios.post(`http://127.0.0.1:8000/api/v2/auth/add-venue-photo/${venueId}/`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            const response = await axiosOwnerFormInstance.post(`add-venue-photo/${venueId}/`, formData,  );
+            //     {
+            //     headers: {
+            //         'Content-Type': 'multipart/form-data'
+            //     }
+            // }
+       
             toast.success('New Venue photo added successfully');
             fetchVenuePhotos()
         } catch(error) {
@@ -40,7 +43,7 @@ export default function VenuePhotosManagement() {
 
     const fetchVenuePhotos = async () => {
         try{
-            const response = await axios.get(`http://127.0.0.1:8000/api/v2/auth/show-all-venue-photos/${venueId}/`)
+            const response = await axiosOwnerInstance.get(`show-all-venue-photos/${venueId}/`)
             setVenuePhotos(response.data)
             console.log(response.data)
         }catch(error) {
@@ -55,7 +58,7 @@ export default function VenuePhotosManagement() {
 
     const blockVenuePhoto = async (venuePhotoId) => {
         try {
-            const response = await axios.post(`http://127.0.0.1:8000/api/v2/auth/block-venue-photo/${venuePhotoId}/`);
+            const response = await axiosOwnerInstance.post(`block-venue-photo/${venuePhotoId}/`);
             toast.success('Banner image Blocked');
             fetchVenuePhotos();
         } catch (error) {
@@ -67,7 +70,7 @@ export default function VenuePhotosManagement() {
 
     const unblockVenuePhoto = async (venuePhotoId) => {
         try {
-            const response = await axios.post(`http://127.0.0.1:8000/api/v2/auth/unblock-venue-photo/${venuePhotoId}/`);
+            const response = await axiosOwnerInstance.post(`unblock-venue-photo/${venuePhotoId}/`);
             toast.success('Banner image Unblocked');
             fetchVenuePhotos();
         } catch (error) {

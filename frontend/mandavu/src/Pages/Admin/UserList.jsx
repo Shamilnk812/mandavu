@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Sidebar from "../../Components/Admin/Sidebar"
 import { toast } from "react-toastify"
+import { axiosAdminInstance } from "../../Utils/Axios/axiosInstance"
 
 
 export default function UserList() {
@@ -26,7 +27,7 @@ export default function UserList() {
 
     const fetchUserList = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/admin_dash/auth/user-list/?search=${searchTerm}`);
+            const response = await axiosAdminInstance.get(`user-list/?search=${searchTerm}`);
             console.log(response.data);
             setUserList(response.data);
         } catch (error) {
@@ -44,7 +45,7 @@ export default function UserList() {
 
     const handleBlockClick = async (uid) => {
         try{
-            const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/block-user/${uid}/`)
+            const response = await axiosAdminInstance.post(`block-user/${uid}/`)
             toast.success('User account is blocked ')
             fetchUserList()
         }catch(error) {
@@ -55,7 +56,7 @@ export default function UserList() {
 
     const handleUnblockClick = async (uid) => {
         try{
-            const response = await axios.post(`http://localhost:8000/api/admin_dash/auth/unblock-user/${uid}/`)
+            const response = await axiosAdminInstance.post(`unblock-user/${uid}/`)
             toast.success('User account is Unblock.')
             fetchUserList()
         }catch(error) {

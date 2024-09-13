@@ -2,6 +2,7 @@ import { useSelector } from "react-redux"
 import {jwtDecode} from 'jwt-decode'
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { axiosChatInstance } from "../../Utils/Axios/axiosInstance";
 
 
 export default function ChatUsersList({Chat}) {
@@ -18,8 +19,8 @@ export default function ChatUsersList({Chat}) {
         const getChatUsers = async () => {
             if (userId) {
                 try {
-                    const response = await axios.get(
-                        `http://127.0.0.1:8000/chat/chat_users/${userId}/`
+                    const response = await axiosChatInstance.get(
+                        `chat_users/${userId}/`
                     );
                     setChatUsers(response.data);
                     console.log(response.data)

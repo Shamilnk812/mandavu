@@ -1,6 +1,7 @@
 import React, { useEffect,useState } from 'react';
 import { Link,useNavigate } from 'react-router-dom';
 import axios from "axios";
+import { axiosUserInstance } from '../../Utils/Axios/axiosInstance';
 import {toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { UserLogout } from "../../Redux/Slices/User";
@@ -37,7 +38,7 @@ export default  function Navb() {
   const handleLogout = async () => {
       const refresh_token = localStorage.getItem('refresh_token');
       try {
-          const response = await axios.post('http://127.0.0.1:8000/api/v1/auth/logout/', 
+          const response = await axiosUserInstance.post('logout/', 
               { "refresh_token": refresh_token },
               {
                   headers: {

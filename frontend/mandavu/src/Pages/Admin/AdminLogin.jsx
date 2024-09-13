@@ -4,6 +4,8 @@ import { Navigate, useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 import { AdminLoginSlice } from "../../Redux/Slices/AdminSlice"
 import { useDispatch } from "react-redux";
+import { axiosAdminInstance } from "../../Utils/Axios/axiosInstance"
+
 
 
 export default function AdminLogin() {
@@ -29,7 +31,7 @@ export default function AdminLogin() {
         } 
 
         try {
-            const response = await axios.post('http://127.0.0.1:8000/api/admin_dash/auth/login/', {
+            const response = await axiosAdminInstance.post('login/', {
                 email: email,
                 password: password
             })

@@ -1,4 +1,4 @@
-import axios from "axios";
+import { axiosUserInstance } from "../../Utils/Axios/axiosInstance";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
@@ -15,7 +15,7 @@ export default function ResetPasswordRequest() {
       console.log(values);
 
       try{
-        const response = await axios.post('http://127.0.0.1:8000/api/v1/auth/password-reset-request/',values);
+        const response = await axiosUserInstance.post('password-reset-request/',values);
         toast.success(response.data.message)
       }catch(error) {
         toast.error('Failed to send password reset link.')

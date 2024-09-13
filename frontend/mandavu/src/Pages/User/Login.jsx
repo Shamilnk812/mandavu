@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom"
 import { useDispatch } from 'react-redux';
 import LoginSchema from "../../Validations/User/LoginSchema"
 import { UserLogin } from "../../Redux/Slices/User";
-import axios from "axios"
 import { toast } from 'react-toastify';
+import { axiosUserInstance } from "../../Utils/Axios/axiosInstance";
 
 
 
@@ -22,7 +22,7 @@ export default function Login() {
         onSubmit: async (values) => {
             console.log(values)
             try{
-                const response = await axios.post('http://127.0.0.1:8000/api/v1/auth/login/',values);
+                const response = await axiosUserInstance.post('login/',values);
                 console.log(response.data);  
                 const { access_token, refresh_token, email,user_id } = response.data;
 

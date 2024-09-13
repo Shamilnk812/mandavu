@@ -6,6 +6,10 @@ import AddFacilityModal2 from "../../Components/Owner/AddFacilityModal2";
 import { toast } from "react-toastify";
 import axios from "axios";
 import AddFacilitySchema from "../../Validations/Owner/AddFacilitySchema";
+import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
+
+
+
 
 export default function RegistrationStep4() {
     const [showModal, setShowModal] = useState(false);
@@ -121,7 +125,7 @@ export default function RegistrationStep4() {
     
         try {
             
-            const response = await axios.post('http://127.0.0.1:8000/api/v2/auth/register/', formData, {
+            const response = await axiosOwnerInstance.post('register/', formData, {
                 headers: {
                     'Content-Type': 'application/json',
                 },

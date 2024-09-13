@@ -3,6 +3,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { axiosUserInstance } from "../../Utils/Axios/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
 export default function UserSetNewPasswordCmp({uidb64, token}) {
@@ -25,7 +26,7 @@ export default function UserSetNewPasswordCmp({uidb64, token}) {
     onSubmit: async(values) => {
       console.log(values);
       try{
-        const response = await axios.patch('http://127.0.0.1:8000/api/v1/auth/set-new-password/',values);
+        const response = await axiosUserInstance.patch('set-new-password/',values);
         toast.success(response.data.message)
         navigate('/user/login')
       }catch(error) {

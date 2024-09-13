@@ -12,6 +12,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import ShowBookingStatusChart from "../../Components/Common/Charts/ShowBookingDetailsChart";
+import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
+
 
 
 
@@ -22,7 +24,7 @@ export default function Dashboard_Owner() {
 
   const fetchBookingStatus = async ()=> {
     try{
-      const response = await axios.get('http://127.0.0.1:8000/api/v2/auth/get-booking-status',{params:{
+      const response = await axiosOwnerInstance.get('get-booking-status',{params:{
         venue_id :venueId,
       }})
       const data = response.data

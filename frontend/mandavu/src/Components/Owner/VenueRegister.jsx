@@ -5,6 +5,7 @@ import VenueRegisterSchema from "../../Validations/Owner/VenueRegisterSchema"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 import 'react-toastify/dist/ReactToastify.css';
+import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance"
 
 
 export default function VenueRegister() {
@@ -34,7 +35,7 @@ export default function VenueRegister() {
               owner:ownerId
             }
             console.log("this is form data",formData)
-            const response = await axios.post('http://127.0.0.1:8000/api/v2/auth/register-venue/',formData)
+            const response = await axiosOwnerInstance.post('register-venue/',formData)
             console.log(response.data)
             toast.success('Your Venue successfully registerd')
             navigate('/owner/success-register')

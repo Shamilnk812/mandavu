@@ -6,6 +6,9 @@ import ShowOwnerDetailsCmp from "../../Components/Admin/ShowOwnerDetailsCmp";
 import ShowVenueDetailsCmp from "../../Components/Admin/ShowVenueDetailsCmp";
 import { toast } from "react-toastify";
 import ShowFacilitiesCmp from "../../Components/Admin/ShowFacilitiesCmp";
+import { axiosAdminInstance } from "../../Utils/Axios/axiosInstance";
+import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
+
 
 
 
@@ -19,7 +22,7 @@ export default function ShowVenueDetails() {
     useEffect(()=> {
         const fetchVenueDetails =  async ()=> {
             try{
-                const response = await axios.get(`http://localhost:8000/api/admin_dash/auth/venue-details/${venueId}/`)
+                const response = await axiosAdminInstance.get(`venue-details/${venueId}/`)
                 setOwner(response.data)
                 console.log(response.data)
             }catch(error) {
@@ -32,7 +35,7 @@ export default function ShowVenueDetails() {
     useEffect(()=> {
         const fetchFacilities = async () => {
             try{
-              const response = await axios.get(`http://localhost:8000/api/v2/auth/get-facility/${venueId}/`)
+              const response = await axiosOwnerInstance.get(`get-facility/${venueId}/`)
               setFacilities(response.data)
             }catch(error) {
                 toast.error('Failed to fetch facilities. Plase try again later')
@@ -45,7 +48,7 @@ export default function ShowVenueDetails() {
      useEffect(()=> {
         const fetchEvents = async ()=> {
             try{
-                const response = await axios.get(`http://127.0.0.1:8000/api/v2/auth/get-all-events/${venueId}/`)
+                const response = await axiosOwnerInstance.get(`get-all-events/${venueId}/`)
                 setEvents(response.data)
                 console.log(response.data)
             }catch(error) {

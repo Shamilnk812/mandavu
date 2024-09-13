@@ -7,6 +7,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import ShowFacilityDetails from "../../Components/Owner/ShowFacilities";
 import AddFacilityModal2 from "../../Components/Owner/AddFacilityModal2";
+import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
 
 
 export default function FacilitesManagement () {
@@ -23,7 +24,7 @@ export default function FacilitesManagement () {
         validationSchema:AddFacilitySchema,
         onSubmit: async (values) => {
             try{
-                const response = await axios.post(`http://127.0.0.1:8000/api/v2/auth/add-facility/${venueId}/`,values);
+                const response = await axiosOwnerInstance.post(`add-facility/${venueId}/`,values);
                 toast.success('Facility added successfully ')
                 formik.resetForm()
                 setIsModalOpen(false)
@@ -44,7 +45,7 @@ export default function FacilitesManagement () {
     const updateFacility = async (id, updatedValues) => {
         try{
             console.log(updatedValues)
-            const response = await axios.put(`http://127.0.0.1:8000/api/v2/auth/update-facility/${venueId}/`,{...updatedValues, facility_id : id})
+            const response = await axiosOwnerInstance.put(`update-facility/${venueId}/`,{...updatedValues, facility_id : id})
             console.log(response.data)
             toast.success('Facility updated successfully ')
             fetchFacilities()
@@ -72,7 +73,7 @@ export default function FacilitesManagement () {
     
     const fetchFacilities = async ()=>{
         try{
-            const response = await axios.get(`http://127.0.0.1:8000/api/v2/auth/get-facility/${venueId}/`)
+            const response = await axiosOwnerInstance.get(`get-facility/${venueId}/`)
             setFacility(response.data)
             console.log(response.data)
         }catch (error) {
@@ -83,7 +84,7 @@ export default function FacilitesManagement () {
     const blockFacilities = async (facility_id) => {
         try{
             console.log('facilliii',facility_id)
-            const response = await axios.post(`http://127.0.0.1:8000/api/v2/auth/block-facility/${venueId}/`,{facility_id})
+            const response = await axiosOwnerInstance.post(`block-facility/${venueId}/`,{facility_id})
             toast.success('Facility blocked successfully')
             fetchFacilities()
         }catch (error) {
@@ -93,7 +94,7 @@ export default function FacilitesManagement () {
 
     const unblockFacilities = async (facility_id) => {
         try{
-            const response = await axios.post(`http://127.0.0.1:8000/api/v2/auth/unblock-facility/${venueId}/`,{facility_id})
+            const response = await axiosOwnerInstance.post(`unblock-facility/${venueId}/`,{facility_id})
             toast.success('Facility unblocked successfully')
             fetchFacilities()
         }catch (error) {

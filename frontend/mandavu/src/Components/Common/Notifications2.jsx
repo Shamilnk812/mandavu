@@ -3,6 +3,11 @@ import { useSelector } from 'react-redux';
 import {jwtDecode} from 'jwt-decode';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import CampaignIcon from '@mui/icons-material/Campaign';
+import { SOCKET,notificationUrl } from '../../Utils/Axios/EndPoints';
+
+
+
+
 
 const CommonNotification = () => {
   const [notifications, setNotifications] = useState([]);
@@ -18,7 +23,7 @@ const CommonNotification = () => {
   const user_id = jwtDecode(access).user_id;
 
   useEffect(() => {
-    const ws = new WebSocket(`ws://localhost:8000/ws/notifications/${user_id}/?token=${access}`);
+    const ws = new WebSocket(`${SOCKET}notifications/${user_id}/?token=${access}`);
 
     ws.onopen = () => {
       console.log('WebSocket connected');
@@ -29,7 +34,7 @@ const CommonNotification = () => {
       console.log('Received message:', data);
 
       setNotifications((prevNotifications) => [data, ...prevNotifications]);
-      updateUnreadCount([data, ...notifications]); // Update the unread count with the new notification
+      updateUnreadCount([data, ...notifications]); 
     };
 
     ws.onclose = () => {
@@ -43,7 +48,7 @@ const CommonNotification = () => {
   
   const fetchNotifications = async () => {
     try {
-      const response = await fetch('http://localhost:8000/notification/notification-list/', {
+      const response = await fetch(`${notificationUrl}notification-list/`, {
         headers: {
           'Authorization': `Bearer ${access}`,
         },
@@ -64,7 +69,7 @@ const CommonNotification = () => {
 
   const markAsRead = async () => {
     try {
-      await fetch('http://localhost:8000/notification/notification-list/', {
+      await fetch(`${notificationUrl}notification-list/`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${access}`,

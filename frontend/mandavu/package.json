@@ -43,6 +43,7 @@
     "simple-peer": "^9.11.1",
     "styled-components": "^6.1.12",
     "sweetalert2": "^11.12.3",
+    "vercel": "^37.4.2",
     "yup": "^1.4.0",
     "zego-zim-web": "^2.9.0"
   },

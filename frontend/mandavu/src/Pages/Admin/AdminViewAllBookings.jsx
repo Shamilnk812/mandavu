@@ -5,6 +5,10 @@ import { toast } from "react-toastify";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import SearchIcon from '@mui/icons-material/Search';
+import { axiosAdminInstance } from "../../Utils/Axios/axiosInstance";
+
+
+
 
 export default function AdminViewAllBookings() {
     const [bookings, setBookings] = useState([]);
@@ -15,7 +19,7 @@ export default function AdminViewAllBookings() {
 
     const fetchAllBookings = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/admin_dash/auth/get-all-bookings?page=${currentPage}&start_date=${startDate}&end_date=${endDate}`);
+            const response = await axiosAdminInstance.get(`get-all-bookings?page=${currentPage}&start_date=${startDate}&end_date=${endDate}`);
             setBookings(response.data.results);
             setTotalPages(response.data.total_pages);
         } catch (error) {

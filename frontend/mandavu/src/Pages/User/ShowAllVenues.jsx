@@ -8,6 +8,7 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { toast } from 'react-toastify';
+import { axiosUserInstance } from '../../Utils/Axios/axiosInstance';
 
 
 export default function ShowAllVenues() {
@@ -33,7 +34,7 @@ export default function ShowAllVenues() {
 
   const fetchVenuesList = async () => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/v1/auth/venues-list/`, {
+      const response = await axiosUserInstance.get(`venues-list/`, {
         params: {
           search: searchQuery,
           page: currentPage,
@@ -60,7 +61,7 @@ export default function ShowAllVenues() {
       return; // Prevent the API call
     }
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/v1/auth/venues-list/`, {
+      const response = await axiosUserInstance.get(`venues-list/`, {
         params: {
           search: searchQuery,
           page: currentPage,

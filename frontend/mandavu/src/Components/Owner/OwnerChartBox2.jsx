@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'; // Import the icon if using MUI
 import ReviewsIcon from '@mui/icons-material/Reviews';
 import { Grid, Box } from "@mui/material";
+import { axiosUserInstance } from "../../Utils/Axios/axiosInstance";
+
 
 export default function OwnerChartBox2({ title, icon, pchart }) {
     const venueId = useSelector((state) => state.owner?.venueId);
@@ -12,7 +14,7 @@ export default function OwnerChartBox2({ title, icon, pchart }) {
 
     const fetchReviews = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/v1/auth/get-reviews/${venueId}/`);
+            const response = await axiosUserInstance.get(`get-reviews/${venueId}/`);
             setReviews(response.data);
             console.log(response.data);
         } catch (error) {

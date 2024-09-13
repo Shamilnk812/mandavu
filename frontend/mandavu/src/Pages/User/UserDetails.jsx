@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 import Sidebar from "../../Components/User/Sidebar";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { axiosUserInstance } from "../../Utils/Axios/axiosInstance";
+
+
+
 
 export default function UserDetails() {
 
@@ -25,7 +29,7 @@ export default function UserDetails() {
     useEffect(() =>{
         const fetchUserDetails = async () =>{
             try{
-                const response = await axios.get(`http://127.0.0.1:8000/api/v1/auth/user-details/${uid}/`)
+                const response = await axiosUserInstance.get(`user-details/${uid}/`)
                 console.log(response.data)
                 setUser(response.data)
             }catch(error) {
@@ -58,7 +62,7 @@ export default function UserDetails() {
             email: email || user.email
         };
         try {
-            const response = await axios.put(`http://127.0.0.1:8000/api/v1/auth/update/${uid}/`, updatedUser);
+            const response = await axiosUserInstance.put(`update/${uid}/`, updatedUser);
             console.log(response.data);
             setUser(response.data);
             toast.success('User details updated successfully');
@@ -86,7 +90,7 @@ export default function UserDetails() {
             return;
         }
         try{
-            const response = await axios.post(`http://127.0.0.1:8000/api/v1/auth/change-password/${uid}/`,{
+            const response = await axiosUserInstance.post(`change-password/${uid}/`,{
                 old_password:oldPassword,
                 new_password:newPassword
             });

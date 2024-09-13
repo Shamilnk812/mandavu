@@ -5,6 +5,8 @@ import axios from "axios";
 import {toast } from "react-toastify"
 import Facilities from "../../Components/Owner/Facilities";
 import { useEffect } from "react";
+import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
+
 
 
 export default function VenueDetails({ venueDetails }) {
@@ -42,7 +44,7 @@ export default function VenueDetails({ venueDetails }) {
     const updateVenue = async (updatedValues) => {
         console.log('updataed values',updatedValues)
         try{
-            const response = await axios.put(`http://127.0.0.1:8000/api/v2/auth/update-venue/${venueDetails.id}/`, updatedValues)
+            const response = await axiosOwnerInstance.put(`update-venue/${venueDetails.id}/`, updatedValues)
             console.log('Venue updated successfully:', response.data);
             toast.success('Venue Details Successfully updated')
             

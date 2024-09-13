@@ -5,6 +5,9 @@ import ViewSingleBookingDetailsCmp from "../../Components/Common/ViewSingleBooki
 import axios from "axios"
 import { toast } from "react-toastify"
 import { useSelector } from "react-redux"
+import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance"
+
+
 
 export default function OwnerViewSingleBookingDetails(){
     const {id} = useParams()
@@ -14,7 +17,7 @@ export default function OwnerViewSingleBookingDetails(){
 
     const fetchBookingDetails = async ()=> {
         try{
-            const response = await axios.get(`http://127.0.0.1:8000/api/v2/auth/get-single-booking-details/${id}/`);
+            const response = await axiosOwnerInstance.get(`get-single-booking-details/${id}/`);
             const bookingData = response.data.length > 0 ? response.data[0] : {};
             setBookingDetails(bookingData)
             console.log(bookingData)

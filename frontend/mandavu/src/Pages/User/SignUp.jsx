@@ -2,7 +2,7 @@ import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import SignupSchema from '../../Validations/User/SignupSchema';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import { axiosUserInstance } from '../../Utils/Axios/axiosInstance';
 
 
 
@@ -23,7 +23,7 @@ export default function SignUp() {
     onSubmit: async (values) => {
       console.log('Form submitted with values:', values);
       try {
-        const response = await axios.post('http://127.0.0.1:8000/api/v1/auth/register/', values);
+        const response = await axiosUserInstance.post('register/', values);
         localStorage.setItem('email', values.email); 
         toast.success('Account created successfully! Please check your email for the OTP.');
         navigate('/user/otp'); 

@@ -8,6 +8,11 @@ import { useNavigate } from "react-router-dom";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import SearchIcon from '@mui/icons-material/Search';
+import { axiosOwnerInstance, axiosUserInstance } from "../../Utils/Axios/axiosInstance";
+
+
+
+
 
 export default function BookingManagement() {
     const venueId = useSelector((state) => state.owner.venueId);
@@ -29,7 +34,7 @@ export default function BookingManagement() {
             return;
         }
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/v2/auth/all-booking-details/${venueId}/`, {
+            const response = await axiosOwnerInstance.get(`all-booking-details/${venueId}/`, {
                 params: {
                     start_date: startDate,
                     end_date: endDate,
@@ -88,7 +93,7 @@ export default function BookingManagement() {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`http://127.0.0.1:8000/api/v1/auth/cancel-booking/${bookingId}/`, { reason: cancelReason });
+            await axiosUserInstance.post(`cancel-booking/${bookingId}/`, { reason: cancelReason });
             handleCloseModal();
             toast.success('Booking Cancelled successfully');
             // Refresh the booking details after canceling
@@ -101,7 +106,7 @@ export default function BookingManagement() {
 
     const handleUpdateStatus = async (bookingId)=> {
         try{
-             await axios.post(`http://127.0.0.1:8000/api/v2/auth/update-booking-status/${bookingId}/`)
+             await axiosOwnerInstance.post(`update-booking-status/${bookingId}/`)
              fetchBookingDetails(startDate, endDate, currentPage);
              toast.success('Booking Completed Successfully')
 

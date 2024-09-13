@@ -11,6 +11,9 @@ import VenueDetailsEditModal from "../../Components/Owner/EditVenueDetailsModal"
 import VenueRegisterSchema from "../../Validations/Owner/VenueRegisterSchema";
 import OwnerChangePasswordModal from "../../Components/Owner/OwnerChangePasswordModal";
 import ChangePasswordSchema from "../../Validations/Owner/ChangePasswordSchema";
+import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
+
+
 
 
 export default function OwnerDetails2() {
@@ -27,7 +30,7 @@ export default function OwnerDetails2() {
     const fetchingOwnerAllDetails = async () => {
         if (!ownerId) return; // Avoid making the API call if ownerId is not available
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/v2/auth/get-owner-venue-details/${ownerId}/`);
+            const response = await axiosOwnerInstance.get(`get-owner-venue-details/${ownerId}/`);
             setOwner(response.data);
             console.log(response.data);
         } catch (error) {
@@ -70,7 +73,7 @@ export default function OwnerDetails2() {
                 return;
             }
             try {
-                await axios.put(`http://127.0.0.1:8000/api/v2/auth/update/${ownerId}/`, updatedValues);
+                await axiosOwnerInstance.put(`update/${ownerId}/`, updatedValues);
                 toast.success('Owner details updated successfully!');
                 fetchingOwnerAllDetails(); // Refresh the details after update
                 handleCloseOwnerDetailsEditModal();
@@ -108,12 +111,13 @@ export default function OwnerDetails2() {
         }, enableReinitialize: true,
         validationSchema:VenueRegisterSchema,
         onSubmit: async (updataedValues)=> {
+            console.log('updated values ',updataedValues)
             if (!formik1.dirty) { 
                 toast.warning('No changes detected. Please update venue details before submitting.');
                 return;
             }
             try{
-                const response = await axios.put(`http://127.0.0.1:8000/api/v2/auth/update-venue/${owner?.venue?.id}/`, updataedValues);
+                const response = await axiosOwnerInstance.put(`update-venue/${owner?.venue?.id}/`, updataedValues);
                 toast.success('Venue details updated successfully')
                 handleCloseVenueDetailsEditModal()
                 fetchingOwnerAllDetails()
@@ -149,7 +153,7 @@ export default function OwnerDetails2() {
             };
 
             try {
-                const response = await axios.post(`http://127.0.0.1:8000/api/v2/auth/change-password/${owner?.id}/`, payload);
+                const response = await axiosOwnerInstance.post(`change-password/${owner?.id}/`, payload);
                 // Display success message
                 handleCloseChangePasswordModal();
                 toast.success(response.data.message);
