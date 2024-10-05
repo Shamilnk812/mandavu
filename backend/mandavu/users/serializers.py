@@ -196,7 +196,7 @@ class VenuesListSerializer(serializers.ModelSerializer) :
 
     class Meta:
         model = Venue
-        fields = ['id','convention_center_name', 'price', 'images']
+        fields = ['id','convention_center_name','short_description', 'price', 'images']
 
 
 class SingleVenueDetailsSerializer(serializers.ModelSerializer) :

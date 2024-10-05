@@ -9,8 +9,14 @@ export default function OtpVerification() {
 
     const navigate = useNavigate();
     const email = localStorage.getItem('email');
-    const [timeLeft, setTimeLeft] = useState(120); // 2 minutes in seconds
+    const [timeLeft, setTimeLeft] = useState(120); 
     const [isResendVisible, setIsResendVisible] = useState(false);
+
+    useEffect(()=> {
+      if(!email) {
+        navigate('/user/login')
+      }
+    })
 
     useEffect(() => {
       if (timeLeft > 0) {

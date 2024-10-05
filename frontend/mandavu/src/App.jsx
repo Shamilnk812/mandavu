@@ -7,11 +7,14 @@ import { ToastContainer } from 'react-toastify'
 // import { WebSocketProvider } from './Utils/ChatContext/ChatContext'
 import { VideoCallWebSocketProvider } from './Utils/VideoCallContext/VideoCallContext'
 import GlobalVideoCallInvitation from './Utils/VideoCallContext/VideoCallContext'
+import CheckInternetConnection from './Utils/CheckConnection/CheckConnection'
 
 function App() {
 
 
   return (
+    <CheckInternetConnection>
+      
     <div className="min-h-screen bg-customColor7">
      <VideoCallWebSocketProvider>
      {/* <WebSocketProvider> */}
@@ -39,6 +42,8 @@ function App() {
       />
      
      </div>
+
+     </CheckInternetConnection>
   )
 }
 

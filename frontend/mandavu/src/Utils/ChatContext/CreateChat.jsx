@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { axiosChatInstance } from '../Axios/axiosInstance';
 
 const ChatContext = createContext();
 
@@ -9,7 +10,7 @@ export const ChatProvider = ({ children }) => {
 
     const handleChat = async (userId, venueOwnerId) => {
         try {
-            const response = await axios.post('http://127.0.0.1:8000/chat/add_chat_rooms/', {
+            const response = await axiosChatInstance.post('add_chat_rooms/', {
                 user_id1: userId,
                 user_id2: venueOwnerId,
             });

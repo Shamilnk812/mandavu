@@ -41,6 +41,7 @@ export default function ShowAllVenues() {
         },
       });
       setVenuesList(response.data.results);
+      console.log(response.data.results)
       setTotalPages(response.data.total_pages);
       console.log(response.data);
     } catch (error) {
@@ -91,7 +92,7 @@ export default function ShowAllVenues() {
 
       <div className="container mx-auto max-w-screen-xl px-4 py-4 border bg-customColor7">
         <div className='flex justify-center pt-5 bg-gradient-to-r from-teal-500 to-gray-800 rounded-t-lg'>
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Find Your View</h1>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Find Your Dream View</h1>
         </div>
         <div className="flex items-center justify-between py-8 px-2 bg-gradient-to-r from-teal-500 to-gray-800">
           <button
@@ -183,8 +184,8 @@ export default function ShowAllVenues() {
                     <h3 className="text-xl font-semibold">{venue.convention_center_name}</h3>
                     <p className="text-gray-600">${venue.price}</p>
                     <p className="mb-4 text-base">
-                      Some quick example text to build on the card title and make up the
-                      bulk of the card's content.
+                      {venue.short_description}
+                      
                     </p>
                     <Link to={`/user/show-single-venue/${venue.id}`} className="mt-2 inline-block bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700">
                       View & Book
