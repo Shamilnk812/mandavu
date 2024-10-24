@@ -4,6 +4,8 @@ const alphaNumericPattern = /^[a-zA-Z0-9\s]+$/;
 const positiveDigitPattern = /^[1-9]\d*$/;
 const alphabetPattern = /^[a-zA-Z\s]+$/;
 const pincodePattern = /^\d{6}$/;
+const alphaNumericWithSpecialCharsPattern = /^[a-zA-Z0-9\s.,-]+$/;
+
 
 const RegisterationStep2Schema= Yup.object({
   convention_center_name: Yup.string()
@@ -11,11 +13,11 @@ const RegisterationStep2Schema= Yup.object({
     .required('Convention center name is required'),
 
   short_description: Yup.string()
-    .matches(alphaNumericPattern, 'Short description can only contain alphanumeric characters')
+    .matches(alphaNumericWithSpecialCharsPattern, 'Short description can only contain alphanumeric characters')
     .required('Short description is required'),
 
   description: Yup.string()
-    .matches(alphaNumericPattern, 'Description can only contain alphanumeric characters')
+    .matches(alphaNumericWithSpecialCharsPattern, 'Description can only contain alphanumeric characters and - , .')
     .required('Description is required'),
 
   dining_seat_count: Yup.number()

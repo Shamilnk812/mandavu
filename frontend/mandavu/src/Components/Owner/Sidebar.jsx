@@ -201,6 +201,13 @@ export default function  Sidebar () {
                 <span className="flex-1 ms-3 whitespace-nowrap"><TableViewIcon/> Facilities </span>
               </Link>
             </li>
+            <li>
+              <Link to='/owner/booking-packages'
+                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
+              >
+                <span className="flex-1 ms-3 whitespace-nowrap"><TableViewIcon/> Packages </span>
+              </Link>
+            </li>
             {/* <li>
               <Link to='/owner/details'
                 

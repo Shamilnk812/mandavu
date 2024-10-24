@@ -12,7 +12,7 @@ from django.urls import reverse
 from .utils import send_password_reset_email
 from rest_framework.exceptions import ValidationError
 from owners.serializers import BannerDetailsSerializer,GetFacilitiesSerializer,VenueDetailsSerializer
-from owners.models import Venue
+from owners.models import Venue,Event
 
 
 class UserRegisterSerializer(serializers.ModelSerializer) :
@@ -209,6 +209,12 @@ class SingleVenueDetailsSerializer(serializers.ModelSerializer) :
         model = Venue
         fields = ['id','convention_center_name', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'address', 'latitude', 'longitude', 'images', 'facilities','owner_id']
 
+
+class SingleVenueEventsDetailsSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = Event
+        fields = '__all__'
+        
 
 
 # ============= Show Bookings ============

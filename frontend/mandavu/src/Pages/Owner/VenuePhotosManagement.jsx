@@ -99,7 +99,7 @@ export default function VenuePhotosManagement() {
                                             className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800"
                                             onClick={handleOpenModal}
                                         >
-                                            Add Banner
+                                           + Add Photo
                                         </button>
                                     </div>
                                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

@@ -99,7 +99,7 @@ export default function EventsManagement() {
                     <div className="bg-customColor8 rounded-lg shadow-lg pb-10">
                         <div>
                             <h3 className="text-2xl font-semibold py-3  text-center text-white bg-gradient-to-r from-teal-500 to-gray-800 rounded-tl-lg rounded-tr-lg">
-                                Venue Photos
+                                Events
                             </h3>
                         </div>
                         <div className="px-24 py-8">
@@ -109,7 +109,7 @@ export default function EventsManagement() {
                                             className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800"
                                             onClick={handleOpenModal}
                                         >
-                                            Add Banner
+                                            + Add Event
                                         </button>
                                     </div>
                                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

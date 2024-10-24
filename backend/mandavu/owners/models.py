@@ -85,6 +85,25 @@ class Event(models.Model):
 
     def __str__(self):
         return self.event_name
+    
+
+
+class BookingPackages(models.Model) :
+    package_name = models.CharField(max_length=225)
+    venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price_for_per_hour = models.CharField(max_length=150)
+    air_condition = models.CharField(max_length=150)
+    extra_price_for_aircondition = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True) 
+    # description = models.TextField()
+    is_active = models.BooleanField(default=True) # defaul is False
+    # is_verified = models.BooleanField(default=False)
+    # is_editable = models.BooleanField(default=False)
+    # is_rejected = models.BooleanField(default=False)
+    # rejection_reason = models.TextField(null=True,blank=True)
+    
+    def __str__(self) :
+        return self.package_name
 
 
 class VenueImage(models.Model):

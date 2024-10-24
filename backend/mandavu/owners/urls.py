@@ -35,6 +35,12 @@ urlpatterns = [
     path('get-all-events/<int:vid>/',GetAllEventsDetails.as_view(),name='get-all-events'),
     path('block-event/<int:vid>/',BlockEventView.as_view(),name='block-event'),
     path('unblock-event/<int:vid>/',UnblockEventView.as_view(),name='unblock-event'),
+    
+    path('get-all-booking-packages/<int:vid>/',GetAllBookingPackagesView.as_view(),name='get-all-booking-packages'),
+    path('add-booking-package/<int:vid>/',AddBookingPackageView.as_view(),name='add-booking-package'),
+    path('update-booking-package/<int:vid>/',UpdateBookingPackageView.as_view(),name='update-booking-package'),
+    path('block-booking-package/<int:vid>/',BlockBookingPackageView.as_view(),name='block-booking-package'),
+    path('unblock-booking-package/<int:vid>/',UnblockBookingPackagesView.as_view(),name='unblock-booking-package'),
 
     path('all-booking-details/<int:vid>/',AllBookingDetailsView.as_view(),name='all-booking-details'),
     path('get-single-booking-details/<int:b_id>/',GetSingleBookingDetailsView.as_view(),name='get-single-booking-details'),

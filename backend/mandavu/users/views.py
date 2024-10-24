@@ -276,6 +276,17 @@ class SingleVenueDetailsView(GenericAPIView) :
         venue = get_object_or_404(Venue, id=vid)
         serializer = self.serializer_class(venue, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class SingleVenueEventsDetails(GenericAPIView) :
+    serializer_class = SingleVenueEventsDetailsSerializer
+    def get(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        event = Event.objects.filter(venue=venue)
+        serializer = self.serializer_class(event, many=True, context={'request': request} )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+
 
 
 

@@ -617,7 +617,73 @@ class UnblockEventView(APIView) :
         event_obj.is_active = True
         event_obj.save()
         return Response({"message":"Event is unblocked successfully"})
-    
+
+#============== BOOKING PACKAGES ===========
+
+
+class GetAllBookingPackagesView(GenericAPIView):
+    serializer_class = BookingPackagesSerializer
+    def get(self, request, vid):
+        venue = get_object_or_404(Venue, id=vid)
+        booking_packages = BookingPackages.objects.filter(venue=venue)
+        serializer = self.serializer_class(booking_packages,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+class AddBookingPackageView(GenericAPIView) :
+    serializer_class = BookingPackagesSerializer
+
+    def post(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        data = request.data.copy()
+        data['venue'] = venue.id
+        print('finalllll',data)
+        serializer = self.serializer_class(data=data)
+        if serializer.is_valid() :
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class UpdateBookingPackageView(GenericAPIView) :
+    serializer_class = BookingPackagesSerializer
+
+    def put(self, request, vid):
+        pid= request.data['package_id']
+        venue = get_object_or_404(Venue, id=vid)
+        booking_package = get_object_or_404(BookingPackages, id=pid, venue=venue)
+        print(booking_package)
+        data = request.data.copy()
+        data['venue'] = booking_package.venue.id
+        
+        serializer = self.serializer_class(booking_package, data=data, partial=False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BlockBookingPackageView(APIView) :
+    def patch(self, request, vid) :
+        pid = request.data.get('package_id')
+        venue = get_object_or_404(Venue, id=vid)
+        booking_package_obj = get_object_or_404(BookingPackages, id=pid, venue=venue)
+        booking_package_obj.is_active = False
+        booking_package_obj.save()
+        return Response({"message":"Event is blocked successfully"},status=status.HTTP_200_OK)
+
+
+class UnblockBookingPackagesView(APIView) :
+    def patch(self, request, vid) :
+        pid = request.data.get('package_id')
+        venue = get_object_or_404(Venue, id=vid)
+        booking_package_obj = get_object_or_404(BookingPackages, id=pid, venue=venue)
+        booking_package_obj.is_active = True
+        booking_package_obj.save()
+        return Response({"message":"Event is unblocked successfully"},status=status.HTTP_200_OK)
+
+
 
 #============== BOOKING ============
 

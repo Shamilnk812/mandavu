@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Owner,Venue,Facility,Event,VenueImage
+from .models import *
 # Register your models here.
 
 
@@ -8,3 +8,4 @@ admin.site.register(Venue)
 admin.site.register(Facility)
 admin.site.register(Event)
 admin.site.register(VenueImage)
+admin.site.register(BookingPackages)

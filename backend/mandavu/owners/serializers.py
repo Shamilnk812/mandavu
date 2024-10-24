@@ -413,6 +413,51 @@ class UpdateEventSerializer(serializers.ModelSerializer) :
         return super().update(instance, validated_data)
 
 
+#============ BOOKING PACKAGES ============
+
+
+
+class BookingPackagesSerializer(serializers.ModelSerializer) :
+    class Meta:
+        model = BookingPackages
+        fields = '__all__'
+
+
+    def validate(self, attrs):
+        package_name = attrs.get('package_name')
+        price_for_per_hour = attrs.get('price_for_per_hour')
+        venue_id = attrs.get('venue')
+
+        if self.instance:
+            if self.instance.package_name.lower() == 'regular':  
+                if 'package_name' in attrs and attrs['package_name'].lower() != 'regular':
+                    raise serializers.ValidationError("You can't change the package name for the 'regular' package.")
+                if 'price_for_per_hour' in attrs and attrs['price_for_per_hour'].lower() != 'not allowed':
+                    raise serializers.ValidationError("You can't set price per hour for the 'regular' package.")
+
+        if self.instance:  
+            if BookingPackages.objects.filter(package_name__iexact=package_name, venue=venue_id).exclude(id=self.instance.id).exists():
+                raise serializers.ValidationError('This package already exists for the selected venue (case-insensitive match).')
+        else: 
+            if BookingPackages.objects.filter(package_name__iexact=package_name, venue=venue_id).exists():
+                raise serializers.ValidationError('This package already exists for the selected venue (case-insensitive match).')
+
+        return attrs
+    
+
+    def update(self, instance, validated_data):
+        if instance.package_name.lower() == 'regular':  
+            venue = instance.venue
+            
+            if 'price' in validated_data:
+                venue.price = validated_data.get('price')
+            if 'air_condition' in validated_data:
+                venue.condition = validated_data.get('air_condition')
+            venue.save()  
+        return super().update(instance, validated_data)
+
+    
+    
 # =========== booking =========
 
 

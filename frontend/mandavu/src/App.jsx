@@ -13,7 +13,7 @@ function App() {
 
 
   return (
-    <CheckInternetConnection>
+    // <CheckInternetConnection>
       
     <div className="min-h-screen bg-customColor7">
      <VideoCallWebSocketProvider>
@@ -43,7 +43,7 @@ function App() {
      
      </div>
 
-     </CheckInternetConnection>
+    //  </CheckInternetConnection>
   )
 }
 
