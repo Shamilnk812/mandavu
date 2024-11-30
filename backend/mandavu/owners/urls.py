@@ -42,6 +42,9 @@ urlpatterns = [
     path('block-booking-package/<int:vid>/',BlockBookingPackageView.as_view(),name='block-booking-package'),
     path('unblock-booking-package/<int:vid>/',UnblockBookingPackagesView.as_view(),name='unblock-booking-package'),
 
+    path('get-time-slotes/<int:vid>/',GetPackageTimeSlotes.as_view(),name='get-time-slotes'),
+    path('change_time_slote_status/<int:vid>/',BlockOrUnblockBookingPackageTimeSlote.as_view(),name='change_time_slote_status'),
+
     path('all-booking-details/<int:vid>/',AllBookingDetailsView.as_view(),name='all-booking-details'),
     path('get-single-booking-details/<int:b_id>/',GetSingleBookingDetailsView.as_view(),name='get-single-booking-details'),
     path('booking-cancelling/<int:bid>/',CancellingBookingView.as_view(),name='booking-cancelling'),

@@ -636,10 +636,27 @@ class AddBookingPackageView(GenericAPIView) :
         venue = get_object_or_404(Venue, id=vid)
         data = request.data.copy()
         data['venue'] = venue.id
-        print('finalllll',data)
+        
         serializer = self.serializer_class(data=data)
         if serializer.is_valid() :
-            serializer.save()
+            booking_package  = serializer.save()
+            
+            if booking_package.price_for_per_hour.lower() != 'not allowed':
+                time_slots = []
+                start_hour = 9  # Start time: 9 AM
+                end_hour = 21  # End time: 9 PM (21:00 in 24-hour format)
+
+                for hour in range(start_hour, end_hour):
+                    start_time = f"{hour % 12 if hour % 12 != 0 else 12} {'AM' if hour < 12 else 'PM'}"
+                    end_time = f"{(hour + 1) % 12 if (hour + 1) % 12 != 0 else 12} {'AM' if (hour + 1) < 12 else 'PM'}"
+                    # time_slots.append([f"{start_time} to {end_time}",True])
+                    time_slots.append({"start_time":start_time, "end_time":end_time, "is_active":True})
+
+                TimeSlots.objects.create(
+                        booking_package=booking_package,
+                        time_slots=time_slots
+                    )
+                    
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -683,7 +700,64 @@ class UnblockBookingPackagesView(APIView) :
         booking_package_obj.save()
         return Response({"message":"Event is unblocked successfully"},status=status.HTTP_200_OK)
 
+#============= PACKAGE TIME SLOTES ===============
 
+class GetPackageTimeSlotes(GenericAPIView):
+    serializer_class = BookingPackageTimeSlotesSerializer
+
+    def get(self, request, vid):
+        venue = get_object_or_404(Venue, id=vid)
+        package_id = request.query_params.get('packageId')
+        booking_package = get_object_or_404(BookingPackages, id=package_id,venue=venue)
+
+        time_slots = TimeSlots.objects.filter(booking_package=booking_package)
+
+        serializer = self.serializer_class(time_slots,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
+
+
+class BlockOrUnblockBookingPackageTimeSlote(APIView):
+    def put(self, request, vid):
+        venue = get_object_or_404(Venue, id=vid)
+        package_id = request.data.get('package_id')
+        time_slot_index = request.data.get('index')
+        is_active = request.data.get('is_active')
+
+        if package_id is None or time_slot_index is None or is_active is None :
+            return Response(
+                {"error": "Missing required fields: 'index' or 'is_active'"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+       
+
+        booking_package = get_object_or_404(BookingPackages, id=package_id, venue=venue)
+
+        time_slot_obj = get_object_or_404(TimeSlots, booking_package =booking_package)
+        time_slots = time_slot_obj.time_slots
+
+        if time_slot_index < 0 or time_slot_index > len(time_slots) :
+            return Response(
+                {"error": "Invalid time slot index"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        time_slots[time_slot_index]["is_active"] = is_active
+        start_time = time_slots[time_slot_index]["start_time"]
+        end_time = time_slots[time_slot_index]["end_time"]
+        time_slot_obj.time_slots = time_slots
+        time_slot_obj.save()
+
+
+        return Response(
+            {"updated_slot": {
+                    "start_time": start_time,
+                    "end_time": end_time,
+                    "is_active": is_active
+                }},status=status.HTTP_200_OK)
+        
+
+    
 
 #============== BOOKING ============
 

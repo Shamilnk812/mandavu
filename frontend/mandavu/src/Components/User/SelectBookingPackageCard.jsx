@@ -14,8 +14,8 @@ export default function SelectBookingPackagesCard({
     <div
       className={`cursor-pointer pt-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 relative ${selectedPackage?.id === bookingPackage.id
         ? bookingPackage.package_name.toLowerCase() === 'regular'
-          ? 'border-2 border-amber-500 shadow-[0_4px_10px_rgba(255,193,7,0.5)]'
-          : 'border-2 border-teal-600 shadow-[0_4px_10px_rgba(0,128,128,0.5)]'
+          ? 'border-2 border-amber-500 shadow-[0_5px_15px_rgba(255,193,7,0.5)]'
+          : 'border-2 border-teal-600 shadow-[0_4px_15px_rgba(0,128,128,0.5)]'
         : 'border border-gray-400'
         }`}
       onClick={() => handlePackageSelect(bookingPackage)}

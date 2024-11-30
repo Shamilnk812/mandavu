@@ -1,18 +1,22 @@
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ManageHistoryIcon from '@mui/icons-material/ManageHistory';
 import { useEffect, useState } from "react";
 import { useFormik } from 'formik';
 import toPascalCase from '../../Utils/Extras/ConvertToPascalCase';
 import BookingPackagesShcema from '../../Validations/Owner/BookingPackagesSchema';
 import AddBookingPackageModal from './AddBookingPackageModal';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 export default function BookingPackageCard({ bookingPackage, onUpdateBookingPackage, handleBlockBookingPackage, handleUnblockBookingPackage }) {
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [initialFormValues, setInitialFormValues] = useState(null);
   const [isAcSelected, setIsAcSelected] = useState(false);
+
+  const navigate = useNavigate()
   
 
   const formik = useFormik({
@@ -20,7 +24,7 @@ export default function BookingPackageCard({ bookingPackage, onUpdateBookingPack
       package_name: "",
       price: "",
       price_for_per_hour: "",
-      // description: "",
+      description: "",
       air_condition: "",
       extra_price_for_aircondition: ""
     },
@@ -64,7 +68,7 @@ export default function BookingPackageCard({ bookingPackage, onUpdateBookingPack
         package_name: selectedPackage.package_name,
         price: selectedPackage.price,
         price_for_per_hour: selectedPackage.price_for_per_hour,
-        // description: selectedPackage.description,
+        description: selectedPackage.description,
         air_condition: selectedPackage.air_condition,
         extra_price_for_aircondition: selectedPackage.extra_price_for_aircondition,
       };
@@ -79,7 +83,7 @@ export default function BookingPackageCard({ bookingPackage, onUpdateBookingPack
     <>
     <div
       className="bg-white shadow-lg rounded-lg overflow-hidden my-4 mx-auto w-full max-w-md relative hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
-      style={{ height: "380px" }} // Fixed height
+      style={{ height: "420px" }} // Fixed height
     >
 
     {selectedPackage?.id !== bookingPackage.id && (
@@ -135,7 +139,9 @@ export default function BookingPackageCard({ bookingPackage, onUpdateBookingPack
               <span className="font-semibold text-gray-700">Details:</span>
               <span >
               <button
-            className="bg-purple-600 text-white py-1 px-2 rounded hover:bg-purple-700 transition duration-300"
+            // className="bg-purple-600 text-white py-1 px-2 rounded hover:bg-purple-700 transition duration-300"
+            className="bg-white text-blue-600 py-1 px-2 rounded border border-blue-700 hover:bg-blue-600 hover:text-white  transition duration-300"
+
             onClick={() => handleToggleDetails(bookingPackage)}
           >
             {selectedPackage?.id === bookingPackage.id ? "Hide Details" : "View Details"}
@@ -143,13 +149,30 @@ export default function BookingPackageCard({ bookingPackage, onUpdateBookingPack
           </button>
               </span>
             </div> 
+
+            {bookingPackage.price_for_per_hour !== 'Not Allowed' && (
+            <div className="flex justify-between mb-2">
+              <span className="font-semibold text-gray-700"></span>
+              <span >
+              <button
+            className="bg-white text-purple-700 py-1 px-2 rounded border border-purple-700 hover:bg-purple-600 hover:text-white  transition duration-300"
+            onClick={() => navigate(`/owner/manage-time-slotes/${bookingPackage.id}`)}
+          >
+            Manage time slotes <ManageHistoryIcon/>
+          </button>
+              </span>
+            </div> 
+            )}
+
+
+
           </div>
         ) : (
           <div className="overflow-y-scroll max-h-80 "> 
-           
+            {/* add description  */}
             <div className="mt-4 bg-gray-100 text-gray-700 rounded-lg shadow-inner p-4  transition-all duration-500 ease-in-out transform-gpu">
               <h3 className="font-semibold mb-2 text-lg"> Package Details</h3>
-              <p className="mb-2">This is the default package for regular booking. It includes a range of basic amenities such as air conditioning, seating for up to 100 guests, a spacious dining area, and parking facilities. Ideal for small to medium-sized events, this package offers great value with flexibility. Additional services can be added upon request.</p>
+              <p className="mb-2">{bookingPackage.description}</p>
             </div>
           </div>
         )}
@@ -191,7 +214,7 @@ export default function BookingPackageCard({ bookingPackage, onUpdateBookingPack
           </>
         ) : (
           <button
-            className="bg-purple-600 text-white py-1 px-3 rounded hover:bg-purple-700 transition duration-300"
+            className="bg-white text-blue-600 py-1 px-2 rounded border border-blue-700 hover:bg-blue-600 hover:text-white  transition duration-300"
             onClick={() => handleToggleDetails(bookingPackage)}
           >
             {selectedPackage?.id === bookingPackage.id ? "Hide Details" : "View Details"}

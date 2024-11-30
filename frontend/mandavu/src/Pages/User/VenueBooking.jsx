@@ -202,7 +202,7 @@ export default function VenueBooking() {
         ));
         return selectedFacilities;
     };
-    
+     
 
     return (
         <>
@@ -430,13 +430,13 @@ export default function VenueBooking() {
                     </div>
 
                  
-                    <div className="w-full md:w-5/12 px-4">
+                     <div className="w-full md:w-5/12 px-4">
                     <div className="p-6 bg-customColor8 rounded-lg shadow-md">
                         <div className="flex items-center mb-4">
                             <img src={
                                     venue && venue.images && venue.images.length > 0
-                                        ? venue.images[0].venue_photo // Adjust this based on the actual field name in your image objects
-                                        : 'path/to/placeholder-image.jpg' // Replace with the path to a placeholder image if needed
+                                        ? venue.images[0].venue_photo 
+                                        : 'path/to/placeholder-image.jpg' 
                                 } alt="Venue" className="w-16 h-16 rounded mr-4" />
                             <h2 className="text-2xl font-semibold">Booking Summary</h2>
                         </div>
@@ -464,7 +464,7 @@ export default function VenueBooking() {
                         </div>
                         <p className="mt-2 text-teal-500 font-bold">* You only need to pay 15% of the total amount to book the venue.</p>
                     </div>
-                </div>
+                </div> 
 
 
 

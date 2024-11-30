@@ -27,7 +27,7 @@ class MessageListView(APIView):
         try:
             chat_room = ChatRooms.objects.filter(
                 Q(user1_id=user_id1, user2_id=user_id2) | Q(user1_id=user_id2, user2_id=user_id1)
-            ).first()  # Use .first() to get a single instance or None
+            ).first()  
 
             if not chat_room :
                 raise NotFound('Room not found')

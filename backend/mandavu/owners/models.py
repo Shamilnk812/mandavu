@@ -1,6 +1,8 @@
 from django.db import models
 from users.models import CustomUser
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.postgres.fields import ArrayField
+from django.db.models import JSONField
 
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
@@ -95,7 +97,7 @@ class BookingPackages(models.Model) :
     price_for_per_hour = models.CharField(max_length=150)
     air_condition = models.CharField(max_length=150)
     extra_price_for_aircondition = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True) 
-    # description = models.TextField()
+    description = models.TextField()
     is_active = models.BooleanField(default=True) # defaul is False
     # is_verified = models.BooleanField(default=False)
     # is_editable = models.BooleanField(default=False)
@@ -105,6 +107,13 @@ class BookingPackages(models.Model) :
     def __str__(self) :
         return self.package_name
 
+
+
+class TimeSlots(models.Model):
+    booking_package = models.ForeignKey(BookingPackages, on_delete=models.CASCADE)
+    time_slots = models.JSONField(blank=True, null=True, default=list)
+
+    # time_slots = ArrayField(models.CharField(max_length=150), blank=True,null=True, default=list)
 
 class VenueImage(models.Model):
     venue_photo = models.ImageField(upload_to='venue_images/', verbose_name="Venue Photo")

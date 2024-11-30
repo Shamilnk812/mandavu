@@ -70,7 +70,7 @@ export default function ChatLayout() {
 
         const socketUrl = `${SOCKET}chat/${chatWithUserId}/?token=${access}`;
         const newWs = new WebSocket(socketUrl);
-
+        
         newWs.onopen = () => {
             console.log('WebSocket connection opened');
         };

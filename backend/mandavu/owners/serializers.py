@@ -456,7 +456,27 @@ class BookingPackagesSerializer(serializers.ModelSerializer) :
             venue.save()  
         return super().update(instance, validated_data)
 
-    
+
+#============ PACKGE TIME SLOTES ==========
+
+class BookingPackageTimeSlotesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TimeSlots
+        fields = ['time_slots']
+
+    # def get_time_slots(self, obj) :
+    #     return [
+    #         {
+    #             "start_time": slot[0],
+    #             "end_time": slot[1],
+    #             "is_active": slot[2],
+    #         }
+    #         for slot in obj.time_slots
+    #     ]
+
+    # time_slots = serializers.SerializerMethodField()
+
     
 # =========== booking =========
 

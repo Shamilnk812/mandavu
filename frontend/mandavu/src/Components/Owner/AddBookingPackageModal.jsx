@@ -96,7 +96,7 @@ export default function AddBookingPackageModal({formik,isModalOpen,isAcSelected,
                   )}
               </div>
 
-              {/* <div className="mb-4">
+              <div className="mb-4">
                 <label className="block text-gray-700 font-semibold mb-2">
                   Description 
                 </label>
@@ -115,7 +115,7 @@ export default function AddBookingPackageModal({formik,isModalOpen,isAcSelected,
                     {formik.errors.description}
                   </div>
                 )}
-              </div> */}
+              </div>
 
               {/* AC / Non-AC Radio Buttons */}
               <div className="mb-4">

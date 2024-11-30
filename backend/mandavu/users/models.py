@@ -61,6 +61,7 @@ class OneTimePassword(models.Model) :
 
 class Booking(models.Model):
     booking_status = (
+        # ('Booking Pending', 'Booking Pending'),
         ('Booking Confirmed', 'Booking Confirmed'),
         ('Booking Completed', 'Booking Completed'),
         ('Booking Canceled', 'Booking Canceled')

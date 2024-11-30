@@ -15,8 +15,8 @@ const BookingPackagesShcema =  Yup.object().shape({
         (value) => value === "Not Allowed" || (Number.isInteger(+value) && +value > 0)
       )
       .required("Price per hour is required"),
-    // description: Yup.string()
-    //   .required('Description is required'),
+    description: Yup.string()
+      .required('Description is required'),
 
     air_condition: Yup.string().required("Please select an option for air conditioning"),
     extra_price_for_aircondition: Yup.number()
