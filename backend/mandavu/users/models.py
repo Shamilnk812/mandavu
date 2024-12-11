@@ -76,7 +76,12 @@ class Booking(models.Model):
     state = models.CharField(max_length=150)
     address = models.TextField()
     time = models.CharField(max_length=150)
+    times = models.JSONField(default=list)
+    dates = models.JSONField(default=list)
     date = models.DateField()
+    event_name = models.CharField(max_length=225,default="Default Event Name")
+    event_details = models.TextField(blank=True, null=True)
+    package_type = models.ForeignKey('owners.BookingPackages', on_delete=models.CASCADE, null=True, blank=True)
     condition = models.CharField(max_length=150)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     booking_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -89,8 +94,15 @@ class Booking(models.Model):
 
 class BookingDetails(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
+
     facilities = models.CharField(max_length=225)
 
+
+class TempBooking(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    venue = models.ForeignKey('owners.Venue', on_delete=models.CASCADE) 
+    data = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Review(models.Model):

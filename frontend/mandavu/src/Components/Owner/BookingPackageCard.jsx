@@ -184,7 +184,7 @@ export default function BookingPackageCard({ bookingPackage, onUpdateBookingPack
           <>
            <button
             // className={`bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-700 ${!bookingPackage.is_editable ? 'opacity-50 cursor-not-allowed' : ''}`}
-            className="bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-700"
+            className="bg-yellow-600 text-white py-1 px-3 rounded hover:bg-yellow-700 transition duration-300"
             onClick={() => handleOpenEditModal(bookingPackage)}
             // disabled={!bookingPackage.is_editable}
             >

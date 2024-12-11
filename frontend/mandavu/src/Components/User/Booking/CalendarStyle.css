@@ -1,0 +1,55 @@
+.fc .fc-button {
+    background-color: #14b8a6; 
+    color: white; 
+    border: none; 
+    border-radius: 5px; 
+    font-size: 13px; 
+    cursor: pointer;
+    transition: all 0.3s ease; 
+  }
+  
+  .fc .fc-button:hover {
+    background-color: #0f766e; 
+  }
+  
+  .fc .fc-button.fc-button-active {
+    background-color: #0f766e; 
+  }
+  
+  .fc .fc-button:disabled {
+    background-color: #e0e0e0;
+    color: #9e9e9e;
+    cursor: not-allowed;
+  }
+  
+  .fc-toolbar.fc-header-toolbar {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 10px; 
+  }
+  
+  .fc .fc-button {
+    min-height: 20px; 
+    min-width: 50px; 
+  }
+  
+  .fc-toolbar .fc-toolbar-title {
+    font-size: 25px; 
+    font-weight: 500;
+  
+    color: #0f766e; 
+    letter-spacing: 1px; 
+  }
+
+@media (max-width: 1024px) {
+    .fc-toolbar .fc-toolbar-title {
+        font-size: 20px; 
+    }
+}
+
+@media (max-width: 640px) {
+    .fc-toolbar .fc-toolbar-title {
+        font-size: 20px; 
+    }
+}

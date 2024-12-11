@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .models import OneTimePassword,Booking,BookingDetails
+from owners.models import BookingPackages
 from .utils import sent_otp_to_user,encrypt_otp,decrypt_otp
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import smart_str,DjangoUnicodeDecodeError
@@ -305,7 +306,13 @@ class CreateCheckOutSession(APIView):
         user = get_object_or_404(User, id=user_id)
         venue = get_object_or_404(Venue, id=venue_id)
 
-        booking_details = request.data
+        temp_booking = TempBooking.objects.create(
+            user=user,
+            venue=venue,
+            data=request.data
+        )
+
+        # booking_details = request.data
 
         try:
             checkout_session = stripe.checkout.Session.create(
@@ -326,7 +333,7 @@ class CreateCheckOutSession(APIView):
                 success_url=settings.SITE_URL + '?success=true',
                 cancel_url=settings.SITE_URL + '?canceled=true',
                  metadata={
-                    'booking_details': json.dumps(booking_details)  # Send all request data as metadata
+                    'temp_booking_id': temp_booking.id   # Send all request data as metadata
                 }
             )
             return Response({'id': checkout_session.id})
@@ -359,23 +366,30 @@ def strip_webhook_view(request) :
 
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        booking_details = json.loads(session['metadata']['booking_details']) 
+        temp_booking_id = json.loads(session['metadata']['temp_booking_id']) 
+
+        temp_booking = get_object_or_404(TempBooking, id=temp_booking_id)
+
+        booking_details = temp_booking.data
+
+        booking_package_id = booking_details['bookingPackage']
+        booking_package = get_object_or_404(BookingPackages, id=booking_package_id)
         
-        user_id  = booking_details['userId']
-        venue_id = booking_details['venueId']
-        date_str = booking_details['date']
-        user = get_object_or_404(User, id=user_id)
-        venue = get_object_or_404(Venue, id=venue_id)
+        # user_id  = booking_details['userId']
+        # venue_id = booking_details['venueId']
+        # date_str = booking_details['date']
+        # user = get_object_or_404(User, id=user_id)
+        # venue = get_object_or_404(Venue, id=venue_id)
 
         try:
-            date = datetime.strptime(date_str, '%Y-%m-%d').date()  # Adjust the format if necessary
+            date = datetime.strptime(booking_details['date'], '%Y-%m-%d').date()  # Adjust the format if necessary
         except ValueError:
             return Response(status=400)  # Invalid date format
 
 
         booking = Booking.objects.create(
-            user=user,  # Set to None if user info is not available
-            venue=venue,
+            user=temp_booking.user,  # Set to None if user info is not available
+            venue=temp_booking.venue,
             name=booking_details['fullName'],  # Data from frontend
             email=booking_details['email'],
             phone=booking_details['phoneNumber'],
@@ -388,21 +402,61 @@ def strip_webhook_view(request) :
             condition=booking_details['airConditioning'],
             total_price=booking_details['totalAmount'],
             booking_amount=booking_details['bookingAmount'],  # Assuming 15% booking amount
-            payment_intent_id=session['payment_intent'] 
+            payment_intent_id=session['payment_intent'] ,
+            times = booking_details['times'],
+            dates = booking_details['dates'],
+            event_name = booking_details['eventName'],
+            event_details = booking_details['eventDetails'],
+            package_type = booking_package
             
         )
-
-        facilities = booking_details.get('facilities', [])
-        for facility in facilities:
-            # facility_str = f"{facility['facility']} - {facility['price']}"
-            BookingDetails.objects.create(
-                booking=booking,
-                facilities=facility
-            )
+        temp_booking.delete()
+        # facilities = booking_details.get('facilities', [])
+        # for facility in facilities:
+        #     # facility_str = f"{facility['facility']} - {facility['price']}"
+        #     BookingDetails.objects.create(
+        #         booking=booking,
+        #         facilities=facility
+        #     )
 
         print('Booking created successfully with facilities', session)
 
     return HttpResponse(status=200)    
+
+
+
+#================== Boooking 2 ===========
+
+
+class GetBookedDates(APIView):
+    def get(self, request, vid):
+        venue = get_object_or_404(Venue, id=vid)
+        bookings = Booking.objects.filter(venue=venue, status="Booking Confirmed")
+        booking_package = request.query_params.get("booking_package")  # Use query params
+
+        if booking_package == "regular":
+            # Scenario 1: Fetch only dates
+            booked_dates = bookings.values_list("date", flat=True)
+            result = [{"date": date} for date in booked_dates]
+        else:
+            # Scenario 2: Fetch dates with filtered time slots
+            booked_dates = []
+            for booking in bookings:
+                if booking.times:
+                    filtered_times = [
+                        time for time in booking.times if time not in ["morning", "evening", "full day"]
+                    ]
+                    slot_count = len(filtered_times)
+
+                    booked_dates.append({
+                        "date": booking.date,
+                        "booked_time_slots_count": slot_count,
+                    })
+            result = booked_dates
+
+        return Response(result, status=status.HTTP_200_OK)
+             
+
 
 
 

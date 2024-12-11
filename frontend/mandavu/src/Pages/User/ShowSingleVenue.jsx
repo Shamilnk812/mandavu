@@ -229,12 +229,15 @@ export default function ShowSingleVenueDetails() {
                         </div>
 
                         <div className="flex justify-center md:justify-end px-4 md:px-8 pb-5 gap-2">
-                        {/* <button onClick={()=>setIsEventModalOpen(true)} className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800">
+                        <button onClick={()=>setIsEventModalOpen(true)} className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800">
                             Book your venue
-                        </button> */}
-                        <Link to={`/user/venue-booking/${venue.id}`} className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800">
+                        </button>
+                        {/* <Link to={`/user/venue-booking/${venue.id}`} className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800">
                             Book your venue
-                        </Link>
+                        </Link> */}
+                        {/* <Link to={`/user/venue-booking-step1/${venue.id}`} className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800">
+                            Book your venue
+                        </Link> */}
                         <button
                             onClick={() => handleChat(venue.owner_id)}
                             className="mt-2 bg-orange-600 text-white py-2 px-4 rounded hover:bg-orange-500"

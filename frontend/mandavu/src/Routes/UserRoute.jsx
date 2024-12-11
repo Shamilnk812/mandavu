@@ -20,6 +20,8 @@ import UserChat from "../Pages/User/UserChat";
 import ResetPasswordRequest from "../Pages/User/ResetPasswordRequest";
 import UserSetNewPassword from "../Pages/User/UserSetNewPassword";
 import { ChatProvider } from "../Utils/ChatContext/CreateChat";
+import VenueBookingStep1 from "../Pages/User/VenueBookingStep1";
+import VenueBookingStep2 from "../Pages/User/VenueBookingStep2";
 // import ResetPasswordConfirm from "../Pages/User/ResetPasswordConfirm";
 
 export default function UserRoute() {
@@ -41,6 +43,8 @@ export default function UserRoute() {
             <Route path="/show-all-venues" element={ <UserLoginAuth> <ShowAllVenues/> </UserLoginAuth>} />
             <Route path="/show-single-venue/:venueId" element={ <UserLoginAuth> <ShowSingleVenueDetails/> </UserLoginAuth>} />
             <Route path="/venue-booking/:venueId" element={ <UserLoginAuth> <VenueBooking/> </UserLoginAuth>} />
+            <Route path="/venue-booking-step1/:venueId" element={ <UserLoginAuth> <VenueBookingStep1/> </UserLoginAuth>} />
+            <Route path="/venue-booking-step2/:venueId" element={ <UserLoginAuth> <VenueBookingStep2/> </UserLoginAuth>} />
             <Route path="/view-slot/:venueId" element={ <UserLoginAuth> <ViewSlote/> </UserLoginAuth>} />
             <Route path="/chat" element={ <UserLoginAuth> <UserChat/> </UserLoginAuth>} />
 

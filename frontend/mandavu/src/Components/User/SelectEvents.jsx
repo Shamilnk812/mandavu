@@ -4,14 +4,20 @@ import { toast } from "react-toastify"
 import { motion, AnimatePresence } from 'framer-motion';
 import SelectBookingPackagesCard from "./SelectBookingPackageCard";
 import EventCard from "./EventCard";
+import { useDispatch } from "react-redux";
+import { setBookingDetails } from "../../Redux/Slices/User";
+import { useNavigate } from "react-router-dom";
+
 
 
 export default function SelectEventsModal({ venueId, isEventModalOpen, handleCloseEventModal }) {
 
-  const [events, setEvents] = useState([])
-  const [packages, setPackages] = useState([])
+  const [events, setEvents] = useState([]);
+  const [packages, setPackages] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedPackage, setSelectedPackage] = useState('');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   // get-all-booking-packages
   useEffect(() => {
     const fetchEventsDetails = async () => {
@@ -49,9 +55,11 @@ export default function SelectEventsModal({ venueId, isEventModalOpen, handleClo
   };
 
   const handleBooking = () => {
+    
+    dispatch(setBookingDetails({selectedEvent,selectedPackage}))
     console.log("Booking event:", selectedEvent, "with package:", selectedPackage);
-    // Add your booking logic here
     handleCloseEventModal();
+    navigate(`/user/venue-booking-step1/${venueId}`)
   };
 
   if (!isEventModalOpen) return null;

@@ -403,7 +403,7 @@ export default function VenueBooking() {
 
 
 
-{/* 
+                               {/* 
                                 <div className="flex flex-wrap -mx-3 mb-4">
                                     <div className="w-full px-3">
                                         
@@ -430,7 +430,7 @@ export default function VenueBooking() {
                     </div>
 
                  
-                     <div className="w-full md:w-5/12 px-4">
+                    <div className="w-full md:w-5/12 px-4">
                     <div className="p-6 bg-customColor8 rounded-lg shadow-md">
                         <div className="flex items-center mb-4">
                             <img src={
