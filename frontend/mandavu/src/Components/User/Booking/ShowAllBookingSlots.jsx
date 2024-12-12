@@ -5,7 +5,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import "./CalendarStyle.css"
+import "./Styles/CalendarStyle.css"
 
 export default function ViewAllBookingSlots({ venueId, showCalendar, setShowCalendar }) {
 

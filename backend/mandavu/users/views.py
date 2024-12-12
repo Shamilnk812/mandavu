@@ -428,6 +428,39 @@ def strip_webhook_view(request) :
 #================== Boooking 2 ===========
 
 
+# class GetBookedDates(APIView):
+#     def get(self, request, vid):
+#         venue = get_object_or_404(Venue, id=vid)
+#         bookings = Booking.objects.filter(venue=venue, status="Booking Confirmed")
+#         booking_package = request.query_params.get("booking_package")  # Use query params
+
+#         if booking_package == "regular":
+#             # Scenario 1: Fetch only dates
+#             booked_dates = bookings.values_list("date", flat=True)
+#             result = [{"date": date} for date in booked_dates]
+#         else:
+#             # Scenario 2: Fetch dates with filtered time slots
+#             booked_dates = []
+#             for booking in bookings:
+#                 if booking.times:
+#                     filtered_times = [
+#                         time for time in booking.times if time not in ["Morning", "Evening", "Full Day"]
+#                     ]
+#                     slot_count = len(filtered_times)
+                    
+#                     if slot_count > 0 :
+#                         booked_dates.append({
+#                             "date": booking.date,
+#                             "booked_time_slots_count": slot_count,
+#                         })
+#             result = booked_dates
+
+#         return Response(result, status=status.HTTP_200_OK)
+             
+
+
+
+
 class GetBookedDates(APIView):
     def get(self, request, vid):
         venue = get_object_or_404(Venue, id=vid)
@@ -435,29 +468,50 @@ class GetBookedDates(APIView):
         booking_package = request.query_params.get("booking_package")  # Use query params
 
         if booking_package == "regular":
-            # Scenario 1: Fetch only dates
-            booked_dates = bookings.values_list("date", flat=True)
-            result = [{"date": date} for date in booked_dates]
-        else:
-            # Scenario 2: Fetch dates with filtered time slots
-            booked_dates = []
-            for booking in bookings:
-                if booking.times:
-                    filtered_times = [
-                        time for time in booking.times if time not in ["morning", "evening", "full day"]
-                    ]
-                    slot_count = len(filtered_times)
+            # Scenario 1: Fetch all dates
+            # booked_dates = bookings.values_list("dates", flat=True)  # Fetch from `dates` field
+            booked_dates = bookings.filter(package_type__package_name="regular").values_list("dates", flat=True)
+            flattened_dates = [date for sublist in booked_dates for date in sublist]  # Flatten nested lists
+            unique_dates = list(set(flattened_dates))  # Remove duplicates
+            result = [{"date": date} for date in unique_dates]
+        # else:
+        #     # Scenario 2: Fetch dates with aggregated time slot counts
+        #     date_slot_count = {}
+        #     for booking in bookings:
+        #         if booking.dates and booking.times:
+        #             for date in booking.dates:
+        #                 if date not in date_slot_count:
+        #                     date_slot_count[date] = 0
+        #                 # Increment by the count of time slots
+        #                 date_slot_count[date] += len(booking.times)
 
-                    booked_dates.append({
-                        "date": booking.date,
-                        "booked_time_slots_count": slot_count,
-                    })
-            result = booked_dates
+        #     result = [
+        #         {"date": date, "booked_time_slots_count": count}
+        #         for date, count in date_slot_count.items()
+        #     ]
+        else :
+            date_slot_count = {}
+            for booking in bookings:
+                if booking.dates and booking.times:
+                    # Filter out unwanted time slots
+                    filtered_times = [
+                        time for time in booking.times if time not in ["Morning", "Evening", "Full Day"]
+                    ]
+
+                    # Only process bookings with remaining valid time slots
+                    if len(filtered_times) > 0:
+                        for date in booking.dates:
+                            if date not in date_slot_count:
+                                date_slot_count[date] = 0
+                            # Increment by the count of filtered time slots
+                            date_slot_count[date] += len(filtered_times)
+
+            result = [
+                {"date": date, "booked_time_slots_count": count}
+                for date, count in date_slot_count.items()
+            ]
 
         return Response(result, status=status.HTTP_200_OK)
-             
-
-
 
 
 

@@ -6,13 +6,41 @@ import { axiosOwnerInstance } from "../../../Utils/Axios/axiosInstance";
 import { format, addDays } from "date-fns";
 import { toast } from "react-toastify"
 import BookingStatusColors from "./BookingStatusColors";
+import "./Styles/DatePickerStyle.css"
 
 
-export default function SelectDates({ venueId, selectedPackage, isRangeMode, setSelectedDates, selectedDates, datePickerRef, setShowTimeSlots, setPackageTimeSlots,allBookedDates }) {
+export default function SelectDates({ venueId, selectedPackage, isRangeMode, setSelectedDates, selectedDates, datePickerRef, setShowTimeSlots, setPackageTimeSlots, bookedDatesForAlternativePackage, bookedDatesForRegularPackage }) {
 
 
 
-    const bookedDates = allBookedDates.map(item => item.date)
+
+    const bookedDates = bookedDatesForRegularPackage.map(item => item.date)
+
+
+    // let low = [];
+    let mediumAvailabilityDates = [];
+    let almostFullyBookedDates = [];
+    let completelyBookedDates = [];
+
+
+    console.log("")
+    // Categorize the dates for alternative packages
+    if (bookedDatesForAlternativePackage) {
+        bookedDatesForAlternativePackage.forEach(item => {
+            const { date, booked_time_slots_count } = item;
+
+            // if (booked_time_slots_count >= 0 && booked_time_slots_count <= 4) {
+            //     low.push(date);
+            // }
+            if (booked_time_slots_count >= 4 && booked_time_slots_count <= 8) {
+                mediumAvailabilityDates.push(date);
+            } else if (booked_time_slots_count > 0 && booked_time_slots_count <= 11) {
+                almostFullyBookedDates.push(date);
+            } else if (booked_time_slots_count === 12) {
+                completelyBookedDates.push(date);
+            }
+        });
+    }
 
 
 
@@ -44,6 +72,17 @@ export default function SelectDates({ venueId, selectedPackage, isRangeMode, set
             // const formattedDates = dates.map((date) => format(new Date(date), "yyyy-MM-dd"));
             // setSelectedDates(formattedDates);
         }
+        else {
+            // Allow only one date
+            const singleDate = Array.isArray(dates) ? dates[0] : dates;
+            const formattedDate = singleDate ? format(new Date(singleDate), "yyyy-MM-dd") : null;
+            setSelectedDates(formattedDate ? [formattedDate] : []);
+
+            if (singleDate) {
+                datePickerRef.current.closeCalendar();
+            }
+        }
+
 
         fetchTimeSoltesForPackge();
 
@@ -72,7 +111,7 @@ export default function SelectDates({ venueId, selectedPackage, isRangeMode, set
         <>
             <div className="flex flex-wrap -mx-3 mb-4 mt-12">
 
-               {/* Section for showing booking status colors */}
+                {/* Section for showing booking status colors */}
                 <BookingStatusColors />
 
                 <div className="w-full md:w-1/2 px-3 mb-3 md:mb-0">
@@ -106,11 +145,41 @@ export default function SelectDates({ venueId, selectedPackage, isRangeMode, set
                                             opacity: 0.7,
                                             textDecoration: "line-through",
                                         },
-                                        
-                                       
+
+
                                     };
                                 }
-                                return {}; // Default behavior for other dates
+                                if (mediumAvailabilityDates.includes(formattedDate)) {
+                                    return {
+                                        style: {
+                                            backgroundColor: "green",
+                                            opacity: 0.7,
+                                            color: "white",
+                                        }
+                                    }
+                                }
+                                if (almostFullyBookedDates.includes(formattedDate)) {
+                                    return {
+                                        style: {
+                                            backgroundColor: "orange",
+                                            opacity: 0.7,
+                                            color: "white",
+                                        }
+                                    }
+                                }
+                                if (completelyBookedDates.includes(formattedDate)) {
+                                    return {
+                                        disabled: true,
+                                        style: {
+                                            backgroundColor: "red",
+                                            color: "white",
+                                            textDecoration: "line-through",
+                                        }
+                                    }
+                                }
+
+
+                                return {}; 
                             }}
 
 
@@ -118,7 +187,7 @@ export default function SelectDates({ venueId, selectedPackage, isRangeMode, set
                         <button
                             onClick={() => datePickerRef.current.openCalendar()}
                             className="custom-button"
-                            style={{ marginLeft: "4px" }} 
+                            style={{ marginLeft: "4px" }}
                         >
                             <CalendarMonthIcon />
                         </button>

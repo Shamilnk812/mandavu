@@ -32,7 +32,7 @@ export default function SelectAirConditioningSection({selectedPackage,setAirCond
             <div className="flex flex-wrap -mx-3 mb-4 mt-2">
                 <div className="w-full md:w-1/2 px-3">
                     <label className="block text-gray-700 text-sm font-bold mb-2">
-                        Booking Status
+                      Select Air-Conditioning
                     </label>
                     <div className="flex items-center space-x-12 mt-3">
                         {/* A/C Radio Button */}

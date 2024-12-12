@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import { useSelector } from "react-redux"
 import ViewAllBookingSlots from "./ShowAllBookingSlots"
 import "react-multi-date-picker/styles/colors/teal.css"
-import "./DatePicker/DatePickerStyle.css"
+// import "./DatePicker/DatePickerStyle.css"
 import { toast } from "react-toastify"
 import { axiosUserInstance } from "../../../Utils/Axios/axiosInstance"
 import SelectDates from "./SelectDates"
@@ -18,14 +18,15 @@ import SelectAdditionalFacilitiesSection from "./SelectAdditionalFacilitiesSecti
 export default function BookingFormForDateAndTime({ venueId, setSelectedDates, selectedDates, selectedTimeSlot, setSelectedTimeSlot, airConditionSelection, setAirConditionSelection, facilities, selectedFacilities, setSelectedFacilities, totalAmount, setTotalAmount, setAdvanceAmount }) {
 
 
-    console.log("Child total amount", totalAmount)
+    console.log(facilities)
 
     const selectedPackage = useSelector((state) => state.user.selectedPackage)
     const isRangeMode = selectedPackage?.price_for_per_hour.toLowerCase() === "not allowed";
 
     const datePickerRef = useRef()
     const [showCalendar, setShowCalendar] = useState(true);
-    const [bookedDates, setBookedDates] = useState([])
+    const [bookedDatesForRegularPackage, setBookedDatesForRegularPackage] = useState([])
+    const [bookedDatesForAlternativePackage, setBookedDatesForAlternativePackage] = useState([])
     const [packageTimeSlots, setPackageTimeSlots] = useState([])
     const [showTimeSlots, setShowTimeSlots] = useState(false);
 
@@ -39,7 +40,13 @@ export default function BookingFormForDateAndTime({ venueId, setSelectedDates, s
                 const response = await axiosUserInstance.get(`/get-booked-dates/${venueId}/`, {
                     params: { booking_package: bookingPackage }
                 });
-                setBookedDates(response.data);
+                
+                if (bookingPackage == 'regular') {
+                    setBookedDatesForRegularPackage(response.data)
+                }else {
+                    setBookedDatesForAlternativePackage(response.data);
+                }
+
                 console.log("Fetched booked dates:", response.data);
             } catch (error) {
                 console.error("Error fetching booked dates:", error);
@@ -49,6 +56,11 @@ export default function BookingFormForDateAndTime({ venueId, setSelectedDates, s
 
         fetchBookedDates();
     }, [venueId, selectedPackage]);
+
+
+    const hasPaidActiveFacilities = facilities.some(
+        (facility) => facility.is_active && facility.price !== "FREE"
+    );
 
 
 
@@ -81,7 +93,8 @@ export default function BookingFormForDateAndTime({ venueId, setSelectedDates, s
                         selectedPackage={selectedPackage} 
                         setPackageTimeSlots={setPackageTimeSlots} 
                         setShowTimeSlots={setShowTimeSlots} 
-                        allBookedDates={bookedDates}
+                        bookedDatesForRegularPackage={bookedDatesForRegularPackage}
+                        bookedDatesForAlternativePackage={bookedDatesForAlternativePackage}
                     />
 
 
@@ -111,6 +124,7 @@ export default function BookingFormForDateAndTime({ venueId, setSelectedDates, s
 
 
                     {/* Section for select Additional Facilities */}
+                    {hasPaidActiveFacilities && (
                     <SelectAdditionalFacilitiesSection 
                         facilities={facilities} 
                         selectedFacilities={selectedFacilities} 
@@ -119,6 +133,7 @@ export default function BookingFormForDateAndTime({ venueId, setSelectedDates, s
                         setTotalAmount={setTotalAmount} 
                         setAdvanceAmount={setAdvanceAmount} 
                     />
+                    )}
 
 
                 </div>

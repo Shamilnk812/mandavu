@@ -5,11 +5,11 @@ export default function BookingStatusColors() {
         <>
 
             {/* Showing staus   */}
-            <div className="w-full md:w-1/2 px-3">
+            <div className="w-full md:w-1/2 px-3 mb-4 ">
                 <label className="block text-gray-700 text-sm font-bold mb-2">
                     Booking Status
                 </label>
-                <div className="flex flex-wrap gap-4 mt-4">
+                <div className="flex flex-wrap gap-4 mt-2">
                     {/* Booked */}
                     <div className="flex items-center space-x-2">
                         <div className="w-4 h-4 bg-purple-500"></div>

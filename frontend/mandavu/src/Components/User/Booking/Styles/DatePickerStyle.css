@@ -1,0 +1,36 @@
+.custom-input {
+    appearance: none;
+    display: block;
+    width: 100%;
+    background-color: #f7fafc; /* Corresponding to bg-customColor7 */
+    color: #4a5568; /* Corresponding to text-gray-700 */
+    border: 1px solid #cbd5e0; /* Default Tailwind border color */
+    border-radius: 0.5rem; /* Rounded-lg */
+    padding: 8px 16px; /* py-3 px-4 */
+    line-height: 1.5; /* leading-tight */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .custom-input:focus {
+    outline: 2px solid #14b8a6; /* Corresponding to focus:outline-teal-500 */
+    background-color: #ffffff; /* Corresponding to focus:bg-white */
+  }
+  
+
+
+.custom-button {
+    background-color: #14b8a6; 
+    color: white;
+    border-radius: 0.5rem;
+    padding: 0 10px; 
+    height: 40px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+  
+.custom-button:hover {
+    background-color: #0f766e; 
+  }
+  

@@ -207,7 +207,7 @@ class SingleVenueDetailsSerializer(serializers.ModelSerializer) :
 
     class Meta:
         model = Venue
-        fields = ['id','convention_center_name', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'address', 'latitude', 'longitude', 'images', 'facilities','owner_id']
+        fields = ['id','convention_center_name', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'address', 'latitude', 'longitude', 'images', 'facilities','owner_id','terms_and_conditions']
 
 
 class SingleVenueEventsDetailsSerializer(serializers.ModelSerializer) :
