@@ -40,10 +40,10 @@ export default function BookingFormForDateAndTime({ venueId, setSelectedDates, s
                 const response = await axiosUserInstance.get(`/get-booked-dates/${venueId}/`, {
                     params: { booking_package: bookingPackage }
                 });
-                
+
                 if (bookingPackage == 'regular') {
                     setBookedDatesForRegularPackage(response.data)
-                }else {
+                } else {
                     setBookedDatesForAlternativePackage(response.data);
                 }
 
@@ -74,65 +74,80 @@ export default function BookingFormForDateAndTime({ venueId, setSelectedDates, s
                     </h2>
 
                     {/*Section for  view calendar  */}
-                    <ViewAllBookingSlots 
-                        venueId={venueId} 
-                        showCalendar={showCalendar} 
-                        setShowCalendar={setShowCalendar} 
-                    />
-
-
-
-
-                    {/* Section for selcting dates */}
-                    <SelectDates 
-                        venueId={venueId} 
-                        isRangeMode={isRangeMode} 
-                        setSelectedDates={setSelectedDates} 
-                        selectedDates={selectedDates} 
-                        datePickerRef={datePickerRef} 
-                        selectedPackage={selectedPackage} 
-                        setPackageTimeSlots={setPackageTimeSlots} 
-                        setShowTimeSlots={setShowTimeSlots} 
+                    <ViewAllBookingSlots
+                        venueId={venueId}
+                        showCalendar={showCalendar}
+                        setShowCalendar={setShowCalendar}
+                        selectedPackage={selectedPackage}
                         bookedDatesForRegularPackage={bookedDatesForRegularPackage}
                         bookedDatesForAlternativePackage={bookedDatesForAlternativePackage}
                     />
 
 
 
+                    <div className="flex flex-wrap -mx-3 mb-4 mt-12">
+
+                        {/* Section for selcting dates */}
+                        <SelectDates
+                            venueId={venueId}
+                            isRangeMode={isRangeMode}
+                            setSelectedDates={setSelectedDates}
+                            selectedDates={selectedDates}
+                            datePickerRef={datePickerRef}
+                            selectedPackage={selectedPackage}
+                            setPackageTimeSlots={setPackageTimeSlots}
+                            setShowTimeSlots={setShowTimeSlots}
+                            bookedDatesForRegularPackage={bookedDatesForRegularPackage}
+                            bookedDatesForAlternativePackage={bookedDatesForAlternativePackage}
+                            packagePrice={selectedPackage?.price}
+                            setAdvanceAmount={setAdvanceAmount}
+                            setTotalAmount={setTotalAmount}
+                            totalAmount={totalAmount}
+                        />
+
+
+                        <SelectAirConditioningSection
+                            selectedPackage={selectedPackage}
+                            airConditionSelection={airConditionSelection}
+                            setAirConditionSelection={setAirConditionSelection}
+                            setAdvanceAmount={setAdvanceAmount}
+                            setTotalAmount={setTotalAmount}
+                            totalAmount={totalAmount}
+                        />
+
+                    </div>
+
+
 
                     {/* Section for selecting time slots */}
-                    <SelectTimeSlotsSection 
-                        packageTimeSlots={packageTimeSlots} 
-                        showTimeSlots={showTimeSlots} 
-                        selectedTimeSlot={selectedTimeSlot} 
-                        setSelectedTimeSlot={setSelectedTimeSlot} 
+                    <SelectTimeSlotsSection
+                        venueId={venueId}
+                        packageTimeSlots={packageTimeSlots}
+                        showTimeSlots={showTimeSlots}
+                        selectedTimeSlot={selectedTimeSlot}
+                        setSelectedTimeSlot={setSelectedTimeSlot}
+                        selectedDates={selectedDates}
+                        packageName={selectedPackage?.package_name}
+                        packagePrice={selectedPackage?.price}
+                        setAdvanceAmount={setAdvanceAmount}
+                        setTotalAmount={setTotalAmount}
+                        totalAmount={totalAmount}
+
                     />
 
-
-
-
-                    {/* Section for selecting air-conditioning options */}
-                    <SelectAirConditioningSection 
-                        selectedPackage={selectedPackage} 
-                        airConditionSelection={airConditionSelection} 
-                        setAirConditionSelection={setAirConditionSelection} 
-                        setAdvanceAmount={setAdvanceAmount} 
-                        setTotalAmount={setTotalAmount} 
-                        totalAmount={totalAmount} 
-                    />
 
 
 
                     {/* Section for select Additional Facilities */}
-                    {hasPaidActiveFacilities && (
-                    <SelectAdditionalFacilitiesSection 
-                        facilities={facilities} 
-                        selectedFacilities={selectedFacilities} 
-                        setSelectedFacilities={setSelectedFacilities} 
-                        totalAmount={totalAmount} 
-                        setTotalAmount={setTotalAmount} 
-                        setAdvanceAmount={setAdvanceAmount} 
-                    />
+                    {hasPaidActiveFacilities && selectedPackage?.package_name.toLowerCase() === "regular" && (
+                        <SelectAdditionalFacilitiesSection
+                            facilities={facilities}
+                            selectedFacilities={selectedFacilities}
+                            setSelectedFacilities={setSelectedFacilities}
+                            totalAmount={totalAmount}
+                            setTotalAmount={setTotalAmount}
+                            setAdvanceAmount={setAdvanceAmount}
+                        />
                     )}
 
 

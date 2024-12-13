@@ -1,42 +1,70 @@
 import { useState, useEffect } from "react"
-import { axiosUserInstance } from "../../../Utils/Axios/axiosInstance"
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import "./Styles/CalendarStyle.css"
+import BookingStatusColors from "./BookingStatusColors";
 
-export default function ViewAllBookingSlots({ venueId, showCalendar, setShowCalendar }) {
+export default function ViewAllBookingSlots({ venueId, showCalendar, setShowCalendar, selectedPackage, bookedDatesForRegularPackage, bookedDatesForAlternativePackage }) {
 
-    const [events, setEvents] = useState([])
 
-    const fetchBookingDetails = () => {
-        axiosUserInstance.get(`booking-details/${venueId}`)
-            .then((res) => {
-                const bookings = res.data.map((booking) => ({
-                    id: booking.id,
-                    title: booking.status === 'Booking Confirmed' ? 'Booked' : booking.status === 'Booking Completed' ? 'Completed' : booking.status === 'Booking Canceled' ? 'Canceled' : 'Other',
-                    start: booking.start,
-                    color: booking.status === 'Booking Confirmed' ? 'orange' : booking.status === 'Booking Completed' ? 'green' : 'blue'
-                }));
-                setEvents(bookings);
-                console.log(bookings)
-            })
-            .catch((err) => {
-                console.error("Error fetching booking details:", err);
-            });
-    };
 
-    useEffect(() => {
-        fetchBookingDetails()
-    }, [])
+    const regularbookedDates = bookedDatesForRegularPackage.map(item => item.date)
+ 
+    let mediumAvailabilityDates = [];
+    let almostFullyBookedDates = [];
+    let completelyBookedDates = [];
+
+
+
+    // Categorize the dates for alternative packages
+    if (bookedDatesForAlternativePackage) {
+        bookedDatesForAlternativePackage.forEach(item => {
+            const { date, booked_time_slots_count } = item;
+
+            if (booked_time_slots_count >= 4 && booked_time_slots_count <= 8) {
+                mediumAvailabilityDates.push(date);
+            } else if (booked_time_slots_count > 8 && booked_time_slots_count <= 11) {
+                almostFullyBookedDates.push(date);
+            } else if (booked_time_slots_count === 12) {
+                completelyBookedDates.push(date);
+            }
+        });
+    }
+
+
+    const events = [
+        ...regularbookedDates.map((date) => ({
+            title: "Booked",
+            start: date,
+            color: "red", // Red for regular booked dates
+        })),
+        ...mediumAvailabilityDates.map((date) => ({
+            title: "Medium",
+            start: date,
+            color: "lightgreen", // Light green for medium availability
+        })),
+        ...almostFullyBookedDates.map((date) => ({
+            title: "Almost Full",
+            start: date,
+            color: "orange", // Orange for almost fully booked
+        })),
+        ...completelyBookedDates.map((date) => ({
+            title: "Fully Booked",
+            start: date,
+            color: "red", // Red for completely booked dates
+        })),
+    ];
+
+
 
     return (
         <>
 
             <div
-                className={`transition-all duration-500 ease-in-out overflow-hidden ${showCalendar ? "max-h-[500px]" : "max-h-0"
+                className={`transition-all duration-500 ease-in-out shadow-lg overflow-hidden ${showCalendar ? "max-h-[500px]" : "max-h-0"
                     }`}
             >
                 <div className="h-[350px] bg-gray-50 p-4 rounded-lg shadow-lg">
@@ -57,30 +85,40 @@ export default function ViewAllBookingSlots({ venueId, showCalendar, setShowCale
             </div>
 
 
-            <div
-                className={`mt-4 ${showCalendar ? "flex justify-end" : "text-center"
-                    }`}
-            >
-                <button
-                    onClick={() => setShowCalendar(!showCalendar)}
-                    className={`px-3 py-1 text-sm font-semibold rounded-lg shadow-lg transform hover:-translate-y-1 hover:shadow-xl   focus:outline-none  transition duration-300 
-            ${showCalendar
-                            ? "bg-red-500 hover:bg-red-600 text-white"
-                            : "bg-teal-500 hover:bg-teal-600 text-white"
-                        }`}
-                >
-                    {showCalendar ? (
-                        <>
-                            <span>Hide </span>
-                            <ArrowDropUpIcon />
-                        </>
-                    ) : (
-                        <>
-                            <span>View Slots </span>
-                            <ArrowDropDownIcon />
-                        </>
-                    )}
-                </button>
+
+
+
+            <div className="flex mt-4 justify-between items-center">
+                {/* Check the package_name condition */}
+                {selectedPackage?.package_name !== "regular" && (
+                    <BookingStatusColors />
+                )}
+
+                {/* Button */}
+                <div
+                    className={`${selectedPackage?.package_name === "regular" ? "mx-auto" : ""
+                        }`}>
+                    <button
+                        onClick={() => setShowCalendar(!showCalendar)}
+                        className={`px-3 py-1 text-sm font-semibold rounded-lg shadow-lg transform hover:-translate-y-1 hover:shadow-xl focus:outline-none transition duration-300 
+                ${showCalendar
+                                ? "bg-teal-600 hover:bg-teal-700 text-white"
+                                : "bg-teal-500 hover:bg-teal-600 text-white"
+                            }`}
+                    >
+                        {showCalendar ? (
+                            <>
+                                <span>Hide </span>
+                                <ArrowDropUpIcon />
+                            </>
+                        ) : (
+                            <>
+                                <span>View Slots </span>
+                                <ArrowDropDownIcon />
+                            </>
+                        )}
+                    </button>
+                </div>
             </div>
 
 

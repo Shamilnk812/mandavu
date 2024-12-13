@@ -1,9 +1,11 @@
-import { lazy, Suspense, useState, useEffect, } from "react";
+import { lazy, Suspense, useState, useEffect } from "react";
 import Navb from "../../Components/User/Navb";
 import { axiosUserInstance } from "../../Utils/Axios/axiosInstance";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import LoadingAnimation from "../../Components/Common/LoadingAnimation";
+import { useNavigate } from "react-router-dom";
+
 const BookingFormForDateAndTime = lazy(() => import("../../Components/User/Booking/BookingForm2"));
 const BookingSummary2 = lazy(() => import("../../Components/User/Booking/BookingSummary2"));
 
@@ -12,8 +14,20 @@ const BookingSummary2 = lazy(() => import("../../Components/User/Booking/Booking
 export default function VenueBookingStep2() {
 
     const { venueId } = useParams();
+    const navigate = useNavigate();
 
     const selectedPackage = useSelector((state) => state.user.selectedPackage)
+    const selectedEvent = useSelector((state) => state.user.selectedEvent); 
+    const userBookingDetails = useSelector((state) => state.user.addressAndEventDetails)
+
+    useEffect(() => {
+        if (!selectedPackage || !selectedEvent || !userBookingDetails) {
+            navigate("/user/home"); 
+        }
+
+    }, [selectedPackage, selectedEvent,userBookingDetails, navigate]);
+
+
 
     const [selectedDates, setSelectedDates] = useState([])
     const [selectedTimeSlot, setSelectedTimeSlot] = useState([]);

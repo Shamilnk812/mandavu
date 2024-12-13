@@ -29,12 +29,12 @@ export default function SelectAirConditioningSection({selectedPackage,setAirCond
 
     return (
         <>
-            <div className="flex flex-wrap -mx-3 mb-4 mt-2">
+            {/* <div className="flex flex-wrap -mx-3 mb-4 mt-2"> */}
                 <div className="w-full md:w-1/2 px-3">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">
+                    <label className="block text-gray-700 text-sm font-bold mb-2 ml-2">
                       Select Air-Conditioning
                     </label>
-                    <div className="flex items-center space-x-12 mt-3">
+                    <div className="flex items-center space-x-12 ml-2 mt-3">
                         {/* A/C Radio Button */}
                         <label className="flex items-center space-x-2">
                             <input
@@ -51,8 +51,8 @@ export default function SelectAirConditioningSection({selectedPackage,setAirCond
                             />
                             <span
                                 className={`${selectedPackage?.air_condition === 'Non A/C'
-                                        ? 'text-gray-400'
-                                        : 'text-gray-800'
+                                        ? 'text-gray-400 text-sm'
+                                        : 'text-gray-800 text-sm'
                                     }`}
                             >
                                 A/C
@@ -75,8 +75,8 @@ export default function SelectAirConditioningSection({selectedPackage,setAirCond
                             />
                             <span
                                 className={`${selectedPackage?.air_condition === 'AC'
-                                        ? 'text-gray-400'
-                                        : 'text-gray-800'
+                                        ? 'text-gray-400 text-sm'
+                                        : 'text-gray-800 text-sm '
                                     }`}
                             >
                                 Non A/C
@@ -86,7 +86,7 @@ export default function SelectAirConditioningSection({selectedPackage,setAirCond
                 </div>
 
 
-            </div>
+            {/* </div> */}
 
         </>
     )

@@ -512,7 +512,27 @@ class GetBookedDates(APIView):
             ]
 
         return Response(result, status=status.HTTP_200_OK)
+    
 
+
+class GetBookedTimeSlotsForASelectedDate(APIView):
+
+    def get(self, request,vid):
+        venue = get_object_or_404(Venue, id=vid)
+        booking_date = request.query_params.get("selectedDate")
+        if not booking_date :
+            return Response({"error": "selectedDate is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        bookings = Booking.objects.filter(venue=venue, status="Booking Confirmed", dates__contains=[booking_date])
+
+        booked_time_slots = []
+        for booking in bookings :
+            booked_time_slots.extend(booking.times)
+
+        excluded_slots = ["Morning", "Evening", "Full Day"]
+        remaining_time_slots = [slot for slot in booked_time_slots if slot not in excluded_slots]
+
+        return Response( remaining_time_slots, status=status.HTTP_200_OK)
 
 
 # ==================   Booking =================

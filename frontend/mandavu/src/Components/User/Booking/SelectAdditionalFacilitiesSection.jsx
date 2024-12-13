@@ -30,7 +30,7 @@ export default function SelectAdditionalFacilitiesSection({ facilities, selected
     return (
         <>
             <div className="h-[300px] bg-gray-50 p-4 rounded-lg shadow-lg overflow-y-auto">
-                <h3 className="text-lg font-semibold mb-4">Additional Facilities</h3>
+                <h3 className="text-lg font-semibold mb-4 text-center">Additional Facilities</h3>
                 {facilities?.length > 0 ? (
                     <div>
                         {facilities

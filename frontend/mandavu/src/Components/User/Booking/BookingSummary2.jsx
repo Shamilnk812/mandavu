@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { axiosUserInstance } from "../../../Utils/Axios/axiosInstance";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import toPascalCase from "../../../Utils/Extras/ConvertToPascalCase";
 import { loadStripe } from '@stripe/stripe-js';
 import { toast } from "react-toastify";
-
+import { clearBookingDetails } from "../../../Redux/Slices/User";
 
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
@@ -23,6 +23,7 @@ export default function BookingSummary2({ venue, venueId, selectedDates, selecte
     const selectedEvent = useSelector((state) => state.user.selectedEvent)
     const selectedPackage = useSelector((state) => state.user.selectedPackage)
     const userBookingDetails = useSelector((state) => state.user.addressAndEventDetails)
+    const dispatch = useDispatch();
     const [isChecked, setIsChecked] = useState(false)
 
     const userId = useSelector((state) => state.user.user?.id);
@@ -78,6 +79,9 @@ export default function BookingSummary2({ venue, venueId, selectedDates, selecte
 
             if (result.error) {
                 console.error(result.error.message);
+            }else{
+                dispatch(clearBookingDetails());
+                console.log("Redux values cleared after successful submission.");
             }
         } catch (error) {
             console.error('Error booking venue:', error);

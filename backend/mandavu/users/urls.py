@@ -30,6 +30,7 @@ urlpatterns = [
     path('cancel-booking/<int:bid>/',CancelBookingView.as_view(),name='cancel-booking'),
 
     path('get-booked-dates/<int:vid>/',GetBookedDates.as_view(),name='get-booked-dates'),
+    path('get-booked-time-slots/<int:vid>/',GetBookedTimeSlotsForASelectedDate.as_view(),name='get-booked-time-slots'),
 
     path('add-review/',AddReviewView.as_view(),name='add-review'),
     path('get-ratings/<int:vid>/',ShowRatingView.as_view(),name='get-ratings'),
