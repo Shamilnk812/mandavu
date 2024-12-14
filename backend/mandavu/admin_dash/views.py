@@ -10,7 +10,7 @@ from django.db.models import Q,Sum
 from django.db.models.functions import Extract
 from users.models import Booking,CustomUser
 
-from owners.models import Owner,Venue
+from owners.models import Owner,Venue,BookingPackages
 from .serializers import *
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -386,4 +386,25 @@ class VenueDetailsView(APIView) :
         owner = get_object_or_404(Owner, venue=venue)
         serializer = self.serializer_class(owner, context={'request':request})
         return Response(serializer.data , status=status.HTTP_200_OK)
+        
+
+
+
+
+# VENEU BOOKING PACKAGE   
+
+
+class VeneuBookingPackageApproval(APIView):
+
+    def put(self, request, vid):
+        
+        venue = get_object_or_404(Venue, id=vid)
+        pkg_id = request.data.get("pkg_id")
+        print("package id is ",pkg_id)
+        booking_package_obj = get_object_or_404(BookingPackages, venue=venue, id=pkg_id)
+        booking_package_obj.is_verified = True
+        booking_package_obj.save()
+
+        return Response({"package_name":booking_package_obj.package_name} ,status=status.HTTP_200_OK)
+
         

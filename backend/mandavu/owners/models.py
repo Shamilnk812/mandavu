@@ -99,10 +99,10 @@ class BookingPackages(models.Model) :
     extra_price_for_aircondition = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True) 
     description = models.TextField()
     is_active = models.BooleanField(default=True) # defaul is False
-    # is_verified = models.BooleanField(default=False)
-    # is_editable = models.BooleanField(default=False)
-    # is_rejected = models.BooleanField(default=False)
-    # rejection_reason = models.TextField(null=True,blank=True)
+    is_verified = models.BooleanField(default=False)
+    is_editable = models.BooleanField(default=False)
+    is_rejected = models.BooleanField(default=False)
+    rejection_reason = models.TextField(null=True,blank=True)
     
     def __str__(self) :
         return self.package_name

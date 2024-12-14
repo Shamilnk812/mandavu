@@ -2,9 +2,12 @@ import Navb from "../../Components/User/Navb";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { clearBookingDetails } from "../../Redux/Slices/User";
 
 export default function PaymentSuccess() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [showContent, setShowContent] = useState(false);
 
     // Animation for container: floating effect
@@ -67,12 +70,16 @@ export default function PaymentSuccess() {
 
     // Delay the showing of the main content after checkmark animation
     useEffect(() => {
+
+        dispatch(clearBookingDetails())
+        navigate('/user/payment-success', { replace: true });
+
         const timer = setTimeout(() => {
             setShowContent(true);
         }, 1500); // Delay content for 1.5 seconds
 
         return () => clearTimeout(timer); // Cleanup the timer
-    }, []);
+    }, [dispatch,navigate]);
 
     return (
         <>

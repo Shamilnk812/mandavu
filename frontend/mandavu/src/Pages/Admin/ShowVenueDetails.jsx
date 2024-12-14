@@ -113,6 +113,10 @@ export default function ShowVenueDetails() {
     </table>
 </div>
                </div>
+
+
+
+               
             </div>  
 
         

@@ -1,7 +1,27 @@
+import { useState,useEffect } from "react";
+
 export default function ShowVenueDetailsCmp({ owner }) {
+    
+    const [fadeIn, setFadeIn] = useState(false);
+
+    const handleOpenPDF = (pdfUrl) => {
+        window.open(pdfUrl, '_blank');
+    };
+
+    useEffect(() => {
+        // Trigger the fade-in effect when the component renders
+        setFadeIn(true);
+      }, []);
+
+
+
     return (
         <>
-            <div className="w-1/2 bg-gray-800 ">
+            <div
+                className={`bg-gray-800 transform transition-opacity duration-500 ease-out ${
+                fadeIn ? 'opacity-100' : 'opacity-0'
+                }`}
+            >
                 <div className="bg-customColor7 overflow-hidden shadow-lg rounded-lg border">
                     <div className="px-4 py-5 sm:px-6 bg-gray-700">
                         <h3 className="text-lg leading-6 font-medium text-center text-white">
@@ -24,6 +44,14 @@ export default function ShowVenueDetailsCmp({ owner }) {
                                 </dt>
                                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                     {owner?.venue?.short_description}
+                                </dd>
+                            </div>
+                            <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt className="text-sm font-medium text-gray-900">
+                                    Description
+                                </dt>
+                                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 break-all  max-w-[400px]">
+                                    {owner?.venue?.description}
                                 </dd>
                             </div>
                             <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -55,7 +83,7 @@ export default function ShowVenueDetailsCmp({ owner }) {
                                     Price
                                 </dt>
                                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                    {owner?.venue?.price}
+                                &#8377; {owner?.venue?.price}
                                 </dd>
                             </div>
                             <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -98,10 +126,22 @@ export default function ShowVenueDetailsCmp({ owner }) {
                                     {owner?.venue?.address}
                                 </dd>
                             </div>
+
+
+                            <div className="py-4 sm:grid sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                <dt className="text-sm font-medium text-gray-900">
+                                    Terms and Conditions
+                                </dt>
+                                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                    <button className="text-teal-500 font-semibold hover:underline" onClick={() => handleOpenPDF(owner.venue.terms_and_conditions)}>
+                                        View Terms and Conditons
+                                    </button>
+                                </dd>
+                            </div>
                         </dl>
-                       
+
                     </div>
-                </div> 
+                </div>
             </div>
         </>
     )

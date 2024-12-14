@@ -110,7 +110,8 @@ export default function VenueList() {
     }
 
     const handleViewDetails = (venueId) => {
-        navigate(`/admin/show-venue-details/${venueId}`)
+        // navigate(`/admin/show-venue-details/${venueId}`)
+        navigate(`/admin/show-venue-details2/${venueId}`)
     }
 
 

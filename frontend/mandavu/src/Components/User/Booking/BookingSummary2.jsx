@@ -70,15 +70,15 @@ export default function BookingSummary2({ venue, venueId, selectedDates, selecte
         console.log("Submitted with ", bookingDetails)
         try {
             const response = await axiosUserInstance.post('create-checkout-session/', bookingDetails);
-
+            
             const { id } = response.data;
-
+          
             const stripe = await stripePromise;
-
+          
             const result = await stripe.redirectToCheckout({ sessionId: id });
-
+        
             if (result.error) {
-                console.error(result.error.message);
+              
             }else{
                 dispatch(clearBookingDetails());
                 console.log("Redux values cleared after successful submission.");
