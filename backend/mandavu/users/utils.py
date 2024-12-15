@@ -46,6 +46,9 @@ def sent_otp_to_user(email) :
 
 # ======== Password Reset email  ===========
 
+
+
+
 def send_password_reset_email(data) :
     email = EmailMessage(
         subject=data['email_subject'],

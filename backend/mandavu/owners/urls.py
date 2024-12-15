@@ -53,4 +53,5 @@ urlpatterns = [
 
     path('get-owner-venue-details/<int:uid>/',OwnerAndVenueDetailsView.as_view(),name='get-owner-venue-details'),
     
+    
 ]

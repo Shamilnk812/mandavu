@@ -24,6 +24,7 @@ export default function SelectEventsModal({ venueId, isEventModalOpen, handleClo
       try {
         const response = await axiosUserInstance.get(`venue-events-details/${venueId}/`);
         setEvents(response.data);
+        console.log(response.data)
       } catch (error) {
         console.error('Error fetching events details:', error);
         toast.error('Failed to fetch events details! Please try again later.');
@@ -34,7 +35,6 @@ export default function SelectEventsModal({ venueId, isEventModalOpen, handleClo
       try {
         const response = await axiosOwnerInstance.get(`get-all-booking-packages/${venueId}/`);
         setPackages(response.data)
-        console.log('packaaa', response.data)
       } catch (error) {
         toast.error('Failed to fetch booking packages. Please try again later.')
       }
@@ -55,8 +55,8 @@ export default function SelectEventsModal({ venueId, isEventModalOpen, handleClo
   };
 
   const handleBooking = () => {
-    
-    dispatch(setBookingDetails({selectedEvent,selectedPackage}))
+
+    dispatch(setBookingDetails({ selectedEvent, selectedPackage }))
     console.log("Booking event:", selectedEvent, "with package:", selectedPackage);
     handleCloseEventModal();
     navigate(`/user/venue-booking-step1/${venueId}`)
@@ -101,9 +101,20 @@ export default function SelectEventsModal({ venueId, isEventModalOpen, handleClo
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {events.map((event) => (
+                {/* {events.map((event) => (
                   <EventCard key={event.id} event={event} handleEventSelect={handleEventSelect} selectedEvent={selectedEvent} />
-                ))}
+                ))} */}
+
+                {events
+                  .filter((event) => event.is_active) // Filter active events
+                  .map((event) => (
+                    <EventCard
+                      key={event.id}
+                      event={event}
+                      handleEventSelect={handleEventSelect}
+                      selectedEvent={selectedEvent}
+                    />
+                  ))}
               </div>
 
               {/* Package Selection */}
@@ -121,10 +132,22 @@ export default function SelectEventsModal({ venueId, isEventModalOpen, handleClo
                       <span className="absolute left-1/2 transform -translate-x-1/2 bottom-[-8px] w-1/2 h-0.5 bg-transparent border-b-2 border-teal-600 rounded-full" style={{ backgroundImage: 'radial-gradient(circle, teal 20%, transparent 20%)', backgroundSize: '10px 10px', backgroundPosition: '0 100%' }}></span>
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {packages.map((bookingPackage) => (
+                      {/* {packages.map((bookingPackage) => (
 
                         <SelectBookingPackagesCard key={bookingPackage.id} bookingPackage={bookingPackage} selectedPackage={selectedPackage} handlePackageSelect={handlePackageSelect} />
-                      ))}
+                      ))} */}
+
+
+                      {packages
+                        .filter((bookingPackage) => bookingPackage.is_verified && bookingPackage.is_active) // Filter packages
+                        .map((bookingPackage) => (
+                          <SelectBookingPackagesCard
+                            key={bookingPackage.id}
+                            bookingPackage={bookingPackage}
+                            selectedPackage={selectedPackage}
+                            handlePackageSelect={handlePackageSelect}
+                          />
+                        ))}
 
                     </div>
 

@@ -452,8 +452,11 @@ class BookingPackagesSerializer(serializers.ModelSerializer) :
             if 'price' in validated_data:
                 venue.price = validated_data.get('price')
             if 'air_condition' in validated_data:
-                venue.condition = validated_data.get('air_condition')
+                venue.condition = validated_data.get('air_condition')    
             venue.save()  
+
+        instance.is_verified = False
+        instance.is_editable = False    
         return super().update(instance, validated_data)
 
 

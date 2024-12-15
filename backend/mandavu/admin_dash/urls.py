@@ -28,4 +28,5 @@ urlpatterns  =[
 
 
     path('booking-package-approval/<int:vid>/',VeneuBookingPackageApproval.as_view(),name='booking-package-approval'),
+    path('booking-package-rejection/<int:vid>/',VeneuBookingPackageRejection.as_view(),name='booking-package-rejection'),
 ]

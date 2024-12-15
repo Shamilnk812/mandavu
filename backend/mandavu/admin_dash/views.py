@@ -391,20 +391,47 @@ class VenueDetailsView(APIView) :
 
 
 
-# VENEU BOOKING PACKAGE   
+# VENEU BOOKING PACKAGE  APPROVALS AND REJECTIONS
 
 
 class VeneuBookingPackageApproval(APIView):
 
     def put(self, request, vid):
-        
         venue = get_object_or_404(Venue, id=vid)
         pkg_id = request.data.get("pkg_id")
         print("package id is ",pkg_id)
         booking_package_obj = get_object_or_404(BookingPackages, venue=venue, id=pkg_id)
         booking_package_obj.is_verified = True
+        booking_package_obj.is_rejected = False
+        booking_package_obj.is_editable = True
         booking_package_obj.save()
 
+        send_venue_booking_package_approval_email(venue, booking_package_obj.package_name)
+
         return Response({"package_name":booking_package_obj.package_name} ,status=status.HTTP_200_OK)
+
+
+
+
+class VeneuBookingPackageRejection(APIView):
+
+    def put(self, request, vid):
+        venue = get_object_or_404(Venue, id=vid)
+        pkg_id = request.data.get("pkg_id")
+        rejection_reason = request.data.get("rejection_reason")
+        booking_package_obj = get_object_or_404(BookingPackages, venue=venue, id=pkg_id)
+        booking_package_obj.is_verified = False
+        booking_package_obj.is_rejected = True
+        booking_package_obj.is_editable = False
+        booking_package_obj.rejection_reason = rejection_reason
+        booking_package_obj.save()
+
+        booking_package_name = booking_package_obj.package_name
+        send_venue_booking_package_rejection_email(venue,booking_package_name,rejection_reason )
+
+        return Response({"packag_name":booking_package_name} ,status=status.HTTP_200_OK)
+
+
+
 
         

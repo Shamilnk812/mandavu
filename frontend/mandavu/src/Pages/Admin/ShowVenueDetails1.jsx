@@ -22,8 +22,6 @@ export default function ShowVenueDetails2() {
     const [facilities, setFacilities] = useState([])
     const [events, setEvents] = useState([])
     const [photos, setPhotos] = useState([])
-
-
     const [activeComponent, setActiveComponent] = useState("approvals")
 
 
@@ -86,25 +84,6 @@ export default function ShowVenueDetails2() {
 
 
 
-    // const [bookingPackages, setBookingPackages] = useState([])
-
-    // useEffect(() => {
-    //     const fetchBookingPackages = async () => {
-    //         try{
-    //             const response  = await axiosOwnerInstance.get(`get-all-booking-packages/${venueId}/`)
-    //             console.log(response.data)
-    //             setBookingPackages(response.data)
-    //         }catch(error) {
-    //             console.error("proble",error)
-    //             toast.error("Failed to fetch booking packages. Please try again later.")
-    //         }
-    //     }
-
-    //     fetchBookingPackages();
-    // },[venueId])
-
-
-    
     const renderComponent = () => {
         switch (activeComponent) {
             case "approvals":
@@ -134,14 +113,14 @@ export default function ShowVenueDetails2() {
                     </div>
 
 
-                    {/* Centered and equal-sized buttons with gap */}
+                    {/*  Buttons For Navigate */}
                     <div className="flex justify-center items-center flex-wrap gap-4 my-6 ">
 
 
                         <button
                             className={`flex-grow text-base py-2 px-4 rounded text-center ${activeComponent === "approvals"
-                                    ? "bg-purple-900 text-white"
-                                    : "bg-purple-600 hover:bg-purple-700 text-white"
+                                ? "bg-purple-900 text-white"
+                                : "bg-purple-600 hover:bg-purple-700 text-white"
                                 }`}
                             onClick={() => setActiveComponent("approvals")}
                         >
@@ -149,8 +128,8 @@ export default function ShowVenueDetails2() {
                         </button>
                         <button
                             className={`flex-grow text-base py-2 px-4 rounded text-center ${activeComponent === "ownerDetails"
-                                    ? "bg-purple-900 text-white"
-                                    : "bg-purple-600 hover:bg-purple-700 text-white"
+                                ? "bg-purple-900 text-white"
+                                : "bg-purple-600 hover:bg-purple-700 text-white"
                                 }`}
                             onClick={() => setActiveComponent("ownerDetails")}
                         >
@@ -158,8 +137,8 @@ export default function ShowVenueDetails2() {
                         </button>
                         <button
                             className={`flex-grow text-base py-2 px-4 rounded text-center ${activeComponent === "venueDetails"
-                                    ? "bg-purple-900 text-white"
-                                    : "bg-purple-600 hover:bg-purple-700 text-white"
+                                ? "bg-purple-900 text-white"
+                                : "bg-purple-600 hover:bg-purple-700 text-white"
                                 }`}
                             onClick={() => setActiveComponent("venueDetails")}
                         >
@@ -167,8 +146,8 @@ export default function ShowVenueDetails2() {
                         </button>
                         <button
                             className={`flex-grow text-base py-2 px-4 rounded text-center ${activeComponent === "facilities"
-                                    ? "bg-purple-900 text-white"
-                                    : "bg-purple-600 hover:bg-purple-700 text-white"
+                                ? "bg-purple-900 text-white"
+                                : "bg-purple-600 hover:bg-purple-700 text-white"
                                 }`}
                             onClick={() => setActiveComponent("facilities")}
                         >
@@ -176,8 +155,8 @@ export default function ShowVenueDetails2() {
                         </button>
                         <button
                             className={`flex-grow text-base py-2 px-4 rounded text-center ${activeComponent === "events"
-                                    ? "bg-purple-900 text-white"
-                                    : "bg-purple-600 hover:bg-purple-700 text-white"
+                                ? "bg-purple-900 text-white"
+                                : "bg-purple-600 hover:bg-purple-700 text-white"
                                 }`}
                             onClick={() => setActiveComponent("events")}
                         >
@@ -185,60 +164,20 @@ export default function ShowVenueDetails2() {
                         </button>
                         <button
                             className={`flex-grow text-base py-2 px-4 rounded text-center ${activeComponent === "photos"
-                                    ? "bg-purple-900 text-white"
-                                    : "bg-purple-600 hover:bg-purple-700 text-white"
+                                ? "bg-purple-900 text-white"
+                                : "bg-purple-600 hover:bg-purple-700 text-white"
                                 }`}
                             onClick={() => setActiveComponent("photos")}
                         >
                             Photos
                         </button>
 
-
-
-
-
                     </div>
 
-
-
-
-
-
-                
-
+                    {/* Section for render components */}
                     <div className="flex justify-center bg-gray-800 p-12 rounded-lg ">
                         {renderComponent()}
                     </div>
-
-                    {/* <div className="flex justify-center bg-gray-800 p-12 rounded-lg ">
-                        <ShowVenueDetailsCmp owner={owner} />
-
-                    </div>
-                    <div className="flex justify-center bg-gray-800 p-12 rounded-lg ">
-                        <ShowOwnerDetailsCmp owner={owner} />
-
-                    </div>
-
-
-
-                    <div className="flex justify-center bg-gray-800 p-12 rounded-lg ">
-                        <ShowFacilitiesCmp facilities={facilities} />
-
-                    </div>
-
-                    <div className="flex justify-center bg-gray-800 p-12 rounded-lg ">
-                        <ShowEventsCmp events={events} />
-                    </div>
-                    <div className="flex justify-center bg-gray-800 p-12 rounded-lg ">
-                        <ShowVenuePhotosCmp photos={photos} />
-                    </div> */}
-
-
-
-
-
-
-
 
 
                 </div>

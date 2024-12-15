@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #27ae60;
+            text-align: center;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .highlight {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-left: 4px solid #27ae60;
+            margin-top: 10px;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #777;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Booking Package "{{booking_package_name}}" Approved!</h2>
+        <p>Dear {{venue_name}},</p>
+        <p>We are delighted to inform you that your booking package has been successfully approved! </p>
+        <div class="highlight">
+            <p><strong>Package Name:</strong> {{booking_package_name}}</p>
+            <p><strong>Approval Date:</strong> {{approval_date}}</p>
+        </div>
+        <p>Your booking package is now live and available for users to view and book.</p>
+        <p>If you have any questions or require assistance, please feel free to reach out to our support team.</p>
+        <p>Thank you for choosing Mandavu!</p>
+        <p>Best regards,</p>
+        <p>The Mandavu Team</p>
+        <div class="footer">
+            <!-- <p>© 2024 Mandavu. All rights reserved.</p> -->
+        </div>
+    </div>
+</body>
+</html>
