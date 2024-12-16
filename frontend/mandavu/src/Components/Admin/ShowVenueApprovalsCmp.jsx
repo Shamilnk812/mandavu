@@ -149,16 +149,7 @@ export default function ShowVenueApprovalsCmp({ venueId }) {
 
                                     </button>
 
-                                    {/* <button className="bg-green-600 text-white py-1 px-4 rounded shadow hover:bg-green-700 transition-colors"
-                                        onClick={() => handleBookingPackageApproval(pkg.id)}
-                                    >
-                                        Approve
-                                    </button> */}
-
-
-
-                                    <button
-                                        className="bg-green-600 text-white py-1 px-4 rounded shadow hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                                    <button className="bg-green-600 text-white py-1 px-4 rounded shadow hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
                                         onClick={() => handleBookingPackageApproval(pkg.id)}
                                         disabled={loadingPackageId === pkg.id} 
                                     >
@@ -180,7 +171,7 @@ export default function ShowVenueApprovalsCmp({ venueId }) {
 
 
 
-
+        {/* Modal to Specify the Rejection Reason */}
             <BookingPackageRejectionModal
                 isModalOpen={isModalOpen}
                 closeModal={closeModal}
@@ -189,36 +180,7 @@ export default function ShowVenueApprovalsCmp({ venueId }) {
                 handleBookingPackageRejection={handleBookingPackageRejection}
             />
 
-            {/* {isModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-                        <h2 className="text-lg text-center text-white rounded-lg font-semibold mb-4 bg-gray-700 py-2">Reject Booking Package</h2>
-                        <textarea
-                            className="w-full p-2 border rounded-lg mb-4"
-                            rows="4"
-                            placeholder="Type rejection reason..."
-                            value={rejectionReason}
-                            onChange={(e) => setRejectionReason(e.target.value)}
-                        ></textarea>
-                        <div className="flex justify-end gap-4">
-                            <button
-                                className="bg-gray-600 text-white py-1 px-4 rounded hover:bg-gray-700"
-                                onClick={closeModal}
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                className="bg-red-600 text-white py-1 px-4 rounded hover:bg-red-700"
-                                onClick={handleBookingPackageRejection}
-                            >
-                                Submit
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-     */}
+           
 
 
         </div>
