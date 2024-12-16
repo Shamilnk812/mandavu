@@ -30,16 +30,21 @@ def sent_otp_to_user(email) :
     
     try :
         user = User.objects.get(email=email)
-        current_site = "Mandavu.com"
-        email_body = f"Hi {user.first_name} thanks for singing up on {current_site} please verify your email wiht the one tiem OTP {otp_code}"
-        from_email = settings.DEFAULT_FROM_EMAIL
+        recipient_list = [email]
+        context = {
+            'user_name': user.first_name + user.last_name,
+            'otp_code' : otp_code, 
+            'current_year': datetime.now().year
 
+        }
+    
         OneTimePassword.objects.update_or_create(
             user=user,
             defaults={'code': encrypted_otp, 'created_at': timezone.now()}
         )
-        s_email = EmailMessage(subject=subject, body=email_body, from_email=from_email, to=[email])
-        s_email.send(fail_silently=False)
+     
+        message = render_to_string('emails/otp_verification_email.html', context)
+        send_mail(subject,'',settings.DEFAULT_FROM_EMAIL, recipient_list, html_message=message)
         print('emial sented success')
     except Exception as e :
         print(f"Failed to send email: {e}")    
