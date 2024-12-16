@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .models import OneTimePassword,Booking,BookingDetails
 from owners.models import BookingPackages
-from .utils import sent_otp_to_user,encrypt_otp,decrypt_otp
+from .utils import *
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import smart_str,DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -410,7 +410,17 @@ def strip_webhook_view(request) :
             package_type = booking_package
             
         )
+
+        facilities = booking_details['facilities']
+
+        # Send Booking confirmation Email 
+        send_venue_booking_confirmation_email(booking, facilities)
+        
         temp_booking.delete()
+        
+        
+
+
         # facilities = booking_details.get('facilities', [])
         # for facility in facilities:
         #     # facility_str = f"{facility['facility']} - {facility['price']}"
@@ -426,39 +436,6 @@ def strip_webhook_view(request) :
 
 
 #================== Boooking 2 ===========
-
-
-# class GetBookedDates(APIView):
-#     def get(self, request, vid):
-#         venue = get_object_or_404(Venue, id=vid)
-#         bookings = Booking.objects.filter(venue=venue, status="Booking Confirmed")
-#         booking_package = request.query_params.get("booking_package")  # Use query params
-
-#         if booking_package == "regular":
-#             # Scenario 1: Fetch only dates
-#             booked_dates = bookings.values_list("date", flat=True)
-#             result = [{"date": date} for date in booked_dates]
-#         else:
-#             # Scenario 2: Fetch dates with filtered time slots
-#             booked_dates = []
-#             for booking in bookings:
-#                 if booking.times:
-#                     filtered_times = [
-#                         time for time in booking.times if time not in ["Morning", "Evening", "Full Day"]
-#                     ]
-#                     slot_count = len(filtered_times)
-                    
-#                     if slot_count > 0 :
-#                         booked_dates.append({
-#                             "date": booking.date,
-#                             "booked_time_slots_count": slot_count,
-#                         })
-#             result = booked_dates
-
-#         return Response(result, status=status.HTTP_200_OK)
-             
-
-
 
 
 class GetBookedDates(APIView):

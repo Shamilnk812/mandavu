@@ -3,6 +3,9 @@ from django.core.mail import EmailMessage
 from .models import OneTimePassword,User
 from django.conf import settings
 from django.utils import timezone
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from datetime import datetime
 
 
 def generateOtp() :
@@ -56,4 +59,38 @@ def send_password_reset_email(data) :
         from_email=settings.DEFAULT_FROM_EMAIL,
         to=[data['to_email']]
     )
-    email.send(fail_silently=False)
+    email.send(fail_silently=False) 
+
+
+#-------------- Venue Booking Confirmation Email -------------
+
+def send_venue_booking_confirmation_email(booking , facilities):
+    subject = f"Booking Confirmation - {booking.venue.convention_center_name}"
+    logo_url = f"{settings.MEDIA_URL}logo/mandavu-logo.png"
+    recipient_list = ['shamilnk0458@gmail.com']
+    # recipient_list = [booking.user.email]
+
+    print('user email is ',recipient_list)
+    print('facilitis', facilities)
+    context = {
+        'logo_url': logo_url,
+        'venue_name': booking.venue.convention_center_name,
+        'event_name': booking.event_name,
+        'event_details': booking.event_details,
+        'dates': booking.dates,
+        'times': booking.times,
+        'facilities': facilities,
+        'total_amount': booking.total_price,
+        # 'remaining_amount': booking.remaining_amount,
+        'booking_amount': booking.booking_amount,
+        'current_year': datetime.now().year
+
+    
+    }
+    message = render_to_string('emails/venue_booking_confirmation_email.html', context)
+    send_mail(subject,'',settings.DEFAULT_FROM_EMAIL, recipient_list, html_message=message)
+
+
+
+
+

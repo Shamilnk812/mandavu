@@ -172,9 +172,6 @@ def send_notification_for_booking_package(sender, instance, created, **kwargs):
 
 
 
-
-
-
 #---------------------- Users Registration ----------------
 
 @receiver(post_save,sender=User)
