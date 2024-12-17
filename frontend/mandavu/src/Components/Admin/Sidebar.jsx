@@ -1,6 +1,6 @@
 import {Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AdminLogoutSlice } from "../../Redux/Slices/AdminSlice";
 import { useDispatch } from "react-redux";
@@ -17,11 +17,7 @@ export default function Sidebar() {
       try {
           const response = await axiosAdminInstance.post('logout/', 
               { "refresh_token": refresh_token },
-              {
-                  headers: {
-                      'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                  }
-              }
+              
           );
           if (response.status === 200) {
               localStorage.removeItem('access_token');

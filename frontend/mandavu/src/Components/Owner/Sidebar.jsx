@@ -29,12 +29,8 @@ export default function  Sidebar () {
         const refresh_token = localStorage.getItem('refresh_token');
         try {
             const response = await axiosOwnerInstance.post('logout/', 
-                { "refresh_token": refresh_token },
-                {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                    }
-                }
+                { "refresh_token": refresh_token }
+                
             );
             if (response.status === 200) {
 

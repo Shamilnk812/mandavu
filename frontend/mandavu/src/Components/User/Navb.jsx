@@ -40,11 +40,7 @@ export default  function Navb() {
       try {
           const response = await axiosUserInstance.post('logout/', 
               { "refresh_token": refresh_token },
-              {
-                  headers: {
-                      'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                  }
-              }
+             
           );
           if (response.status === 200) {
               
