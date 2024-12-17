@@ -6,6 +6,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import SearchIcon from '@mui/icons-material/Search';
 import { axiosAdminInstance } from "../../Utils/Axios/axiosInstance";
+import PaginationCmp from "../../Components/Admin/PaginationCmp";
 
 
 
@@ -76,31 +77,32 @@ export default function AdminViewAllBookings() {
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-semibold">All Bookings</h2>
                         <form onSubmit={handleSearch} className="flex gap-4">
-                        <div className="flex flex-col">
-                        <label htmlFor="startDate" className="mb-1 text-gray-800">Starting Date</label>
-                        <input
-                            id="startDate"
-                            type="date"
-                            value={startDate}
-                            onChange={(e) => setStartDate(e.target.value)}
-                            className="px-4 py-2 border rounded"
-                        />
-                    </div>
-                    <div className="flex flex-col">
-                        <label htmlFor="endDate" className="mb-1 text-gray-800">Ending Date</label>
-                        <input
-                            id="endDate"
-                            type="date"
-                            value={endDate}
-                            onChange={(e) => setEndDate(e.target.value)}
-                            className="px-4 py-2 border rounded"
-                        />
-                    </div>
-                         <div className="mt-6">
-                            <button type="submit" className="px-4 py-2 bg-purple-600 text-white rounded transition-colors duration-300 hover:bg-purple-500"><SearchIcon/></button>
-                        </div>
+                            <div className="flex flex-col">
+                                <label htmlFor="startDate" className="mb-1 text-gray-800">Starting Date</label>
+                                <input
+                                    id="startDate"
+                                    type="date"
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    className="px-4 py-2 border rounded"
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <label htmlFor="endDate" className="mb-1 text-gray-800">Ending Date</label>
+                                <input
+                                    id="endDate"
+                                    type="date"
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    className="px-4 py-2 border rounded"
+                                />
+                            </div>
+                            <div className="mt-6">
+                                <button type="submit" className="px-4 py-2 bg-purple-600 text-white rounded transition-colors duration-300 hover:bg-purple-500"><SearchIcon /></button>
+                            </div>
                         </form>
                     </div>
+
 
                     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                         {bookings.length === 0 ? (
@@ -136,27 +138,8 @@ export default function AdminViewAllBookings() {
                             </table>
                         )}
                         {bookings.length > 0 && (
-                            <div className="flex justify-center mt-10 mb-5">
-                                <div className="p-4 flex items-center">
-                                    <button
-                                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                                        disabled={currentPage === 1}
-                                        className={`p-2 rounded-full text-white transition-colors duration-300 
-                                        ${currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'}`}
-                                    >
-                                        <NavigateBeforeIcon />
-                                    </button>
-                                    <span className="mx-4">Page {currentPage} of {totalPages}</span>
-                                    <button
-                                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                                        disabled={currentPage === totalPages}
-                                        className={`p-2 rounded-full text-white transition-colors duration-300 
-                                        ${currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'}`}
-                                    >
-                                        <NavigateNextIcon />
-                                    </button>
-                                </div>
-                            </div>
+                            <PaginationCmp setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} />
+
                         )}
                     </div>
                 </div>

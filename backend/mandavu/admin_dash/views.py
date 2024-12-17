@@ -11,6 +11,7 @@ from django.db.models.functions import Extract
 from users.models import Booking,CustomUser
 
 from owners.models import Owner,Venue,BookingPackages
+from users.serializers import UserDetailsSerializer
 from .serializers import *
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -51,7 +52,7 @@ class AdminLogoutView(GenericAPIView) :
 
 
 class CustomPagination(PageNumberPagination):
-    page_size = 2
+    page_size = 1
     page_size_query_param = 'page_size'
     max_page_size = 100
 
@@ -126,36 +127,7 @@ class GetAllUsersCountView(APIView) :
         return Response(data,status=status.HTTP_200_OK)
 
 
-# class GetTotalRevenueView(APIView):
-#     def get(self, request):
-#         selected_view = request.GET.get('view', 'monthly')
-#         revenue_data = None
 
-#         if selected_view == 'weekly':
-#             revenue_data = Booking.objects.filter(status='Booking Completed').annotate(
-#                 week=Extract('created_at', 'week')
-#             ).values('week').annotate(
-#                 total_revenue=Sum('total_price')
-#             ).order_by('week')
-
-#         elif selected_view == 'monthly':
-#             revenue_data = Booking.objects.filter(status='Booking Completed').annotate(
-#                 month=Extract('created_at', 'month')
-#             ).values('month').annotate(
-#                 total_revenue=Sum('total_price')
-#             ).order_by('month')
-
-#         elif selected_view == 'yearly':
-#             revenue_data = Booking.objects.filter(status='Booking Completed').annotate(
-#                 year=Extract('created_at', 'year')
-#             ).values('year').annotate(
-#                 total_revenue=Sum('total_price')
-#             ).order_by('year')
-
-#         else:
-#             return Response({'error': 'Invalid view selected'}, status=status.HTTP_400_BAD_REQUEST)
-
-#         return Response({'data': list(revenue_data)}, status=status.HTTP_200_OK)
 
 class GetTotalRevenueView(APIView):
     def get(self, request):
@@ -218,42 +190,36 @@ class GetTotalRevenueView(APIView):
 #============== User handling =============
 
 
-# class UserListView(GenericAPIView) :
-#     serializer_class = UserListSerializer
-#     def get(self, request) :
-#         users  = User.objects.filter(is_superuser=False)
-#         serializer = self.serializer_class(users, many=True)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-class UserListView(APIView):
+class UserListView(GenericAPIView):
     # permission_classes = [IsAdminUser]
+    serializer_class = UserDetailsSerializer
+    pagination_class = CustomPagination
 
-    def get(self, request, format=None):
+    def get(self, request,):
         search_query = request.GET.get('search', '')
+        page = request.query_params.get('page', 1)
+
         if search_query:
             users = User.objects.filter(
-                Q(first_name__icontains=search_query) |
-                Q(last_name__icontains=search_query) |
-                Q(email__icontains=search_query)|
-                Q(is_verified=True)
-            )
-        else:
-            users = User.objects.filter(is_verified=True)
+                Q(is_verified=True) & ( 
+                    Q(first_name__icontains=search_query) |
+                    Q(last_name__icontains=search_query) |
+                    Q(email__icontains=search_query)
+                )
+            ).order_by('id')
 
-        user_list = [
-            {
-                'id': user.id,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'email': user.email,
-                'date_joined': user.date_joined,
-                'is_active': user.is_active,
-            }
-            for user in users
-        ]
-        return Response(user_list, status=status.HTTP_200_OK)
+        else:
+            users = User.objects.filter(is_verified=True).order_by('id')
+
+        
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(users, request)
+        serializer = self.serializer_class(result_page, many=True)
+
+        return paginator.get_paginated_response(serializer.data)
     
+
 
 
 class BlockUserView(GenericAPIView) :
@@ -279,11 +245,32 @@ class UnblockUserView(GenericAPIView) :
 
 class OwnerListView(GenericAPIView) :
     serializer_class = OwnerListSerializer
+    pagination_class = CustomPagination
     def get(self, request) :
-        owners = Owner.objects.filter(is_superuser=False)
-        serializer = OwnerListSerializer(owners, many=True)
-        return Response(serializer.data,status=status.HTTP_200_OK)
+        search_query = request.GET.get('search', '')
+        page = request.query_params.get('page', 1)
+
+        if search_query:
+            owners = Owner.objects.filter(
+                Q(is_verified=True) & Q(is_superuser=False) & ( 
+                Q(first_name__icontains=search_query) |
+                Q(last_name__icontains=search_query) |
+                Q(email__icontains=search_query)
+            )
+        ).order_by('id')
+
+        else:
+            owners = Owner.objects.filter(is_verified=True,is_superuser=False).order_by('id')
+        
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(owners, request)
+        serializer = self.serializer_class(result_page, many=True)
+
+        return paginator.get_paginated_response(serializer.data)
+
     
+
 
 class BlockOwnerView(GenericAPIView) :
     def post(self, request,uid) :
@@ -291,9 +278,11 @@ class BlockOwnerView(GenericAPIView) :
         owner.is_active = False
         owner.save()
         serializer=OwnerListSerializer(owner)
+
         return Response(serializer.data,status=status.HTTP_200_OK)
     
     
+
 class UnblockOwnerView(GenericAPIView) :
     def post(self, request,uid) :
         owner = get_object_or_404(Owner, id=uid)
@@ -306,24 +295,24 @@ class UnblockOwnerView(GenericAPIView) :
 
 #============= Venue Handling =================
 
-class VenueListView(APIView):
-    def get(self, request, format=None):
+class VenueListView(GenericAPIView):
+    serializer_class = VenueDetailsSeriallizer
+    pagination_class = CustomPagination
+
+    def get(self, request):
         search_query = request.GET.get('search', '')
+        page = request.query_params.get('page', 1)
+
         if search_query:
-            venues = Venue.objects.filter(name__icontains=search_query)
+            venues = Venue.objects.filter(convention_center_name__icontains=search_query)
         else:
             venues = Venue.objects.all()
 
-        venue_list = [{
-            'id': venue.id,
-            'name': venue.convention_center_name,
-            'is_verified': venue.is_verified,
-            'is_active': venue.is_active,
-            'created_at': venue.created_at,
-            'is_rejected': venue.is_rejected
-        } for venue in venues]
-        print(venue_list)
-        return Response(venue_list, status=status.HTTP_200_OK)    
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(venues, request)
+        serializer = self.serializer_class(result_page, many=True)
+
+        return paginator.get_paginated_response(serializer.data) 
 
 
 
@@ -336,6 +325,7 @@ class VenueVerifyView(APIView) :
         send_approval_email(venue)
         print('venue approved ')
         return Response(status=status.HTTP_200_OK)
+
 
 
 class RejectVenueView(APIView) :
@@ -352,15 +342,6 @@ class RejectVenueView(APIView) :
         
 
 
-
-# class VenueUnVerifyView(APIView) :
-#     def post(self, request, vid) :
-#         venue = get_object_or_404(Venue, id=vid)
-#         venue.is_verified = False
-#         venue.save()
-#         print('venue un approved ')
-#         return Response(status=status.HTTP_200_OK)
-    
 
 
 class BlockVenueView(APIView) :

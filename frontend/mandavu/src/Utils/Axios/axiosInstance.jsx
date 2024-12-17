@@ -7,6 +7,12 @@ import { userUrl,ownerUrl,adminUrl} from "./EndPoints";
 import { ChatUrl } from "./EndPoints";
 
 
+const token = localStorage.getItem('access_token');
+const refresh_token = localStorage.getItem('refresh_token');
+console.log(refresh_token)
+
+
+
 
 const baseUrl="http://localhost:8000/api/v1"
 
@@ -32,6 +38,10 @@ const refreshToken = async ()=> {
     
     }catch(error){
         console.log("Failed to refresh token",error)
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        localStorage.removeItem("user_email");
+        localStorage.removeItem("user_id");
     }   
     return null
 }
@@ -65,6 +75,7 @@ const addAuthInterceptor = (axiosInstance) =>{
         }
     )
 }
+
 
 
 
@@ -106,6 +117,7 @@ addAuthInterceptor(axiosOwnerFormInstance)
 export const axiosChatInstance = axios.create({
     baseURL:ChatUrl,
     'Content-type':'application/json',
+
 })
 addAuthInterceptor(axiosChatInstance)
 

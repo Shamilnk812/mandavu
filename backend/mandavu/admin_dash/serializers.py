@@ -63,6 +63,8 @@ class AdminLogoutSerializer(serializers.Serializer) :
             raise serializers.ValidationError({'refresh_token': 'Token is invalid or has expired'})
 
 
+#--------------- User Details Serializer -----------
+
 
 
 class GetAllBookingDetailsSerializer(serializers.ModelSerializer) :
