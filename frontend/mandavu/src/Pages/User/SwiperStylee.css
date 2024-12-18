@@ -1,0 +1,14 @@
+.swiper-pagination-bullet {
+    /* // Style the individual dots here */
+    width: 8px;
+    height: 8px;
+    background-color: #ccc;
+    margin: 0 4px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
+.swiper-pagination-bullet-active {
+    /* // Style the active dot here */
+    background-color: #0d9488;
+  }

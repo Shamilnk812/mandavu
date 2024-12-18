@@ -11,7 +11,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from .utils import send_password_reset_email
 from rest_framework.exceptions import ValidationError
-from owners.serializers import BannerDetailsSerializer,GetFacilitiesSerializer,VenueDetailsSerializer
+from owners.serializers import BannerDetailsSerializer,GetFacilitiesSerializer,VenueDetailsSerializer,EventSerializer
 from owners.models import Venue,Event
 
 
@@ -204,11 +204,12 @@ class SingleVenueDetailsSerializer(serializers.ModelSerializer) :
     images = BannerDetailsSerializer(many=True, read_only=True)
     facilities = GetFacilitiesSerializer(many=True, read_only=True)
     owner_id = serializers.IntegerField(source='owner.id', read_only=True) 
+    events = EventSerializer(many=True, read_only=True)
 
 
     class Meta:
         model = Venue
-        fields = ['id','convention_center_name', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'address', 'latitude', 'longitude', 'images', 'facilities','owner_id','terms_and_conditions']
+        fields = ['id','convention_center_name', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'address', 'latitude', 'longitude', 'images', 'facilities','owner_id','terms_and_conditions','events']
 
 
 class SingleVenueEventsDetailsSerializer(serializers.ModelSerializer) :
