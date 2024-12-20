@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 const AddReviewModal = ({ isOpen, onClose, onSubmit }) => {
     const [rating, setRating] = useState(0);
@@ -10,6 +11,10 @@ const AddReviewModal = ({ isOpen, onClose, onSubmit }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (rating === 0) {
+            toast.warning("Please add a rating!");
+            return;
+        }
         onSubmit({ rating, reviewText });
         setRating(0);
         setReviewText("");

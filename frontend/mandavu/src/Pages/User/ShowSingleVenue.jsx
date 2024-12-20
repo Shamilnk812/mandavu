@@ -423,7 +423,7 @@ export default function ShowSingleVenueDetails() {
 
         {/* raitng  */}
 
-        <ShowRating venueId={venue.id} />
+        <ShowRating venueId={venue.id} scrollVariants={scrollVariants}/>
         {/* <div className="mt-8  rounded-lg bg-customColor8   h-[400px]"></div> */}
 
 

@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 
 export default function ShowSingleBookingDetails() {
     const { bookingId } = useParams();
-    const [bookedDetails, setBookedDetails] = useState(null);
+    const [booking, setBookedDetails] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -35,107 +35,163 @@ export default function ShowSingleBookingDetails() {
     if (error) return <p>{error}</p>;
 
 
-    return(
+    return (
         <>
-        <Navb/>
-        <Sidebar/>
-        <div className="bg-customColor7 flex">
-                <div className="flex-1 p-10 text-2xl ml-64">
-                    <div className="bg-customColor8 rounded-lg shadow-lg pb-10">
-                        <h3 className="text-2xl bg-gradient-to-r from-teal-500 to-gray-800 font-semibold mb-4 py-3 text-center text-white rounded-tl-lg rounded-tr-lg">Booking Details</h3>
-                        <div className="space-y-4 px-10 py-10">
-                            {bookedDetails ? (
-                                <div className="bg-white p-6 rounded-lg shadow-lg">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">Booking ID:</h4>
-                                            <p className="text-gray-400 text-lg">{bookedDetails.id}</p>
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">Venue Name:</h4>
-                                            <p className="text-gray-400 text-lg ">{bookedDetails.venue.name}</p>
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">Date:</h4>
-                                            <p className="text-gray-400 text-lg ">{bookedDetails.date}</p>
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">Time:</h4>
-                                            <p className="text-gray-400 text-lg ">{bookedDetails.time}</p>
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">Total Price:</h4>
-                                            <p className="text-gray-400 text-lg ">{bookedDetails.total_price}</p>
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">Booking Amount:</h4>
-                                            <p className="text-gray-400 text-lg ">{bookedDetails.booking_amount}</p>
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">Name:</h4>
-                                            <p className="text-gray-400 text-lg ">{bookedDetails.name}</p>
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">Email:</h4>
-                                            <p className="text-gray-400 text-lg ">{bookedDetails.email}</p>
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">Phone:</h4>
-                                            <p className="text-gray-400 text-lg ">{bookedDetails.phone}</p>
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">Additional Phone:</h4>
-                                            <p className="text-gray-400 text-lg ">{bookedDetails.additional_phone}</p>
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">Address:</h4>
-                                            <p className="text-gray-400 text-lg ">{bookedDetails.address}</p>
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">City:</h4>
-                                            <p className="text-gray-400 text-lg ">{bookedDetails.city}</p>
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">State:</h4>
-                                            <p className="text-gray-400 text-lg ">{bookedDetails.state}</p>
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">Condition:</h4>
-                                            <p className="text-gray-400 text-lg ">{bookedDetails.condition}</p>
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">Status:</h4>
-                                            <p className={`text-gray-400 text-lg  ${bookedDetails.status === 'Booking Confirmed' ? 'text-blue-500' : bookedDetails.status === 'Booking Completed' ? 'text-green-500' : 'text-red-500'}`}>
-                                                {bookedDetails.status}
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <h4 className="font-semibold text-lg text-gray-700">Created At:</h4>
-                                            <p className="text-gray-400 text-lg ">{new Date(bookedDetails.created_at).toLocaleString()}</p>
-                                        </div>
-                                    </div>
+            <Navb />
+            <div className="flex flex-col lg:flex-row">
+                <Sidebar />
+                <main className="flex-1 px-4 py-6 bg-gray-100 lg:ml-64 ">
+                    <div className="max-w-4xl mx-auto bg-white my-16 pt-2 shadow-lg rounded-lg">
+                        <h3 className="text-xl  font-semibold mb-2 py-3 m text-center text-gray-600 ">Booking Details</h3>
+
+
+                        <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+                            <dl className="sm:divide-y sm:divide-gray-200">
+
+
+                                <div className="py-3 sm:py-5 lg:px-6 border-b border-gray-200">
+                                    <h2 className="text-md font-semibold text-teal-600">
+                                        {booking.venue.convention_center_name}
+                                    </h2>
                                 </div>
-                            ) : (
-                                <p>No booking details found.</p>
-                            )}
+                                <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
+                                    <dt className="text-sm font-medium text-gray-600">
+                                        Event
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                                        {booking.event_name}
+                                    </dd>
+                                </div>
+                                <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
+                                    <dt className="text-sm font-medium text-gray-600">
+                                        Booking Package
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                                        {/* add booking packge name */}
+                                    </dd>
+                                </div>
+
+                                <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between  border-b border-gray-200 ">
+                                    <dt className="text-sm font-medium text-gray-600">
+                                        Dates
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                                        {booking.dates && booking.dates.length > 0 ? (
+                                            <ul  className="list-none ml-0">
+                                                {booking.dates.map((date, index) => (
+                                                    <li key={index}>{date}</li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            <span>No dates available</span>
+                                        )}
+                                    </dd>
+                                </div>
+
+
+
+                                <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
+                                    <dt className="text-sm font-medium text-gray-600">
+                                        Times
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                                        {booking.times && booking.times.length > 0 ? (
+                                            <ul  className="list-none ml-0">
+                                                {booking.times.map((time, index) => (
+                                                    <li key={index}>
+                                                        {Array.isArray(time) ? `${time[0]} - ${time[1]}` : time}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            <span>No times available</span>
+                                        )}
+                                    </dd>
+                                </div>
+
+
+
+                                <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
+                                    <dt className="text-sm font-medium text-gray-600">
+                                        Email address
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                                        {booking.email}
+                                    </dd>
+                                </div>
+                                <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
+                                    <dt className="text-sm font-medium text-gray-600">
+                                        Phone number
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                                        {booking.phone}
+                                    </dd>
+                                </div>
+                                <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
+                                    <dt className="text-sm font-medium text-gray-600">
+                                        Additional Phone number
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                                        {booking.additional_phone}
+                                    </dd>
+                                </div>
+
+                                <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
+                                    <dt className="text-sm font-medium text-gray-600">
+                                        Total Amount
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                                        {booking.total_price}
+                                    </dd>
+                                </div>
+                                <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
+                                    <dt className="text-sm font-medium text-gray-600">
+                                        Remaining Amount
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                                        {booking.remaining_amount}
+                                    </dd>
+                                </div>
+                                <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
+                                    <dt className="text-sm font-medium text-gray-600">
+                                        Booking Amount
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                                        {booking.booking_amount}
+                                    </dd>
+                                </div>
+                                <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
+                                    <dt className="text-sm font-medium text-gray-600">
+                                        Status
+                                    </dt>
+                                    <dd>
+                                        <span
+                                            className={`mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2 px-4 py-2 rounded 
+                                ${booking.status === 'Booking Confirmed' ? 'bg-orange-500 text-white' : ''} 
+                                ${booking.status === 'Booking Completed' ? 'bg-green-500 text-white' : ''} 
+                                ${booking.status === 'Booking Canceled' ? 'bg-red-500 text-white' : ''}`}
+                                        > {booking.status} </span>
+                                    </dd>
+                                </div>
+                                <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
+                                    <dt className="text-sm font-medium text-gray-600">
+                                        Full Address
+                                    </dt>
+                                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                                        {booking.address} {booking.city} {booking.state}
+                                    </dd>
+                                </div>
+
+
+
+                            </dl>
+
                         </div>
-                     </div>   
-                     </div>   
-                     </div>   
+
+                      
+                    </div>
+                </main>
+            </div>
         </>
     )
 }

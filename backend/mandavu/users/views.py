@@ -12,7 +12,7 @@ from django.utils.encoding import smart_str,DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import make_password
-
+from admin_dash.views import CustomPagination
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
@@ -524,13 +524,31 @@ class ShowBookingDetailsForCalandar(GenericAPIView) :
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
+
+
+        # paginator = self.pagination_class()
+        # result_page = paginator.paginate_queryset(bookings, request)
+        # serializer = self.serializer_class(result_page, many=True)
+
+        # return paginator.get_paginated_response(serializer.data)
+    
+
 class ShowBookingListView(GenericAPIView) :
     serializer_class = ShowBookingListSerializer
-    def get(self, rquest, uid) :
+    pagination_class = CustomPagination
+    def get(self, request, uid) :
+        page = request.query_params.get('page', 1)
+
         user = get_object_or_404(User, id=uid)
         all_bookings = Booking.objects.filter(user=user).order_by('-id')
-        serializer = self.serializer_class(all_bookings, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(all_bookings, request)
+        serializer = self.serializer_class(result_page , many=True)
+
+        return paginator.get_paginated_response(serializer.data)
+
+       
+        # return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ShowSingleBookingDetails(GenericAPIView) :
