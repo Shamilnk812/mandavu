@@ -40,7 +40,7 @@ export default function ChatUsersList({Chat,selectedChat}) {
                     className={`w-full lg:w-2/5 border-r border-gray-300 overflow-y-auto h-[500px] lg:block ${
                         selectedChat ? 'hidden' : 'block'
                     }`}
-                    // style={{ maxHeight: '400px' }}
+                    
                 >
          <h2 className="text-lg font-semibold text-gray-600 p-4"><ChatIcon /> Chats</h2>
          <ul>

@@ -6,24 +6,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 
 const ChatNotificationCmp = ({username, content, timestamp, onClose }) => {
     return (
-        // <motion.div
-        //     initial={{ opacity: 0, y: -50 }}
-        //     animate={{ opacity: 1, y: 0 }}
-        //     exit={{ opacity: 0, y: -50 }}
-        //     transition={{ duration: 0.5 }}
-        //     className="fixed top-10 right-5 bg-white shadow-lg rounded-md p-4 z-50 w-80"
-        // >
-        //     <div className="flex justify-between items-center">
-        //         <h4 className="font-bold text-lg">{username}</h4>
-        //         <button onClick={onClose} className="text-gray-500 hover:text-gray-800">
-        //             ✕
-        //         </button>
-        //     </div>
-        //     <p className="text-sm text-gray-700 mt-2">{content}</p>
-        //     <p className="text-xs text-gray-500 mt-2">{new Date(timestamp).toLocaleString()}</p>
-        // </motion.div>
-
-
+       
         <motion.div
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}

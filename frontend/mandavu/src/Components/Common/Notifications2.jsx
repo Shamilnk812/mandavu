@@ -115,7 +115,7 @@ const CommonNotification = () => {
     <button
       id="dropdownHelperButton"
       onClick={toggleDropdown}
-      className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
+      className="flex items-center text-gray-900 rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
       type="button"
     >
       <span className="flex-1 whitespace-nowrap">

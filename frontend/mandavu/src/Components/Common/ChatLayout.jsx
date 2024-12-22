@@ -5,9 +5,9 @@ import ChatUsersList from "./ListingUsers";
 // import { useWebSocket } from "../../Utils/ChatContext/ChatContext";
 import axios from "axios";
 import { axiosChatInstance } from "../../Utils/Axios/axiosInstance";
-import { SOCKET,ChatUrl } from "../../Utils/Axios/EndPoints";
+import { SOCKET, ChatUrl } from "../../Utils/Axios/EndPoints";
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
-import {  useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import DuoIcon from '@mui/icons-material/Duo';
@@ -30,14 +30,14 @@ export default function ChatLayout() {
     const chatArea = useRef(null);
     const videoCallContainerRef = useRef(null);
     const navigate = useNavigate();
-    
-    const {vws} = useVideoCallWebSocket()
+
+    const { vws } = useVideoCallWebSocket()
 
     const User_token = useSelector((state) => state.user.access_token);
     const Owner_token = useSelector((state) => state.owner.access_token);
     const access = User_token || Owner_token;
     const userId = access ? jwtDecode(access).user_id : null;
-    
+
 
     // new states for sample 
     const [isChatOpen, setIsChatOpen] = useState(true);
@@ -62,22 +62,22 @@ export default function ChatLayout() {
 
 
     // console.log( "chat opened ",isChatOpen)
-    
+
 
     const Chat = async ({ id, username }) => {
         setUser(id);
         setUsername(username);
         setSelectedChat('selected')
         setupWebSocket(id, access);
-    
+
         try {
-            const response = await axiosChatInstance.get(`user_messages/${userId}/${id}/`,{
+            const response = await axiosChatInstance.get(`user_messages/${userId}/${id}/`, {
                 headers: {
                     'Authorization': `Bearer ${access}`
                 }
             });
             const data = response.data;
-    
+
             if (Array.isArray(data)) {
                 setMessages(data);
             } else {
@@ -91,16 +91,16 @@ export default function ChatLayout() {
     };
 
 
-    console.log('it is working ',selectedChat)
+    console.log('it is working ', selectedChat)
     const setupWebSocket = (chatWithUserId, access) => {
         if (ws) {
             ws.close();
         }
-        
-        console.log("chat with user id is :",chatWithUserId)
+
+        console.log("chat with user id is :", chatWithUserId)
         const socketUrl = `${SOCKET}chat/${chatWithUserId}/?token=${access}`;
         const newWs = new WebSocket(socketUrl);
-        
+
         newWs.onopen = () => {
             console.log('WebSocket connection opened');
         };
@@ -109,23 +109,8 @@ export default function ChatLayout() {
             const data = JSON.parse(event.data);
             console.log('Received message:', data);
 
-            // if (data.user !== userId) {
-            //     setNotifications((prev) => [
-            //         ...prev,
-            //         {
-            //             id: Date.now(),
-            //             username: data.username,
-            //             content: data.content,
-            //             timestamp: data.timestamp,
-            //         },
-            //     ]);
-            // }
-
-
-
-            
             setMessages((prevMessages) => [...prevMessages, data]);
-            
+
         };
 
         newWs.onclose = () => {
@@ -151,42 +136,42 @@ export default function ChatLayout() {
 
 
 
-   const startVideoCall = async () => {
-    if (!user) return;
+    const startVideoCall = async () => {
+        if (!user) return;
 
-    if (vws.readyState === WebSocket.OPEN) {  // Ensure WebSocket is open
-        const appID = 1387710959;
-        const serverSecret = "3b21f678591c4f04ee738ad015fcf82b";
-        const meetingId = `${user}-${userId}`;
+        if (vws.readyState === WebSocket.OPEN) {  // Ensure WebSocket is open
+            const appID = 1387710959;
+            const serverSecret = "3b21f678591c4f04ee738ad015fcf82b";
+            const meetingId = `${user}-${userId}`;
 
-        const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, meetingId, Date.now().toString(), userId);
-        const zc = ZegoUIKitPrebuilt.create(kitToken);
+            const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, meetingId, Date.now().toString(), userId);
+            const zc = ZegoUIKitPrebuilt.create(kitToken);
 
-        zc.joinRoom({
-            container: videoCallContainerRef.current,
-            scenario: {
-                mode: ZegoUIKitPrebuilt.OneONoneCall,
-            },
-            showScreenSharingButton: true,
-            onLeaveRoom: () => {
-                window.location.reload(); 
-            }
-        });
+            zc.joinRoom({
+                container: videoCallContainerRef.current,
+                scenario: {
+                    mode: ZegoUIKitPrebuilt.OneONoneCall,
+                },
+                showScreenSharingButton: true,
+                onLeaveRoom: () => {
+                    window.location.reload();
+                }
+            });
 
-        const meetingLink = `${ChatUrl}join_call/${meetingId}/?token=${kitToken}`;
-        setShowVideoCall(true);
-        
-        vws.send(JSON.stringify({ 
-            type: 'video_call', 
-            link: meetingLink,
-            recipient_id: user  // Recipient's user ID
-        }));
-    } else {
-        console.error('WebSocket is not open');
-    }
-};
+            const meetingLink = `${ChatUrl}join_call/${meetingId}/?token=${kitToken}`;
+            setShowVideoCall(true);
 
-   
+            vws.send(JSON.stringify({
+                type: 'video_call',
+                link: meetingLink,
+                recipient_id: user  // Recipient's user ID
+            }));
+        } else {
+            console.error('WebSocket is not open');
+        }
+    };
+
+
 
     useEffect(() => {
         return () => {
@@ -205,31 +190,31 @@ export default function ChatLayout() {
     return (
         <>
             {showVideoCall ? (
-               <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-               <div className="relative w-full max-w-4xl h-4/5 bg-white shadow-lg rounded-lg">
-                   <div className="absolute top-0 w-full bg-teal-600 p-4 rounded-t-lg">
-                       <h1 className="text-white text-center text-2xl font-semibold">Video Call</h1>
-                   </div>
-                   <div className="w-1/2" id="root" ref={videoCallContainerRef}>
-                       {/* Zego UI Kit Prebuilt interface will be injected here */}
-                   </div>
-                   {/* Close Button */}
-                   <div className="absolute top-4 right-4 border-2 border-gray-300 rounded-md p-1 bg-white">
-                       <button
-                           // onClick={handleClosePopup}
-                           className="text-red-600 font-bold text-lg"
-                       >
-                           X
-                       </button>
-                   </div>
-               </div>
-           </div>
+                <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                    <div className="relative w-full max-w-4xl h-4/5 bg-white shadow-lg rounded-lg">
+                        <div className="absolute top-0 w-full bg-teal-600 p-4 rounded-t-lg">
+                            <h1 className="text-white text-center text-2xl font-semibold">Video Call</h1>
+                        </div>
+                        <div className="w-1/2" id="root" ref={videoCallContainerRef}>
+                            {/* Zego UI Kit Prebuilt interface will be injected here */}
+                        </div>
+                        {/* Close Button */}
+                        <div className="absolute top-4 right-4 border-2 border-gray-300 rounded-md p-1 bg-white">
+                            <button
+                                // onClick={handleClosePopup}
+                                className="text-red-600 font-bold text-lg"
+                            >
+                                X
+                            </button>
+                        </div>
+                    </div>
+                </div>
             ) : (
                 // <div className="flex flex-col flex-1 ml-64 mt-10 bg-customColor7 min-h-screen">
-                    <div className="flex flex-col lg:flex-row">
+                <div className="flex flex-col lg:flex-row">
                     {/* <div className="p-10"> */}
                     <main className="flex-1 px-4 py-6 bg-gray-50 lg:ml-64">
-                        
+
                         <div className="max-w-4xl mx-auto bg-white mt-16 shadow-xl rounded-lg">
                             <h3 className="text-2xl font-semibold py-3 text-center text-white bg-gray-700 rounded-tl-lg rounded-tr-lg">
                                 Inbox
@@ -238,87 +223,79 @@ export default function ChatLayout() {
                             <div className="flex">
                                 {/* Left side: User List */}
 
-
-                               
-   
-
-                                <ChatUsersList Chat={Chat} selectedChat={selectedChat}  />
-                                
-
- 
+                                <ChatUsersList Chat={Chat} selectedChat={selectedChat} />
 
                                 {/* Right side: Chat Area */}
 
-                              
+
 
                                 {/* <div className="w-3/5 flex flex-col h-[500px]"> */}
 
                                 <div
-                    className={`w-full lg:w-3/5 flex flex-col h-[500px] ${
-                        selectedChat ? 'block' : 'hidden lg:block'
-                    }`}
-                >
+                                    className={`w-full lg:w-3/5 flex flex-col h-[500px] ${selectedChat ? 'block' : 'hidden lg:block'
+                                        }`}
+                                >
                                     {/* Header */}
                                     <div className="flex items-center justify-between p-4 bg-gray-300 shadow-lg">
 
-                                    {selectedChat && (
-                            <button
-                                onClick={() => setSelectedChat(null)}
-                                className="lg:hidden text-teal-800 font-bold"
-                            >
-                                ← Back
-                            </button>
-                        )}
+                                        {selectedChat && (
+                                            <button
+                                                onClick={() => setSelectedChat(null)}
+                                                className="lg:hidden text-teal-800 font-bold"
+                                            >
+                                                ← Back
+                                            </button>
+                                        )}
                                         <h1 className="text-lg text-gray-700 font-semibold">
-                                            
+
                                             {/* {username ?  <AccountCircleIcon/> ` ${username}` : 'Chat Area'} */}
                                             {username ? (
-                                                        <>
-                                                        <AccountCircleIcon className="mr-2" fontSize="large" />
-                                                        {username}
-                                                        </>
-                                                    ) : (
-                                                        'Chat Area'
-                                                    )}
+                                                <>
+                                                    <AccountCircleIcon className="mr-2" fontSize="large" />
+                                                    {username}
+                                                </>
+                                            ) : (
+                                                'Chat Area'
+                                            )}
                                         </h1>
 
-                                        
+
                                         {user && (
                                             <button
                                                 onClick={startVideoCall}
                                                 className="bg-teal-700 text-white px-4 py-1 hover:bg-teal-800 transition-all duration-300 rounded"
                                             >
-                                               {/* <VideoCallIcon/>   */}
-                                               <DuoIcon />
+                                                {/* <VideoCallIcon/>   */}
+                                                <DuoIcon />
                                             </button>
                                         )}
                                     </div>
 
                                     {/* Chat messages area */}
                                     <div ref={chatArea} className="flex-1 p-4 overflow-y-auto">
-                                    <div className="flex flex-col space-y-4">
-                                    {Array.isArray(messages) &&
-                                        messages
-                                            .slice()
-                                            .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-                                            .map((msg, index) => (
-                                                msg && msg.content ? (
-                                                    <ChatMessages
-                                                        key={index}
-                                                        text={msg.content}
-                                                        send={msg.user}
-                                                        sender={userId}
-                                                        timestamp={msg.timestamp}
-                                                        seen={msg.seen}
-                                                    />
-                                                ) : (
-                                                    <div key={index} className="text-red-500">
-                                                        Message content missing
-                                                    </div>
-                                                )
-                                            ))
-                                    }
-                                    </div>
+                                        <div className="flex flex-col space-y-4">
+                                            {Array.isArray(messages) &&
+                                                messages
+                                                    .slice()
+                                                    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+                                                    .map((msg, index) => (
+                                                        msg && msg.content ? (
+                                                            <ChatMessages
+                                                                key={index}
+                                                                text={msg.content}
+                                                                send={msg.user}
+                                                                sender={userId}
+                                                                timestamp={msg.timestamp}
+                                                                seen={msg.seen}
+                                                            />
+                                                        ) : (
+                                                            <div key={index} className="text-red-500">
+                                                                Message content missing
+                                                            </div>
+                                                        )
+                                                    ))
+                                            }
+                                        </div>
                                     </div>
                                     {/* Input area */}
                                     {user && (
@@ -326,33 +303,19 @@ export default function ChatLayout() {
                                     )}
                                 </div>
 
-  
+
 
                             </div>
                         </div>
 
-
-                        {/* chat notification area */}
-
                         <div>
-
-                        {/* {notifications.map((notification) => (
-
-                            <ChatNotificationCmp  key={notification.id} 
-                            username={notification.username}
-                            content={notification.content}
-                            timestamp={notification.timestamp}
-                            onClose={() => closeNotification(notification.id)}
                             
-                            />
-
-                        ))} */}
                         </div>
                     </main>
                 </div>
             )}
 
-           
+
         </>
     );
 }
