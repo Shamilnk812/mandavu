@@ -158,7 +158,7 @@ const CommonNotification = () => {
                     <div className="flex border-b-2 pb-1">
                       <CampaignIcon className="text-teal-600" />
                       <div className="ml-3 font-normal text-gray-700 text-lg">
-                        {notification.message2?.username}
+                        {notification.message2?.username || "New Message"}
                       </div>
                     </div>
                     <div className="ml-3 mt-2">
@@ -176,9 +176,9 @@ const CommonNotification = () => {
                           {notification.is_read ? "Seen" : "New"}
                         </p>
                         <p className="text-xs text-gray-900 dark:text-gray-600 mt-1">
-                          {new Date(
-                            notification.message2?.timestamp
-                          ).toLocaleString()}
+                        {notification.message2?.timestamp
+                          ? new Date(notification.message2?.timestamp).toLocaleString()
+                          : new Date(notification.timestamp).toLocaleString()}
                         </p>
                       </div>
                     </div>
