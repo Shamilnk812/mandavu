@@ -1,7 +1,8 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from users.models import CustomUser
+from users.models import CustomUser,User
+from owners.models import Owner,Venue
 from .models import *
 class ChatConsumer(AsyncWebsocketConsumer):
 
@@ -43,6 +44,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             video_call_link = data.get("link")
 
             if message:
+                
+                username = await self.get_username()
                 result = await self.save_message(message)
                 await self.channel_layer.group_send(
                     self.room_group_name,
@@ -51,6 +54,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         "message_id": result['message_id'],
                         "content": message,
                         "user": self.request_user.id,  # Pass the sender's user ID
+                        "username": username,
                         "timestamp": result['timestamp'],  # Send the timestamp
                         "seen": result['seen'],
                     }
@@ -90,6 +94,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'seen': message.seen ,
         }
     
+    @database_sync_to_async
+    def get_username(self):
+        if self.request_user.is_owner:
+            owner = Owner.objects.get(id=self.request_user.id)
+            venue = Venue.objects.filter(owner=owner).first()
+            if venue :
+                return f"{owner.first_name} {owner.last_name} ({venue.convention_center_name})"
+            return f"{owner.first_name} {owner.last_name}"
+        
+        elif self.request_user.is_user:
+            return f"{self.request_user.first_name} {self.request_user.last_name}"
+        
+        return "Unknown User"
+
+
+
+
 
     # @database_sync_to_async
     # def mark_messages_as_seen(self):
@@ -114,6 +135,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "message_id": event['message_id'],
             "content": event['content'],
             "user": event['user'],  # Use the sender's user ID from the event
+            "username": event['username'],
             "timestamp": event['timestamp'],
             "seen": event['seen'],
         }))

@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save,pre_save
 from django.dispatch import receiver
 from .models import Notification
+from chat.models import Messages
 from users.models import CustomUser,User,Booking
 from owners.models import Owner,BookingPackages
 from channels.layers import get_channel_layer
@@ -14,7 +15,8 @@ import json
 def create_notification(user,message,link=None) :
     Notification.objects.create(
         user=user,
-        message=message,
+        message="new one",
+        message2= message,
         link=link
     )
     send_real_time_notification(user.id,message)
@@ -221,3 +223,36 @@ def send_notification_owner_registration(sender,instance,created, **kwargs) :
 #             'message':message
 #         }
 #     )
+
+
+
+
+# -------------------- Chat Notifications ---------------
+
+
+@receiver(post_save, sender=Messages)
+def notify_recipient_on_new_message(sender, instance, created, **kwargs):
+
+    if created:
+        chat_room = instance.chat_room
+        sender_user = instance.user
+
+        recipient_user = (
+            chat_room.user2 if chat_room.user1 == sender_user else chat_room.user1
+        )
+
+
+        # message_content = (
+        #      f"New message from {sender_user.first_name} {sender_user.last_name} : "
+        #      f"{instance.content}" 
+
+        # )
+
+        message_content = {
+            "type": "chat_notification",
+            "content": instance.content,
+            "username": f"{sender_user.first_name} {sender_user.last_name}",
+            "timestamp": instance.timestamp.isoformat(),
+        }
+
+        create_notification(user=recipient_user,message=message_content)

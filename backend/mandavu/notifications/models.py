@@ -6,6 +6,7 @@ from owners.models import Venue
 class Notification(models.Model) :
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     message = models.CharField(max_length=225)
+    message2 = models.JSONField(null=True,blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
     link = models.URLField(null=True, blank=True)

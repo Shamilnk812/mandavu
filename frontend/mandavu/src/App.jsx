@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify'
 import { VideoCallWebSocketProvider } from './Utils/VideoCallContext/VideoCallContext'
 import GlobalVideoCallInvitation from './Utils/VideoCallContext/VideoCallContext'
 import CheckInternetConnection from './Utils/CheckConnection/CheckConnection'
+import NotificationProvider from './Utils/NotificationContext/NotificationContext'
 
 function App() {
 
@@ -16,7 +17,9 @@ function App() {
     // <CheckInternetConnection>
       
     <div className="min-h-screen bg-customColor7">
+      <NotificationProvider>
      <VideoCallWebSocketProvider>
+
      {/* <WebSocketProvider> */}
       <Routes>
         <Route path='/' element={<Dash />} />
@@ -27,6 +30,7 @@ function App() {
       <GlobalVideoCallInvitation/>
       {/* </WebSocketProvider> */}
       </VideoCallWebSocketProvider> 
+      </NotificationProvider>
       
       <ToastContainer
         position="bottom-right"

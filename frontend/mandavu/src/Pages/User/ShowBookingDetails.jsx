@@ -137,9 +137,9 @@ export default function ShowBookingDetails() {
             <div className="flex flex-col lg:flex-row">
                 <Sidebar />
                 <main className="flex-1 px-4 py-6 bg-gray-100 lg:ml-64">
-                    <div className="max-w-4xl mx-auto bg-white p-4 shadow-lg rounded-lg mt-16">
+                    <div className="max-w-4xl mx-auto bg-white px-4 pb-4 pt-2 shadow-lg rounded-lg mt-16">
 
-                        <h3 className="text-xl  font-semibold mb-8 py-3 text-center text-gray-600 border-b border-gray-200 ">
+                        <h3 className="text-xl  font-semibold mb-8 py-4 text-center text-gray-600 border-b border-gray-200 ">
                             Booking Details
                         </h3>
 

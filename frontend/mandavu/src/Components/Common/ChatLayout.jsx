@@ -10,9 +10,13 @@ import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import {  useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
+import DuoIcon from '@mui/icons-material/Duo';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
 
 import { useSelector } from "react-redux";
 import { useVideoCallWebSocket } from "../../Utils/VideoCallContext/VideoCallContext";
+import ChatNotificationCmp from "./ChatNotificationCmp";
 
 
 
@@ -33,12 +37,37 @@ export default function ChatLayout() {
     const Owner_token = useSelector((state) => state.owner.access_token);
     const access = User_token || Owner_token;
     const userId = access ? jwtDecode(access).user_id : null;
+    
+
+    // new states for sample 
+    const [isChatOpen, setIsChatOpen] = useState(true);
+    const [selectedChat, setSelectedChat] = useState(null);
+
+    const [notifications, setNotifications] = useState([]);
 
 
+    const closeNotification = (id) => {
+        setNotifications((prev) => prev.filter((n) => n.id !== id));
+    };
+
+    // const openChat = () => {
+    //     setIsChatOpen(true);
+    //     // setSelectedUser(user);
+    // };
+
+    // const closeChat = () => {
+    //     setIsChatOpen(false);
+    //     // setSelectedUser(null);
+    // };
+
+
+    // console.log( "chat opened ",isChatOpen)
+    
 
     const Chat = async ({ id, username }) => {
         setUser(id);
         setUsername(username);
+        setSelectedChat('selected')
         setupWebSocket(id, access);
     
         try {
@@ -62,12 +91,13 @@ export default function ChatLayout() {
     };
 
 
-
+    console.log('it is working ',selectedChat)
     const setupWebSocket = (chatWithUserId, access) => {
         if (ws) {
             ws.close();
         }
-
+        
+        console.log("chat with user id is :",chatWithUserId)
         const socketUrl = `${SOCKET}chat/${chatWithUserId}/?token=${access}`;
         const newWs = new WebSocket(socketUrl);
         
@@ -78,6 +108,22 @@ export default function ChatLayout() {
         newWs.onmessage = (event) => {
             const data = JSON.parse(event.data);
             console.log('Received message:', data);
+
+            // if (data.user !== userId) {
+            //     setNotifications((prev) => [
+            //         ...prev,
+            //         {
+            //             id: Date.now(),
+            //             username: data.username,
+            //             content: data.content,
+            //             timestamp: data.timestamp,
+            //         },
+            //     ]);
+            // }
+
+
+
+            
             setMessages((prevMessages) => [...prevMessages, data]);
             
         };
@@ -179,30 +225,71 @@ export default function ChatLayout() {
                </div>
            </div>
             ) : (
-                <div className="flex flex-col flex-1 ml-64 mt-10 bg-customColor7 min-h-screen">
-                    <div className="p-10">
-                        <div className="bg-customColor8 rounded-lg shadow-lg pb-10">
-                            <h3 className="text-2xl font-semibold py-3 text-center text-white bg-gradient-to-r from-teal-500 to-gray-800 rounded-tl-lg rounded-tr-lg">
+                // <div className="flex flex-col flex-1 ml-64 mt-10 bg-customColor7 min-h-screen">
+                    <div className="flex flex-col lg:flex-row">
+                    {/* <div className="p-10"> */}
+                    <main className="flex-1 px-4 py-6 bg-gray-50 lg:ml-64">
+                        
+                        <div className="max-w-4xl mx-auto bg-white mt-16 shadow-xl rounded-lg">
+                            <h3 className="text-2xl font-semibold py-3 text-center text-white bg-gray-700 rounded-tl-lg rounded-tr-lg">
                                 Inbox
                             </h3>
 
                             <div className="flex">
                                 {/* Left side: User List */}
-                                <ChatUsersList Chat={Chat} />
+
+
+                               
+   
+
+                                <ChatUsersList Chat={Chat} selectedChat={selectedChat}  />
+                                
+
+ 
 
                                 {/* Right side: Chat Area */}
-                                <div className="w-3/5 flex flex-col h-[500px]">
+
+                              
+
+                                {/* <div className="w-3/5 flex flex-col h-[500px]"> */}
+
+                                <div
+                    className={`w-full lg:w-3/5 flex flex-col h-[500px] ${
+                        selectedChat ? 'block' : 'hidden lg:block'
+                    }`}
+                >
                                     {/* Header */}
-                                    <div className="flex items-center justify-between p-4 bg-gray-300 shadow">
-                                        <h1 className="text-xl font-semibold">
-                                            {username ? `Chat with ${username}` : 'No chats'}
+                                    <div className="flex items-center justify-between p-4 bg-gray-300 shadow-lg">
+
+                                    {selectedChat && (
+                            <button
+                                onClick={() => setSelectedChat(null)}
+                                className="lg:hidden text-teal-800 font-bold"
+                            >
+                                ← Back
+                            </button>
+                        )}
+                                        <h1 className="text-lg text-gray-700 font-semibold">
+                                            
+                                            {/* {username ?  <AccountCircleIcon/> ` ${username}` : 'Chat Area'} */}
+                                            {username ? (
+                                                        <>
+                                                        <AccountCircleIcon className="mr-2" fontSize="large" />
+                                                        {username}
+                                                        </>
+                                                    ) : (
+                                                        'Chat Area'
+                                                    )}
                                         </h1>
+
+                                        
                                         {user && (
                                             <button
                                                 onClick={startVideoCall}
-                                                className="bg-teal-500 text-white px-4 py-2 rounded"
+                                                className="bg-teal-700 text-white px-4 py-1 hover:bg-teal-800 transition-all duration-300 rounded"
                                             >
-                                               <VideoCallIcon/> Video Call
+                                               {/* <VideoCallIcon/>   */}
+                                               <DuoIcon />
                                             </button>
                                         )}
                                     </div>
@@ -238,9 +325,30 @@ export default function ChatLayout() {
                                         <SendMessage sendMessage={sendMessage} />
                                     )}
                                 </div>
+
+  
+
                             </div>
                         </div>
-                    </div>
+
+
+                        {/* chat notification area */}
+
+                        <div>
+
+                        {/* {notifications.map((notification) => (
+
+                            <ChatNotificationCmp  key={notification.id} 
+                            username={notification.username}
+                            content={notification.content}
+                            timestamp={notification.timestamp}
+                            onClose={() => closeNotification(notification.id)}
+                            
+                            />
+
+                        ))} */}
+                        </div>
+                    </main>
                 </div>
             )}
 

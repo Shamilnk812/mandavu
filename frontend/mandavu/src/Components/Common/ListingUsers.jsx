@@ -3,9 +3,10 @@ import {jwtDecode} from 'jwt-decode'
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { axiosChatInstance } from "../../Utils/Axios/axiosInstance";
+import ChatIcon from '@mui/icons-material/Chat';
 
 
-export default function ChatUsersList({Chat}) {
+export default function ChatUsersList({Chat,selectedChat}) {
 
     const User_token = useSelector((state) => state.user.access_token);
     const Owner_token = useSelector((state) => state.owner.access_token);
@@ -34,10 +35,16 @@ export default function ChatUsersList({Chat}) {
 
 
     return(
-        <div className="w-2/5 border-r border-gray-300 overflow-y-auto" style={{ maxHeight: '400px' }}>
-         <h2 className="text-xl font-semibold p-4">Users</h2>
+        // <div className="w-2/5 border-r border-gray-300 overflow-y-auto" style={{ maxHeight: '400px' }}>
+             <div
+                    className={`w-full lg:w-2/5 border-r border-gray-300 overflow-y-auto h-[500px] lg:block ${
+                        selectedChat ? 'hidden' : 'block'
+                    }`}
+                    // style={{ maxHeight: '400px' }}
+                >
+         <h2 className="text-lg font-semibold text-gray-600 p-4"><ChatIcon /> Chats</h2>
          <ul>
-            {/* Sample user items, only displaying 7 users */}
+            
             {chatUsers.length > 0 ? (
              chatUsers.map((user, index) => (
             <ChatUserItem user={user} userId={userId} key={user.id} Chat={Chat} index={index} />
@@ -58,9 +65,9 @@ const ChatUserItem = ({user, userId, Chat, index}) => {
     return (
         <button
         onClick={()=> Chat({id:displayUser.id, username: displayUser.first_name})}
-        className="w-full bg-teal-500"
+        className="w-full bg-gray-200 border-b border-gray-400 shadow-lg"
         >
-             <li key={index} className="flex items-center p-3 hover:bg-teal-600 cursor-pointer">
+             <li key={index} className="flex items-center p-3 hover:bg-gray-300 hover:shadow-xl cursor-pointer">
                  <img src="/user/user_avatar.png" alt="User" className="rounded-full mr-3 w-12 h-12" />
                 <span className="font-medium ">{displayUser.first_name} {displayUser.last_name}</span>
             </li>
