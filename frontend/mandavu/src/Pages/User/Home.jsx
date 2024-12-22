@@ -3,6 +3,7 @@ import Navb from "../../Components/User/Navb";
 import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
 import Footer from '../../Components/User/Footer';
+import FooterCmp from '../../Components/User/Footer';
 
 export default function Home() {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -94,7 +95,7 @@ export default function Home() {
                     </div>
                 </main>
             </div>
-                {/* <Footer/> */}
+                <FooterCmp />
         </>
     );
 }

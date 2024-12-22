@@ -6,10 +6,14 @@ import ViewSidebarRoundedIcon from '@mui/icons-material/ViewSidebarRounded';
 import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
 import ChatRoundedIcon from '@mui/icons-material/ChatRounded';
 import GridViewRoundedIcon from '@mui/icons-material/GridViewRounded';
+import { useSelector } from "react-redux";
 
 export default function Sidebar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
+  const isToggelMenu = useSelector((state) => state.user.toggleMenuOpen)
+
+
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -21,7 +25,7 @@ export default function Sidebar() {
       {/* Toggle Button (Visible on small screens) */}
 
 
-      {!isSidebarOpen && (
+      {!isSidebarOpen && !isToggelMenu && (
         <button
           onClick={toggleSidebar}
           className="fixed top-24 left-4 z-50 text-white bg-teal-600 p-2 rounded lg:hidden"

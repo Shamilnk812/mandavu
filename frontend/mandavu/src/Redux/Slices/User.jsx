@@ -8,6 +8,7 @@ const initialState ={
     selectedEvent: null,
     selectedPackage: null,
     addressAndEventDetails: null,
+    toggleMenuOpen: false,
 }
 
 const userSlice = createSlice({
@@ -39,9 +40,15 @@ const userSlice = createSlice({
             state.selectedEvent = null;
             state.selectedPackage = null;
             state.addressAndEventDetails = null;
+        },
+        openToggleMenu:(state) => {
+            state.toggleMenuOpen = true
+        },
+        closeToggleMenu:(state) => {
+            state.toggleMenuOpen = false
         }
     }
 })
 
-export const {UserLogin,UserLogout,setBookingDetails,clearBookingDetails} = userSlice.actions;
+export const {UserLogin,UserLogout,setBookingDetails,clearBookingDetails,openToggleMenu,closeToggleMenu} = userSlice.actions;
 export default userSlice.reducer;

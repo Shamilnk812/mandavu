@@ -4,7 +4,7 @@ import axios from "axios";
 import { axiosUserInstance } from '../../Utils/Axios/axiosInstance';
 import {toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
-import { UserLogout } from "../../Redux/Slices/User";
+import { UserLogout,openToggleMenu,closeToggleMenu } from "../../Redux/Slices/User";
 import CommonNotification from '../Common/Notifications2';
 
 
@@ -18,7 +18,18 @@ export default  function Navb() {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+   
   };
+
+  useEffect(()=> {
+    if (isMenuOpen){
+      dispatch(openToggleMenu())
+    }else{
+      dispatch(closeToggleMenu())
+    }
+  },[isMenuOpen])
+
+  
 
   const navigate  = useNavigate()
 
@@ -64,7 +75,7 @@ export default  function Navb() {
             
     <nav className="fixed fixed top-0 left-0 w-full border-teal-700 bg-teal-700 dark:teal-700 dark:teal-700 z-50">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="#" className="flex items-center space-x-3 rtl:space-x-reverse">
+        <a href="/user/home" className="flex items-center space-x-3 rtl:space-x-reverse">
           <img src="/user/mandavu-logo.png" className="h-8" alt="Mandavu logo" />
         </a>
         <button 
@@ -108,9 +119,11 @@ export default  function Navb() {
       </div>
     </nav>
 
+    <div className="pt-16" > 
+
+    </div>
 
 
-   
         </>
     )
 }

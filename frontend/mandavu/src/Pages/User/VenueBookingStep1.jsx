@@ -5,6 +5,7 @@ const BookingFormForAddress = lazy(() => import("../../Components/User/Booking/B
 const BookingSummary1 = lazy(() => import("../../Components/User/Booking/BookingSummary1"))
 import LoadingAnimation from "../../Components/Common/LoadingAnimation";
 import Navb from "../../Components/User/Navb";
+import FooterCmp from "../../Components/User/Footer";
 
 
 
@@ -35,7 +36,7 @@ export default function VenueBookingStep1() {
     return (
         <>
             <Navb />
-            <div className="container mx-auto max-w-screen-xl px-4 py-6">
+            <div className="container mx-auto max-w-screen-xl px-4 pt-12 pb-24">
                 <div className="flex flex-wrap -mx-4">
                     <Suspense fallback={<LoadingAnimation/>}>
                         <BookingFormForAddress ref={formRef} venueId={venueId} />
@@ -44,6 +45,8 @@ export default function VenueBookingStep1() {
 
                 </div>
             </div>
+
+            <FooterCmp />
 
         </>
     )

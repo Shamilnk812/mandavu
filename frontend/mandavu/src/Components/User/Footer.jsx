@@ -1,37 +1,30 @@
 
 
-export default function Footer(){
+export default function FooterCmp(){
     return(
         <>
-           <footer className="bg-white dark:bg-gray-900">
+    <footer className="bg-teal-900">
     <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
         <div className="md:flex md:justify-between">
             <div className="mb-6 md:mb-0">
-                <a href="https://flowbite.com/" className="flex items-center">
-                    <img src="https://flowbite.com/docs/images/logo.svg" className="h-8 me-3" alt="FlowBite Logo" />
-                    <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
+                <a href="/user/home" className="flex items-center bg-white py-2 px-4 rounded">
+                    <img src="/user/mandavu-logo.png" className="h-8 me-3" alt="Mandavu logo" />
+                    
                 </a>
             </div>
             <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+               
                 <div>
-                    <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Resources</h2>
+                    <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Quick Action</h2>
                     <ul className="text-gray-500 dark:text-gray-400 font-medium">
                         <li className="mb-4">
-                            <a href="https://flowbite.com/" className="hover:underline">Flowbite</a>
+                            <a href="/user/profile2" className="hover:underline ">Profile</a>
                         </li>
-                        <li>
-                            <a href="https://tailwindcss.com/" className="hover:underline">Tailwind CSS</a>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Follow us</h2>
-                    <ul className="text-gray-500 dark:text-gray-400 font-medium">
                         <li className="mb-4">
-                            <a href="https://github.com/themesberg/flowbite" className="hover:underline ">Github</a>
+                            <a href="/user/show-booking-details" className="hover:underline ">Bookings</a>
                         </li>
                         <li>
-                            <a href="https://discord.gg/4eeurUVvTy" className="hover:underline">Discord</a>
+                            <a href="" className="hover:underline">Contact Us</a>
                         </li>
                     </ul>
                 </div>
@@ -50,7 +43,7 @@ export default function Footer(){
         </div>
         <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
         <div className="sm:flex sm:items-center sm:justify-between">
-            <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2023 <a href="https://flowbite.com/" className="hover:underline">Flowbite™</a>. All Rights Reserved.
+            <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">© {new Date().getFullYear()} <a href="/user/home" className="hover:underline">Mandavu™</a>. All Rights Reserved.
             </span>
             <div className="flex mt-4 sm:justify-center sm:mt-0">
                 <a href="#" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
@@ -71,12 +64,7 @@ export default function Footer(){
                     </svg>
                     <span className="sr-only">Twitter page</span>
                 </a>
-                <a href="#" className="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
-                    <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
-                        <path fillRule="evenodd" d="M0 8a8 8 0 1 0 16 0 8 8 0 0 0-16 0ZM8 6a2 2 0 0 1 0 4 2 2 0 0 1 0-4Zm4.07 2a4.07 4.07 0 0 0-2.07-.53 4.08 4.08 0 0 0-2.06.53A4.18 4.18 0 0 0 6 10a4.07 4.07 0 0 0 2.07-.53A4.07 4.07 0 0 0 10 10a4.18 4.18 0 0 0 2.07-.53A4.07 4.07 0 0 0 14 6a4.08 4.08 0 0 0-2.07-.53Z" clipRule="evenodd"/>
-                    </svg>
-                    <span className="sr-only">Github page</span>
-                </a>
+              
             </div>
         </div>
     </div>

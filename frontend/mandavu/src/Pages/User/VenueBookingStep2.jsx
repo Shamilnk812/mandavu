@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import LoadingAnimation from "../../Components/Common/LoadingAnimation";
 import { useNavigate } from "react-router-dom";
+import FooterCmp from "../../Components/User/Footer";
 
 const BookingFormForDateAndTime = lazy(() => import("../../Components/User/Booking/BookingForm2"));
 const BookingSummary2 = lazy(() => import("../../Components/User/Booking/BookingSummary2"));
@@ -68,7 +69,7 @@ export default function VenueBookingStep2() {
     return (
         <>
             <Navb />
-            <div className="container mx-auto max-w-screen-xl px-4 py-6">
+            <div className="container mx-auto max-w-screen-xl px-4 pt-12 pb-24">
                 <div className="flex flex-wrap -mx-4">
                     <Suspense
                         fallback={
@@ -106,7 +107,8 @@ export default function VenueBookingStep2() {
                     </Suspense>
                 </div>
             </div>
-
+              
+              <FooterCmp />
         </>
     )
 }

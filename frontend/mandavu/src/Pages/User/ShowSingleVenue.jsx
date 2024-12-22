@@ -14,11 +14,8 @@ import SelectEventsModal from '../../Components/User/SelectEvents';
 import { Button } from '@mui/material';
 
 import { motion } from "framer-motion";
-
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-
-
 import { Swiper, SwiperSlide } from 'swiper/react';
 // import 'swiper/swiper-bundle.min.css';
 import 'swiper/css'
@@ -26,6 +23,8 @@ import 'swiper/css/pagination'
 import 'swiper/css/free-mode'
 import './SwiperStylee.css'
 import { FreeMode, Pagination } from 'swiper/modules'
+import LoadingAnimation from '../../Components/Common/LoadingAnimation';
+import FooterCmp from '../../Components/User/Footer';
 
 export default function ShowSingleVenueDetails() {
   const navigate = useNavigate();
@@ -102,7 +101,7 @@ export default function ShowSingleVenueDetails() {
 
 
   if (!venue) {
-    return <div>Loading...</div>;
+    return  <LoadingAnimation />
   }
 
   return (
@@ -430,6 +429,8 @@ export default function ShowSingleVenueDetails() {
         <SelectEventsModal venueId={venue.id} isEventModalOpen={isEventModalOpen} handleCloseEventModal={handleCloseEventModal} />
 
       </motion.div>
+
+      <FooterCmp />
 
 
     </>
