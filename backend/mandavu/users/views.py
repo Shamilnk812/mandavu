@@ -240,6 +240,7 @@ class UserPagination(PageNumberPagination):
 #         serializer = self.serializer_class(result_page, many=True, context={'request': request})
 #         return paginator.get_paginated_response(serializer.data)
 
+
 class AllVenuesListView(GenericAPIView):
     serializer_class = VenuesListSerializer
     pagination_class = UserPagination
