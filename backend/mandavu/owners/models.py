@@ -122,3 +122,9 @@ class VenueImage(models.Model):
  
 
     
+
+class TempOwnerAndVenueDetails(models.Model):
+    owner_details = models.JSONField(null=True,blank=True)
+    venue_details = models.JSONField(null=True, blank=True)
+    event_details = models.JSONField(null=True, blank=True)  
+    facility_details = models.JSONField(null=True, blank=True)

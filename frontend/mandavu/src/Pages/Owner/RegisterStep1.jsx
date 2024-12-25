@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import SignupStep1Schema from '../../Validations/Owner/RegisterStep1Schema';
+import { axiosOwnerInstance } from '../../Utils/Axios/axiosInstance';
 
 export default function RegisterationStep1() {
   const navigate = useNavigate();
@@ -34,16 +35,14 @@ export default function RegisterationStep1() {
 
         reader.onloadend = () => {
           const base64String = reader.result.split(',')[1];
-          const registrationData = {
+          const formData = {
             ...values,
             id_proof: base64String,
-            progress: '25%',       // Store progress directly in registrationData
-            step_1: 'completed'   // Store step-1 status directly in registrationData
+           
           };
-          sessionStorage.setItem('registrationData', JSON.stringify(registrationData));
+         
 
-          toast.success('Step 1 is Completed');
-          navigate('/owner/register-step-2');
+          handleRegistrationStep1(formData)
         };
 
         reader.readAsDataURL(values.id_proof);
@@ -53,8 +52,33 @@ export default function RegisterationStep1() {
     },
   });
 
+
+  const handleRegistrationStep1 = async (formData)=> {
+    try{
+      const response = await axiosOwnerInstance.post('registration-step1/', formData)
+      const { registrationId } = response.data;
+      console.log('reggg id is ',registrationId)
+      sessionStorage.setItem(
+        'registrationData',
+        JSON.stringify({ ...registrationData, registrationId : registrationId, progress: '25%', step_1: 'completed' })
+      );
+      
+      toast.success('Step 1 is Completed');
+      navigate('/owner/register-step-2');
+    }catch (error) {
+      console.error("Error response:", error.response); // Log the error for debugging
+    const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
+    toast.error(errorMessage); // Display error message in toast
+    }
+
+  }
+
+
+
   const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
   const progress = registrationData.progress || '0%';
+
+  
 
   return (
     <>

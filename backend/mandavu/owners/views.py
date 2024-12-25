@@ -40,6 +40,43 @@ from datetime import datetime, timedelta
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
+
+class RegistrationStep1(APIView) :
+    
+    def post(self, request):
+        print(request.data)
+        email = request.data.get('email')
+        phone = request.data.get('phone')
+        phone2 = request.data.get('phone2')
+
+        if CustomUser.objects.filter(email=email).exists() :
+            return Response({"message": "Owner with this email already exisit!"},status=status.HTTP_400_BAD_REQUEST)
+        
+        if Owner.objects.filter(phone=phone).exists() :
+            return Response({"message": "Owner with this Phone number already exist!"},status=status.HTTP_400_BAD_REQUEST)
+        
+        if Owner.objects.filter(phone2=phone2).exists():
+            return Response({"message": "Owner with this Phone number already exisit!"},status=status.HTTP_400_BAD_REQUEST)
+        
+        temp_registration = TempOwnerAndVenueDetails.objects.create(owner_details=request.data)
+        return Response({"message":"Registration Step 1 successly completed .","registrationId":temp_registration.id},status=status.HTTP_200_OK)
+        
+
+        
+    
+
+
+
+# class RegistrationStep2(APIView) :
+    
+#     def post(self, request):
+#         pass
+            
+
+# class RegistrationStep1(APIView) :
+    
+#     def post(self, request):
+#         pass
             
 
 
