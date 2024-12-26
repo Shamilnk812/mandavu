@@ -172,7 +172,7 @@ export default function RegisterationStep2() {
         step_2: 'completed'
       }));
       toast.success('Step 2 is Completed');
-      // navigate('/owner/register-step-3');
+      navigate('/owner/register-step-3');
 
     } catch (error) {
 

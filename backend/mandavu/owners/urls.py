@@ -6,6 +6,7 @@ urlpatterns = [
     # path('register/',RegisterOwnerView.as_view(),name='register'),
     path('registration-step1/',RegistrationStep1.as_view(),name='registration-step1'),
     path('registration-step2/<int:tid>/',RegistrationStep2.as_view(),name='registration-step2'),
+    path('registration-step3/<int:tid>/',RegistrationStep3.as_view(),name='registration-step3'),
     path('cancel-registration/<int:tid>/',CancelRegistrationView.as_view(),name='cancel-registration'),
     path('register/',RegisterCombinedView.as_view(),name='register'),
     path('login/',LoginOwnerView.as_view(),name='login'),
