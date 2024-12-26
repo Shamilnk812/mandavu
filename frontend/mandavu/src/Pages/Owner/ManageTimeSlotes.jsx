@@ -21,6 +21,7 @@ export default function ManageTimeSlotesForPackages() {
             const response = await axiosOwnerInstance.get(`get-time-slotes/${venueId}/?packageId=${id}`)
             const slots = response.data.length > 0 ? response.data[0].time_slots : [];
             setTimeSlotes(slots)
+            console.log(slots)
         } catch (error) {
             toast.error('Failed to fetch packge time slotes. Please try again later')
         }finally{

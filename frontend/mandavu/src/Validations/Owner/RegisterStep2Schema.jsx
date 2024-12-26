@@ -31,6 +31,20 @@ const RegisterationStep2Schema= Yup.object({
     .required('Auditorium seat count is required'),
 
   condition: Yup.string().required('Condition is required'),
+
+
+  extra_ac_price: Yup.number()
+    .nullable()
+    .when("condition", {
+      is: (value) => value === "AC" || value === "Both",
+      then: (schema) => 
+        schema
+      .required("Extra price for AC is required")
+      .positive("Extra price must be a positive number"),
+      otherwise: (schema) => schema.nullable()
+    }),
+   
+
   price: Yup.number()
     .positive('Price must be a positive number')
     .integer('Dining seat count must be an integer')

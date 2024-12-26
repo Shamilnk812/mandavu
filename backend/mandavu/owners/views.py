@@ -62,21 +62,39 @@ class RegistrationStep1(APIView) :
         return Response({"message":"Registration Step 1 successly completed .","registrationId":temp_registration.id},status=status.HTTP_200_OK)
         
 
+
+
+class RegistrationStep2(APIView) :
+    
+    def post(self, request, tid):
+        print(request.data)
+        temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, id=tid)
+        venue_name = request.data.get('convention_center_name')
+       
+        if Venue.objects.filter(convention_center_name=venue_name).exists():
+            return Response({"message": "Venue with this name already exists !"}, status=status.HTTP_400_BAD_REQUEST)
         
-    
-
-
-
-# class RegistrationStep2(APIView) :
-    
-#     def post(self, request):
-#         pass
+        temp_registration_obj.venue_details = request.data
+        temp_registration_obj.save()
+        return Response({"message":"Registration Step 2 is successfully completed.","registrationId":temp_registration_obj.id},status=status.HTTP_200_OK)
             
 
 # class RegistrationStep1(APIView) :
     
 #     def post(self, request):
 #         pass
+
+
+
+
+class CancelRegistrationView(APIView):
+
+    def delete(self, request, tid):
+        
+        temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, id=tid)
+        temp_registration_obj.delete()
+
+        return Response({"message": "Registration cancelled "}, status=status.HTTP_200_OK)
             
 
 
