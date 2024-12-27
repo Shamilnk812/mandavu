@@ -5,6 +5,8 @@ import * as Yup from 'yup';
 import AddEventModal from "../../Components/Owner/AddEventModal";
 import { toast } from "react-toastify";
 import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 export default function RegisterationStep3() {
     const [showModal, setShowModal] = useState(false);
@@ -46,6 +48,13 @@ export default function RegisterationStep3() {
             eventImage: Yup.mixed().required('Event Image is required'),
         }),
         onSubmit: (values, { resetForm }) => {
+
+            const isDuplicate = events.some(event => event.name.toLowerCase() === values.eventName.toLowerCase());
+        
+            if (isDuplicate) {
+                toast.warning('This Event already exists!');
+                return;
+            }
             const reader = new FileReader();
             reader.readAsDataURL(values.eventImage);
             reader.onloadend = () => {
@@ -101,8 +110,9 @@ export default function RegisterationStep3() {
 
     const handleCancel = async () => {
         try{
-            const response = await axiosOwnerInstance.delete(`cancel-registration/${tempVenueId}`)
+            const response = await axiosOwnerInstance.delete(`cancel-registration/${tempVenueId}/`)
             sessionStorage.removeItem('registrationData'); // Remove registration data from sessionStorage
+            toast.success("Registration Cancelled")
             navigate('/owner/register-step-1');
         }catch(error){
             toast.error("Failed to cancel registration.")
@@ -208,7 +218,7 @@ export default function RegisterationStep3() {
                                                         className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-800 transition-all duration-300"
                                                         onClick={() => handleDeleteEvent(index)}
                                                     >
-                                                        Delete
+                                                        <DeleteIcon/>
                                                     </button>
                                                 </td>
                                             </tr>

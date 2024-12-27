@@ -81,7 +81,7 @@ const RegisterationStep2Schema= Yup.object({
     .matches(pincodePattern, 'Enter a valid pincode')
     .required('Pincode is required'),
 
-  full_address: Yup.string()
+  address: Yup.string()
   .required('Full address is required')
   .test(
     'is-valid-address',

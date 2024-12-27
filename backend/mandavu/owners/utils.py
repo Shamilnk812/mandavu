@@ -82,3 +82,15 @@ def send_owner_password_reset_email(data):
         to=[data['to_email']]
     )
     email.send(fail_silently=False)
+
+
+
+def description_for_regular_bookingpackages(dining_capacity, auditorium_seating):
+    return (
+        f"Experience the perfect blend of elegance and comfort with our Common Package, designed to meet your diverse event needs. "
+        f"This package offers a spacious and well-equipped venue to create unforgettable memories.\n\n"
+        f"Dining Capacity: Accommodates up to {dining_capacity} guests, ensuring a delightful dining experience with ample space for everyone.\n"
+        f"Auditorium Seating: Comfortable seating for up to {auditorium_seating} attendees, ideal for ceremonies, presentations, or entertainment programs.\n\n"
+        f"Our venue boasts a sophisticated ambiance and modern amenities, promising a seamless experience for you and your guests. "
+        f"Choose the Common Package for a hassle-free and memorable event!"
+    )

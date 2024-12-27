@@ -12,7 +12,7 @@ from django.shortcuts import redirect
 from .serializers import *
 from .models import *
 from users.models import Booking
-from .utils import sent_otp_to_owner,decode_base64_file
+from .utils import sent_otp_to_owner,decode_base64_file,description_for_regular_bookingpackages
 import base64
 from django.core.files.base import ContentFile
 from users.utils import decrypt_otp
@@ -106,16 +106,43 @@ class CancelRegistrationView(APIView):
 
 class RegisterCombinedView(APIView):
 
-    def post(self, request):
-        owner_data = request.data.get('owner')
-        venue_data = request.data.get('venue')
-        events = request.data.get('events')
-        facilities = request.data.get('facilities')
-        venue_images = request.data.get('venue_images')
-    
+    def post(self, request, tid):
+        print(request.data)
+        temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, id=tid)
+
+        # owner_data = temp_registration_obj.owner_details
+        # venue_data = temp_registration_obj.venue_details
+        # events = temp_registration_obj.event_details
+        # facilities = request.data
+        # venue_images = temp_registration_obj.venue_details.venue_images
+        
+        # id_proof_base64 = owner_data.id_proof
+        # venue_license_base64 = venue_data.venue_license
+        # venue_terms_and_conditions = venue_data.terms_and_conditions
+
+
+        owner_data = temp_registration_obj.owner_details
+        venue_data = temp_registration_obj.venue_details
+        events = temp_registration_obj.event_details
+        facilities = request.data  # Facilities passed from the request
+        venue_images = venue_data.get("venue_images", [])
+
+        # Decode files
         id_proof_base64 = owner_data.get('id_proof')
         venue_license_base64 = venue_data.get('venue_license')
-        venue_terms_and_conditions = venue_data.get('terms_and_conditions')
+        venue_terms_and_conditions = venue_data.get('terms_conditions')
+
+        
+        
+        # owner_data = request.data.get('owner')
+        # venue_data = request.data.get('venue')
+        # events = request.data.get('events')
+        # facilities = request.data.get('facilities')
+        # venue_images = request.data.get('venue_images')
+    
+        # id_proof_base64 = owner_data.get('id_proof')
+        # venue_license_base64 = venue_data.get('venue_license')
+        # venue_terms_and_conditions = venue_data.get('terms_and_conditions')
         
         if id_proof_base64 or venue_license_base64 or venue_terms_and_conditions:
             try:
@@ -194,7 +221,21 @@ class RegisterCombinedView(APIView):
                 else:
                     print('eoorr;',venue_photo_serializer.errors)
                     return Response(venue_photo_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 
+
+        booking_package_description = description_for_regular_bookingpackages(venue.dining_seat_count,venue.auditorium_seat_count)
+        BookingPackages.objects.create(
+            package_name='regular',
+            venue = venue,
+            price = venue.price,
+            price_for_per_hour = 'Not Allowed',
+            air_condition = venue.condition,
+            extra_price_for_aircondition=0,   # venue.extra_ac_price
+            description=booking_package_description
+
+        )
+    
         sent_otp_to_owner(owner.email)        
 
         return Response({
@@ -202,6 +243,8 @@ class RegisterCombinedView(APIView):
             'owner': owner_serializer.data,
             'venue': venue_serializer.data,
         }, status=status.HTTP_201_CREATED)
+        
+
 
 
 

@@ -81,6 +81,7 @@ export default function RegisterationStep2() {
 
       const response = await axiosOwnerInstance.delete(`cancel-registration/${tempVenueId}`)
       sessionStorage.removeItem('registrationData'); // Remove registration data from sessionStorage
+      toast.success("Registration Cancelled.")
       navigate('/owner/register-step-1'); // Navigate to the owner signup page
 
     } catch (error) {
@@ -107,7 +108,7 @@ export default function RegisterationStep2() {
       district: '',
       city: '',
       pincode: '',
-      full_address: '',
+      address: '',
     },
     validationSchema: RegisterationStep2Schema,
     onSubmit: async (values) => {
@@ -550,19 +551,19 @@ export default function RegisterationStep2() {
               ) : null}
             </div>
             <div className="col-span-2">
-              <label htmlFor="full_address" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="address" className="block text-sm font-medium text-gray-700">
                 Full Address
               </label>
               <textarea
-                id="full_address"
-                name="full_address"
-                value={formik.values.full_address}
+                id="address"
+                name="address"
+                value={formik.values.address}
                 onChange={formik.handleChange}
                 placeholder="Full Address"
                 className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
               />
-              {formik.errors.full_address && formik.touched.full_address ? (
-                <div className="text-red-500 text-sm mt-1">{formik.errors.full_address}</div>
+              {formik.errors.address && formik.touched.address ? (
+                <div className="text-red-500 text-sm mt-1">{formik.errors.address}</div>
               ) : null}
             </div>
           </div>

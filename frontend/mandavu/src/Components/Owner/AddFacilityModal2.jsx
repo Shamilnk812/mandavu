@@ -8,14 +8,14 @@ export default function AddFacilityModal2({ showModal, handleCloseModal, formik 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="relative p-4 w-full max-w-md max-h-full">
-                <div className="relative bg-teal-800 rounded-lg shadow">
+                <div className="relative bg-white rounded-lg shadow">
                     <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                        <h3 className="text-xl font-semibold text-gray-800 ">
                             Add Facility
                         </h3>
                         <button
                             type="button"
-                            className="text-gray-400 bg-transparent hover:bg-white hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-white dark:hover:text-gray-700"
+                            className="text-gray-400 bg-transparent hover:bg-gray-500 hover:text-white rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center "
                             onClick={handleCloseModal}
                         >
                             <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -28,12 +28,12 @@ export default function AddFacilityModal2({ showModal, handleCloseModal, formik 
                         <form className="space-y-4" onSubmit={formik.handleSubmit}>
                            
                             <div>
-                                <label htmlFor="facility" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Facility</label>
+                                <label htmlFor="facility" className="block mb-2 text-sm font-medium text-gray-800">Facility</label>
                                 <input
                                     type="text"
                                     name="facility"
                                     id="facility"
-                                    className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                    className="bg-customColor7 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
                                     value={formik.values.facility}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
@@ -43,12 +43,12 @@ export default function AddFacilityModal2({ showModal, handleCloseModal, formik 
                                 ) : null}
                             </div>
                             <div>
-                                <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
+                                <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-800">Price</label>
                                 <input
                                     type="text"
                                     name="price"
                                     id="price"
-                                    className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                    className="bg-customColor7 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                                     value={formik.values.price}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
@@ -58,8 +58,8 @@ export default function AddFacilityModal2({ showModal, handleCloseModal, formik 
                                 ) : null}
                             </div>
                             <div className="flex justify-center pt-4">
-                                <button type="submit" className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800">
-                                    + Add
+                                <button type="submit" className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300">
+                                    Add
                                 </button>
                             </div>
                         </form>

@@ -46,6 +46,7 @@ class Venue(models.Model) :
     dining_seat_count = models.PositiveIntegerField(verbose_name="Dining Seat Count")
     auditorium_seat_count = models.PositiveIntegerField(verbose_name="Auditorium Seat Count")
     condition = models.CharField( max_length=6)
+    # extra_ac_price = models.DecimalField(max_digits=10, decimal_places=2)
     price = models.IntegerField(verbose_name="Price")
     state = models.CharField(max_length=150, verbose_name="State")
     district = models.CharField(max_length=150, verbose_name="District")
