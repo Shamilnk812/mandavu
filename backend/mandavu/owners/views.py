@@ -17,7 +17,7 @@ import base64
 from django.core.files.base import ContentFile
 from users.utils import decrypt_otp
 from django.db.models.functions import TruncDay, TruncWeek, TruncMonth, TruncYear
-from django.db.models import Sum
+from django.db.models import Sum,Q
 from datetime import datetime, timedelta
 
 # Create your views here.
@@ -867,7 +867,7 @@ class BlockOrUnblockBookingPackageTimeSlote(APIView):
 
 
 class OwnerPagination(PageNumberPagination):
-    page_size = 2
+    page_size = 6
     page_size_query_param = 'page_size'
     max_page_size = 100
 
@@ -891,14 +891,63 @@ class AllBookingDetailsView(GenericAPIView):
         venue = get_object_or_404(Venue, id=vid)
         all_bookings = Booking.objects.filter(venue=venue).order_by('-id')
 
+        # if start_date and end_date:
+        #     all_bookings = all_bookings.filter(date__range=[start_date, end_date])
         if start_date and end_date:
-            all_bookings = all_bookings.filter(date__range=[start_date, end_date])
+            # Convert start and end dates to datetime.date objects
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+
+            # Generate the range of dates between start_date and end_date
+            date_range = [start_date + timedelta(days=x) for x in range((end_date - start_date).days + 1)]
+            date_range_str = [d.strftime("%Y-%m-%d") for d in date_range]
+            print(date_range)
+
+            # Filter bookings manually by checking if any booking date intersects with the range
+            filtered_bookings = []
+            for booking in all_bookings:
+                booking_dates = booking.dates  # Assuming 'dates' is a list of dates (e.g., in a JSONField)
+
+                # Check if any of the booking dates fall within the range
+                if any(date in date_range_str for date in booking_dates):
+                    filtered_bookings.append(booking)
+
+            # Assign the filtered bookings to the all_bookings queryset
+            all_bookings = filtered_bookings
+
+       
 
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(all_bookings, request)
 
         serializer = self.serializer_class(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
+    
+
+
+
+
+
+     # if start_date and end_date:
+        #     # Convert dates to datetime objects for comparison
+        #     start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+        #     end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+
+        #     # Filter bookings where any date in 'dates' falls in the range
+        #     # all_bookings = all_bookings.filter(
+        #     #     Q(dates__contains=[start_date.strftime("%Y-%m-%d")]) |
+        #     #     Q(dates__contains=[end_date.strftime("%Y-%m-%d")]) |
+        #     #     Q(dates__overlap=[str(date) for date in [start_date, end_date]])
+        #     # )   
+
+        #     all_bookings = all_bookings.filter(
+        #         Q(dates__contains=[start_date.strftime("%Y-%m-%d")]) |
+        #         Q(dates__contains=[end_date.strftime("%Y-%m-%d")]) |
+        #         Q(dates__overlap=[
+        #             start_date.strftime("%Y-%m-%d"),
+        #             end_date.strftime("%Y-%m-%d")
+        #         ])
+        #     ) 
 
 
 

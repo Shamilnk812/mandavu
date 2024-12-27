@@ -84,7 +84,7 @@ class Booking(models.Model):
     package_type = models.ForeignKey('owners.BookingPackages', on_delete=models.CASCADE, null=True, blank=True)
     # package_name = models.CharField(max_length=225)
     condition = models.CharField(max_length=150)
-    # extra_ac_price = models.DecimalField(max_digits=10, decimal_places=2)
+    # extra_ac_price = models.DecimalField(max_digits=10, decimal_places=2  null=True, blank=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     booking_amount = models.DecimalField(max_digits=10, decimal_places=2)
     remaining_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
