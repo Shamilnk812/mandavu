@@ -52,7 +52,7 @@ class AdminLogoutView(GenericAPIView) :
 
 
 class CustomPagination(PageNumberPagination):
-    page_size = 8
+    page_size = 9
     page_size_query_param = 'page_size'
     max_page_size = 100
 
@@ -79,7 +79,25 @@ class GetAllBookingDetailsview(GenericAPIView):
         bookings = Booking.objects.all()
         
         if start_date and end_date:
-            bookings = bookings.filter(date__range=[start_date, end_date])
+            # bookings = bookings.filter(date__range=[start_date, end_date])
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+
+            date_range = [start_date + timedelta(days=x) for x in range((end_date - start_date).days + 1)]
+            date_range_str = [d.strftime("%Y-%m-%d") for d in date_range]
+            print(date_range_str)
+
+            filtered_bookings = []
+            for booking in bookings:
+                booking_dates = booking.dates  # Assuming 'dates' is a list of dates (e.g., in a JSONField)
+
+                # Check if any of the booking dates fall within the range
+                if any(date in date_range_str for date in booking_dates):
+                    filtered_bookings.append(booking)
+
+            bookings = filtered_bookings        
+
+
 
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(bookings, request)

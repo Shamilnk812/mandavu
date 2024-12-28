@@ -23,6 +23,7 @@ export default function AdminViewAllBookings() {
             const response = await axiosAdminInstance.get(`get-all-bookings?page=${currentPage}&start_date=${startDate}&end_date=${endDate}`);
             setBookings(response.data.results);
             setTotalPages(response.data.total_pages);
+            console.log(response.data.results)
         } catch (error) {
             console.log('error is :', error);
             toast.error('Failed to fetch Bookings details. Please try again later');
@@ -45,7 +46,7 @@ export default function AdminViewAllBookings() {
             toast.warning('Ending date is required.');
             return;
         }
-        if (startDate && startDate > today) {
+        if (startDate && startDate > endDate) {
             toast.error('Please enter a valid starting date.');
             return;
         }
@@ -108,34 +109,69 @@ export default function AdminViewAllBookings() {
                         {bookings.length === 0 ? (
                             <div className="p-4 text-center text-gray-500">No records found.</div>
                         ) : (
-                            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                    <tr>
-                                        <th scope="col" className="px-6 py-3">User</th>
-                                        <th scope="col" className="px-6 py-3">Venue</th>
-                                        <th scope="col" className="px-6 py-3">Date</th>
-                                        <th scope="col" className="px-6 py-3">Time</th>
-                                        <th scope="col" className="px-6 py-3">Price</th>
-                                        <th scope="col" className="px-6 py-3">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {bookings.map((booking_data) => (
-                                        <tr key={booking_data.id} className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700 `}>
-                                            <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                {booking_data.name}
-                                            </th>
-                                            <td className="px-6 py-4">{booking_data.venue_name}</td>
-                                            <td className="px-6 py-4">{booking_data.date}</td>
-                                            <td className="px-6 py-4">{booking_data.time}</td>
-                                            <td className="px-6 py-4">{booking_data.total_price}</td>
-                                            <td className={`px-6 py-4 ${statusTextColor(booking_data.status)}`}>
-                                                {booking_data.status}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+                            {bookings.map((booking_data) => (
+                                <div
+                                    key={booking_data.id}
+                                    className="flex flex-col bg-white rounded-lg shadow-md p-6 border h-[400px] transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:border-gray-300"
+                                >
+                                    {/* Row for each detail */}
+                                    <div className="flex justify-between items-center mb-4">
+                                        <span className="font-medium text-gray-500 ">User :</span>
+                                        <span className="text-gray-600 ">{booking_data.name}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center mb-4">
+                                        <span className="font-medium text-gray-500 ">Venue :</span>
+                                        <span className="text-gray-600 ">{booking_data.venue_name}</span>
+                                    </div>
+                                    <div className="flex justify-between items-start mb-4">
+                                        <span className="font-medium text-gray-500 ">Dates :</span>
+                                        <div className="text-gray-600 ">
+                                            {booking_data.dates && booking_data.dates.length > 0
+                                                ? booking_data.dates.map((date, index) => (
+                                                      <div key={index}>{date}</div>
+                                                  ))
+                                                : 'No Dates'}
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between items-start mb-4">
+                                        <span className="font-medium text-gray-500 ">Times :</span>
+                                        <div className="text-gray-600 ">
+                                            {Array.isArray(booking_data.times) && booking_data.times.length > 0
+                                                ? booking_data.times.map((time, index) =>
+                                                      Array.isArray(time) ? (
+                                                          <div key={index}>{time.join(' - ')}</div>
+                                                      ) : (
+                                                          <div key={index}>{time}</div>
+                                                      )
+                                                  )
+                                                : 'No Times'}
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between items-center mb-4">
+                                        <span className="font-medium text-gray-500 ">Advance Amount :</span>
+                                        <span className="text-gray-600 ">{booking_data.booking_amount}</span>
+                                    </div>
+                                    {/* add remainign amount */}
+                                    <div className="flex justify-between items-center mb-4">
+                                        <span className="font-medium text-gray-500 ">Remaining Amount :</span>
+                                        <span className="text-gray-600 ">{booking_data.total_price}</span>
+                                    </div>
+
+                                    <div className="flex justify-between items-center mb-4">
+                                        <span className="font-medium text-gray-500 ">Total Amount :</span>
+                                        <span className="text-gray-600 ">{booking_data.total_price}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="font-medium text-gray-500 ">Status :</span>
+                                        <span className={` font-semibold ${statusTextColor(booking_data.status)}`}>
+                                            {booking_data.status}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        
                         )}
                         {bookings.length > 0 && (
                             <PaginationCmp setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} />
@@ -147,3 +183,14 @@ export default function AdminViewAllBookings() {
         </>
     );
 }
+
+
+
+
+
+
+
+
+
+
+

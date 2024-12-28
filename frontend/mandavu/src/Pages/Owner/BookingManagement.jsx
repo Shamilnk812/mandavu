@@ -159,7 +159,7 @@ export default function BookingManagement() {
                             
                             <div className="grid grid-cols-3 gap-6 mt-5 p-6  max-h-[900px] overflow-y-auto">
                             {bookingDetails.map((booking) => (
-                                <div key={booking.id} className="bg-white border border-gray-300 rounded-lg shadow-lg  flex flex-col justify-between h-[400px]">
+                                <div key={booking.id} className="bg-white border border-gray-300 rounded-lg shadow-lg  flex flex-col justify-between h-[400px] transform transition-transform duration-300 hover:scale-105 hover:shadow-xl hover:border-gray-300">
                                     <div>
                                         <div 
                                         // className="w-full bg-red-200 h-8 my-4"
