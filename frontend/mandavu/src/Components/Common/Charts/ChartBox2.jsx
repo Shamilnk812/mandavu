@@ -13,7 +13,7 @@ export default function ChartBox2({ baarchart, titel, icon3, totalRevenue }) {
           <Box sx={{ marginRight: '10px' }}>{icon3}</Box>
           <Box>{titel}</Box>
         </Box>
-        <Box sx={{ padding: '15px', backgroundColor: 'yellow'}}>
+        <Box sx={{ padding: '15px', backgroundColor: 'white' ,boxShadow: 3 }}>
           {baarchart}
         </Box>
       </Grid>
