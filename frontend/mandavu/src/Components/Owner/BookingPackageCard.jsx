@@ -83,7 +83,7 @@ export default function BookingPackageCard({ bookingPackage, onUpdateBookingPack
   return (
     <>
       <div
-        className="bg-white shadow-lg rounded-lg overflow-hidden my-4 mx-auto w-full max-w-md relative hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+        className="bg-white shadow-lg rounded-lg border border-gray-300 overflow-hidden my-4 mx-auto w-full max-w-md relative hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
         style={{ height: "420px" }} // Fixed height
       >
 

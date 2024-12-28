@@ -36,9 +36,8 @@ export default function OwnerViewSingleBookingDetails(){
            <Sidebar/>
            <div className="bg-customColor7 flex">
                 <div className="flex-1 p-10 text-2xl ml-64">
-                    <div className="bg-white rounded-lg shadow-lg pb-10 mt-16">
-                        <h3 className="text-2xl bg-gray-700 font-semibold mb-4 py-3 text-center text-white rounded-tl-lg rounded-tr-lg">Booking Details</h3>
-                          <div className="flex justify-center py-10 ">
+                    <div className="bg-white rounded-lg shadow-lg py-10 mt-16">
+                          <div className="flex justify-center ">
                           <div className="w-3/5">
                           <ViewSingleBookingDetailsCmp booking={bookingDetails} id={venueId}/>
                           </div>

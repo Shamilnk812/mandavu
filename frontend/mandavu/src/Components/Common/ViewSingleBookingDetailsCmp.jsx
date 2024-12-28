@@ -10,8 +10,8 @@ export default function ViewSingleBookingDetailsCmp({booking,id}){
         
             <div className="bg-customColor7 overflow-hidden shadow rounded-lg border">
             <div className="px-4 py-5 sm:px-6">
-                <h3 className="text-lg text-center leading-6 font-medium text-gray-900">
-                    Details
+                <h3 className="text-lg text-center leading-6 font-medium text-gray-700">
+                  Booking Details
                 </h3>
                 {/* <p className="mt-1 max-w-2xl text-sm text-gray-500">
                     This is some information about the user.

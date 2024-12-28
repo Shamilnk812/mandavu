@@ -189,14 +189,14 @@ export default function AddBookingPackageModal({formik,isModalOpen,isAcSelected,
               <div className="mt-6 flex justify-end space-x-4">
                 <button
                   type="button"
-                  className="bg-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-400"
+                  className="bg-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-500 transition-all duration-300"
                   onClick={handleCloseModal} // Close modal on cancel
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700"
+                  className="bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300"
                 >
                   Add Package
                 </button>

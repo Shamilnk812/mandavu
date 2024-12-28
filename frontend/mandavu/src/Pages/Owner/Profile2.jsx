@@ -12,6 +12,7 @@ import VenueRegisterSchema from "../../Validations/Owner/VenueRegisterSchema";
 import OwnerChangePasswordModal from "../../Components/Owner/OwnerChangePasswordModal";
 import ChangePasswordSchema from "../../Validations/Owner/ChangePasswordSchema";
 import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
+import LoadingAnimation from "../../Components/Common/LoadingAnimation";
 
 
 
@@ -179,7 +180,7 @@ export default function OwnerDetails2() {
         setChangePasswordModal(false)
     }
     if (loading) {
-        return <div>Loading...</div>;
+        return <LoadingAnimation/>;
     }
    
     
@@ -190,8 +191,8 @@ export default function OwnerDetails2() {
 
         <div className="flex flex-col flex-1 ml-64 mt-14 bg-customColor7 min-h-screen">
         <div className="p-10">
-          <div className="bg-customColor8 pb-10 rounded-lg shadow-lg">
-          <h3 className="text-2xl font-semibold  text-center text-white py-3 bg-gradient-to-r from-teal-500 to-gray-800 rounded-tl-lg rounded-tr-lg">Owner Details</h3>
+          <div className="bg-white pb-10 rounded-lg shadow-lg border">
+          <h3 className="text-2xl font-semibold  text-center text-gray-700 py-4 border-b border-gray-300">Owner Details</h3>
             <div className="flex">
                 <div className="w-1/2  py-10 px-10">
 
@@ -271,10 +272,10 @@ export default function OwnerDetails2() {
                     
                 </dl>
                 <div className="flex justify-end gap-2 m-4">
-                       <button className="bg-teal-600 text-white  px-4 py-2 rounded hover:bg-teal-700"
+                       <button className="bg-teal-600 text-white  px-4 py-2 rounded hover:bg-teal-800 transition-all duration-300"
                        onClick={handleOpenChangePasswordModal}
                        >Change Password</button>
-                       <button className="bg-teal-600 text-white  px-4 py-2 rounded hover:bg-teal-700"
+                       <button className="bg-teal-600 text-white  px-4 py-2 rounded hover:bg-teal-800 transition-all duration-300"
                        onClick={()=> handleOpenOwnerDetailsEditModal()}
                        >Edit</button>
                 </div>
@@ -358,7 +359,7 @@ export default function OwnerDetails2() {
                 <div className="flex justify-end m-4">
                     <button 
                     onClick={handleOpenVenueDetailsEditModal}
-                    className="bg-teal-600 text-white  px-4 py-2 rounded hover:bg-teal-700">
+                    className="bg-teal-600 text-white  px-4 py-2 rounded hover:bg-teal-800 transition-all duration-300">
                         Edit
                     </button>
                 </div>

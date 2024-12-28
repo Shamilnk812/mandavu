@@ -46,18 +46,18 @@ export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blo
 
     return (
         <>
-            <div className="relative overflow-x-auto ">
+            <div className="relative overflow-x-auto h-[700px] overflow-y-auto ">
                 <div className="flex justify-end items-center py-4 pr-2">
                     <button
-                        className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800"
+                        className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300"
                         onClick={facilityAddingModal}
                     >
                        + Add Facility
                     </button>
                 </div>
 
-                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead className="text-xs text-white uppercase bg-gradient-to-r from-teal-500 to-gray-800 dark:bg-gradient-to-r from-teal-500 to-gray-800 dark:text-white">
+                <table className="w-full text-sm text-left rtl:text-right text-gray-500 ">
+                    <thead className="text-xs text-white uppercase bg-gray-700">
                         <tr>
                             <th scope="col" className="px-6 py-3">Facilities</th>
                             <th scope="col" className="px-6 py-3">Price</th>
@@ -84,7 +84,7 @@ export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blo
                                 <td className="px-6 py-4">
                                     <button
                                         type="button"
-                                        className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500  font-medium rounded-lg text-sm px-5 py-2 me-1 mb-1 "
+                                        className="focus:outline-none text-white bg-yellow-500 hover:bg-yellow-600  font-medium rounded-lg text-sm px-5 py-2 me-1 mb-1 transiton-all duration-300 "
                                         onClick={() => handleOpenEditModal(facility)}
                                     >
                                         Edit
@@ -92,7 +92,7 @@ export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blo
                                     {facility.is_active ? (
                                             <button
                                                 type="button"
-                                                className="focus:outline-none ml-2 text-white  bg-red-500 hover:bg-red-600   font-medium rounded-lg text-sm px-5 py-2 me-1 mb-1 "
+                                                className="focus:outline-none ml-2 text-white  bg-red-500 hover:bg-red-700   font-medium rounded-lg text-sm px-5 py-2 me-1 mb-1 transiton-all duration-300 "
                                                 onClick={()=> blockFacilities(facility.id)}
                                             >
 
@@ -101,7 +101,7 @@ export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blo
                                         ) : (
                                             <button
                                                 type="button"
-                                                className="focus:outline-none ml-2 text-white bg-green-500 hover:bg-green-600 font-medium rounded-lg text-sm px-5 py-2 me-1 mb-1 "
+                                                className="focus:outline-none ml-2 text-white bg-green-500 hover:bg-green-600 font-medium rounded-lg text-sm px-5 py-2 me-1 mb-1 transiton-all duration-300 "
                                                 onClick={()=> unblockFacilities(facility.id)}
                                             >
                                                 Unblock

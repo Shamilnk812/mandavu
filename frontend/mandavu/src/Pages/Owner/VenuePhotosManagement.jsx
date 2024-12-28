@@ -84,26 +84,26 @@ export default function VenuePhotosManagement() {
     return(
         <>
         <Sidebar/>
-        <div className="flex flex-col flex-1 ml-64 mt-10 bg-customColor7 min-h-screen">
+        <div className="flex flex-col flex-1 ml-64 mt-16 bg-customColor7 min-h-screen">
                 <div className="p-10">
-                    <div className="bg-customColor8 rounded-lg shadow-lg pb-10">
+                    <div className="bg-white border rounded-lg shadow-lg pb-10">
                         <div>
-                            <h3 className="text-2xl font-semibold py-3  text-center text-white bg-gradient-to-r from-teal-500 to-gray-800 rounded-tl-lg rounded-tr-lg">
+                            <h3 className="text-2xl font-semibold py-4  text-center text-gray-700 border-b border-gray-300">
                                 Venue Photos
                             </h3>
                         </div>
-                        <div className="px-24 py-8">
-                                <div className="relative overflow-x-auto">
+                        <div className="px-24 py-6">
+                                <div className="relative overflow-x-auto h-[600px] overflow-y-auto">
                                     <div className="flex justify-end items-center py-4 pr-2">
                                         <button
-                                            className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800"
+                                            className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300"
                                             onClick={handleOpenModal}
                                         >
                                            + Add Photo
                                         </button>
                                     </div>
-                                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                        <thead className="text-xs text-white uppercase bg-gradient-to-r from-teal-500 to-gray-800 dark:bg-gradient-to-r from-teal-500 to-gray-800 dark:text-white">
+                                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 ">
+                                        <thead className="text-xs text-white uppercase bg-gray-700">
                                             <tr>
                                                 <th scope="col" className="px-6 py-3">Banner</th>
                                                 <th scope="col" className="px-6 py-3">Status</th>
@@ -113,24 +113,24 @@ export default function VenuePhotosManagement() {
                                         <tbody>
                                             {venuePhotosList.map((venue, index) => (
                                                 <tr key={index} className="bg-customColor7 border-b border-gray-300 dark:bg-customColor7 dark:border-gray-400">
-                                                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                        <img src={venue.venue_photo} alt='venue-photo' className="w-16 h-16 object-cover rounded-lg border border-gray-400" />
+                                                    <td className="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
+                                                        <img src={venue.venue_photo} alt='venue-photo' className="w-12 h-12 object-cover rounded-lg border border-gray-400" />
                                                     </td>
                                                     <td className="px-6 py-4 ">
-                                                        <span className={venue.is_active ? 'text-green-600' : 'text-red-600'}>
+                                                        <span className={venue.is_active ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
                                                                 {venue.is_active ? 'Active' : 'Inactive'}
                                                          </span></td>
                                                     <td className="px-6 py-4">
                                                         {venue.is_active ? (
                                                             <button
-                                                                className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-800"
+                                                                className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-800 transition-all duration-300"
                                                                 onClick={() => blockVenuePhoto(venue.id)}
                                                             >
                                                                 Block
                                                             </button>
                                                         ) : (
                                                             <button
-                                                                className="bg-green-600 text-white py-1 px-3 rounded hover:bg-green-800"
+                                                                className="bg-green-600 text-white py-1 px-3 rounded hover:bg-green-800 transition-all duration-300"
                                                                 onClick={() => unblockVenuePhoto(venue.id)}
                                                             >
                                                                 Unblock

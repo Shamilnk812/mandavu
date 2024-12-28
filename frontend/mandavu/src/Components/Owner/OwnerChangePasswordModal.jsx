@@ -6,14 +6,14 @@ export default function OwnerChangePasswordModal({ isOwnerChangePasswordModalOpe
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="relative p-4 w-full max-w-md max-h-full overflow-y-auto">
-                <div className="relative bg-teal-800 rounded-lg shadow dark:bg-teal-800">
-                    <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <div className="relative bg-white rounded-lg shadow-lg ">
+                    <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t ">
+                        <h3 className="text-xl font-semibold text-gray-700 ">
                             Change Password
                         </h3>
                         <button
                             type="button"
-                            className="text-gray-400 bg-transparent hover:bg-customColor7 hover:text-gray-600 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-customColor7 dark:hover:text-gray-600"
+                            className="text-gray-400 bg-transparent hover:bg-customColor7 hover:text-gray-600 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center "
                             onClick={handleCloseOwnerChangePasswordModal}
                         >
                             <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -25,12 +25,12 @@ export default function OwnerChangePasswordModal({ isOwnerChangePasswordModalOpe
                     <div className="p-4 md:p-5">
                         <form className="space-y-4" onSubmit={formik3.handleSubmit}>
                             <div>
-                                <label htmlFor="old_password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Old Password</label>
+                                <label htmlFor="old_password" className="block mb-2 text-sm font-medium text-gray-700">Old Password</label>
                                 <input
                                     type="password"
                                     name="old_password"
                                     id="old_password"
-                                    className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                    className="bg-customColor7 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
                                     onChange={formik3.handleChange}
                                     value={formik3.values.old_password}
                                 />
@@ -39,12 +39,12 @@ export default function OwnerChangePasswordModal({ isOwnerChangePasswordModalOpe
                                 ) : null}
                             </div>
                             <div>
-                                <label htmlFor="new_password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">New Password</label>
+                                <label htmlFor="new_password" className="block mb-2 text-sm font-medium text-gray-700">New Password</label>
                                 <input
                                     type="password"
                                     name="new_password"
                                     id="new_password"
-                                    className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                    className="bg-customColor7 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
                                     onChange={formik3.handleChange}
                                     value={formik3.values.new_password}
                                 />
@@ -53,12 +53,12 @@ export default function OwnerChangePasswordModal({ isOwnerChangePasswordModalOpe
                                 ) : null}
                             </div>
                             <div>
-                                <label htmlFor="confirm_password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm Password</label>
+                                <label htmlFor="confirm_password" className="block mb-2 text-sm font-medium text-gray-700">Confirm Password</label>
                                 <input
                                     type="password"
                                     name="confirm_password"
                                     id="confirm_password"
-                                    className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                    className="bg-customColor7 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                                     onChange={formik3.handleChange}
                                     value={formik3.values.confirm_password}
                                 />
@@ -69,7 +69,7 @@ export default function OwnerChangePasswordModal({ isOwnerChangePasswordModalOpe
                             <div className="flex justify-center pt-4">
                                 <button
                                     type="submit"
-                                    className="w-1/2 mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800"
+                                    className="w-1/2 mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300"
                                 >
                                     Change Password
                                 </button>

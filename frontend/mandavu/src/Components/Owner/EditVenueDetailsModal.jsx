@@ -6,14 +6,14 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
         <div className="relative w-full max-w-2xl max-h-full">
-            <div className="relative bg-teal-800 rounded-lg shadow dark:bg-teal-800">
-                <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <div className="relative bg-white rounded-lg shadow ">
+                <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t ">
+                    <h3 className="text-xl font-semibold text-gray-800">
                         Edit Venue Details
                     </h3>
                     <button
                         type="button"
-                        className="text-gray-400 bg-transparent hover:bg-customColor7 hover:text-gray-600 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center dark:hover:bg-customColor7 dark:hover:text-gray-600"
+                        className="text-gray-400 bg-transparent hover:bg-customColor7 hover:text-gray-600 rounded-lg text-sm w-8 h-8 inline-flex justify-center items-center d"
                         onClick={handleCloseVenueDetailsEditModal}
                     >
                         <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -26,12 +26,12 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                     <form className="space-y-4" onSubmit={formik2.handleSubmit}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label htmlFor="convention_center_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Convention Center Name</label>
+                                    <label htmlFor="convention_center_name" className="block mb-2 text-sm font-medium text-gray-700 ">Convention Center Name</label>
                                     <input
                                         type="text"
                                         name="convention_center_name"
                                         id="convention_center_name"
-                                        className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                        className="bg-customColor7 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5 "
                                         onChange={formik2.handleChange}
                                         value={formik2.values.convention_center_name}
                                     />
@@ -40,12 +40,12 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                     ) : null}
                                 </div>
                                 <div>
-                                    <label htmlFor="short_description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Short Description</label>
+                                    <label htmlFor="short_description" className="block mb-2 text-sm font-medium text-gray-700 ">Short Description</label>
                                     <input
                                         type="text"
                                         name="short_description"
                                         id="short_description"
-                                        className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                        className="bg-customColor7 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5 "
                                         onChange={formik2.handleChange}
                                         value={formik2.values.short_description}
                                     />
@@ -54,11 +54,11 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                     ) : null}
                                 </div>
                                 <div className="col-span-2">
-                                    <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                                    <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-700 ">Description</label>
                                     <textarea
                                         name="description"
                                         id="description"
-                                        className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                        className="bg-customColor7 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5 "
                                         onChange={formik2.handleChange}
                                         value={formik2.values.description}
                                         rows="3"
@@ -68,12 +68,12 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                     ) : null}
                                 </div>
                                 <div>
-                                    <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price</label>
+                                    <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-700 ">Price</label>
                                     <input
                                         type="text"
                                         name="price"
                                         id="price"
-                                        className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                        className="bg-customColor7 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5 "
                                         onChange={formik2.handleChange}
                                         value={formik2.values.price}
                                     />
@@ -82,12 +82,12 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                     ) : null}
                                 </div>
                                 <div>
-                                    <label htmlFor="dining_seat_count" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Dining Seat Count</label>
+                                    <label htmlFor="dining_seat_count" className="block mb-2 text-sm font-medium text-gray-700 ">Dining Seat Count</label>
                                     <input
                                         type="text"
                                         name="dining_seat_count"
                                         id="dining_seat_count"
-                                        className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                        className="bg-customColor7 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5 "
                                         onChange={formik2.handleChange}
                                         value={formik2.values.dining_seat_count}
                                     />
@@ -96,12 +96,12 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                     ) : null}
                                 </div>
                                 <div>
-                                    <label htmlFor="auditorium_seat_count" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Auditorium Seat Count</label>
+                                    <label htmlFor="auditorium_seat_count" className="block mb-2 text-sm font-medium text-gray-700 ">Auditorium Seat Count</label>
                                     <input
                                         type="text"
                                         name="auditorium_seat_count"
                                         id="auditorium_seat_count"
-                                        className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                        className="bg-customColor7 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5 "
                                         onChange={formik2.handleChange}
                                         value={formik2.values.auditorium_seat_count}
                                     />
@@ -110,12 +110,12 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                     ) : null}
                                 </div>
                                 <div>
-                                    <label htmlFor="condition" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Condition</label>
+                                    <label htmlFor="condition" className="block mb-2 text-sm font-medium text-gray-700 ">Condition</label>
                                     <input
                                         type="text"
                                         name="condition"
                                         id="condition"
-                                        className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                        className="bg-customColor7 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5 "
                                         onChange={formik2.handleChange}
                                         value={formik2.values.condition}
                                     />
@@ -124,12 +124,12 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                     ) : null}
                                 </div>
                                 <div>
-                                    <label htmlFor="state" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">State</label>
+                                    <label htmlFor="state" className="block mb-2 text-sm font-medium text-gray-700 ">State</label>
                                     <input
                                         type="text"
                                         name="state"
                                         id="state"
-                                        className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                        className="bg-customColor7 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5 "
                                         onChange={formik2.handleChange}
                                         value={formik2.values.state}
                                     />
@@ -138,12 +138,12 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                     ) : null}
                                 </div>
                                 <div>
-                                    <label htmlFor="district" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">District</label>
+                                    <label htmlFor="district" className="block mb-2 text-sm font-medium text-gray-700 ">District</label>
                                     <input
                                         type="text"
                                         name="district"
                                         id="district"
-                                        className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                        className="bg-customColor7 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5 "
                                         onChange={formik2.handleChange}
                                         value={formik2.values.district}
                                     />
@@ -152,12 +152,12 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                     ) : null}
                                 </div>
                                 <div>
-                                    <label htmlFor="pincode" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pincode</label>
+                                    <label htmlFor="pincode" className="block mb-2 text-sm font-medium text-gray-700 ">Pincode</label>
                                     <input
                                         type="text"
                                         name="pincode"
                                         id="pincode"
-                                        className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                        className="bg-customColor7 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5 "
                                         onChange={formik2.handleChange}
                                         value={formik2.values.pincode}
                                     />
@@ -166,12 +166,12 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                     ) : null}
                                 </div>
                                 <div className="col-span-2">
-                                    <label htmlFor="address" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Full Address</label>
+                                    <label htmlFor="address" className="block mb-2 text-sm font-medium text-gray-700 ">Full Address</label>
                                     <input
                                         type="text"
                                         name="address"
                                         id="address"
-                                        className="bg-customColor7 border border-teal-500 text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-customColor7 dark:border-teal-500 dark:placeholder-teal-500 dark:text-gray-800"
+                                        className="bg-customColor7 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5 "
                                         onChange={formik2.handleChange}
                                         value={formik2.values.address}
                                     />
@@ -183,7 +183,7 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                             <div className="flex justify-end">
                                 <button
                                     type="submit"
-                                    className="text-white bg-teal-500 hover:bg-teal-600 font-medium rounded-lg text-sm mt-2 px-5 py-2.5 text-center"
+                                    className="text-white bg-teal-500 hover:bg-teal-800 font-medium rounded-lg text-sm mt-2 px-5 py-2.5 text-center transition-all duration-300"
                                 >
                                     Save Changes
                                 </button>

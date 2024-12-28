@@ -94,26 +94,26 @@ export default function EventsManagement() {
     return(
         <>
         <Sidebar/>
-        <div className="flex flex-col flex-1 ml-64 mt-10 bg-customColor7 min-h-screen">
+        <div className="flex flex-col flex-1 ml-64 mt-16 bg-customColor7 min-h-screen">
                 <div className="p-10">
-                    <div className="bg-customColor8 rounded-lg shadow-lg pb-10">
+                    <div className="bg-white rounded-lg shadow-lg border pb-10">
                         <div>
-                            <h3 className="text-2xl font-semibold py-3  text-center text-white bg-gradient-to-r from-teal-500 to-gray-800 rounded-tl-lg rounded-tr-lg">
+                            <h3 className="text-2xl font-semibold py-3 border-b border-gray-300 text-center text-gray-700 rounded-tl-lg rounded-tr-lg">
                                 Events
                             </h3>
                         </div>
-                        <div className="px-24 py-8">
-                                <div className="relative overflow-x-auto">
+                        <div className="px-24 py-5">
+                                <div className="relative overflow-x-auto h-[600px] overflow-y-auto">
                                     <div className="flex justify-end items-center py-4 pr-2">
                                         <button
-                                            className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800"
+                                            className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transiton-all duration-300"
                                             onClick={handleOpenModal}
                                         >
                                             + Add Event
                                         </button>
                                     </div>
-                                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                        <thead className="text-xs text-white uppercase bg-gradient-to-r from-teal-500 to-gray-800 dark:bg-gradient-to-r from-teal-500 to-gray-800 dark:text-white">
+                                    <table className="w-full  text-sm text-left rtl:text-right text-gray-500 ">
+                                        <thead className="text-xs text-white uppercase bg-gray-700">
                                             <tr>
                                                 <th scope="col" className="px-6 py-3">Event Photo</th>
                                                 <th scope="col" className="px-6 py-3">Name</th>
@@ -121,17 +121,18 @@ export default function EventsManagement() {
                                                 <th scope="col" className="px-6 py-3">Action</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody >
                                             {eventsList.map((event, index) => (
                                                 <tr key={index} className="bg-customColor7 border-b border-gray-300 dark:bg-customColor7 dark:border-gray-400">
                                                     <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                        <img src={event.event_photo} alt={event.name} className="w-16 h-16 object-cover rounded-lg border border-gray-400" />
+                                                        <img src={event.event_photo} alt={event.name} className="w-14 h-14 object-cover rounded-lg border border-gray-400" />
                                                     </td>
+                                                    <td className="font-medium text-gray-700 whitespace-nowrap dark:text-gray-700">{event.event_name}</td>     
+
                                                     <td className="px-6 py-4 ">
-                                                        <span className={event.is_active ? 'text-green-600' : 'text-red-600'}>
+                                                        <span className={event.is_active ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
                                                                 {event.is_active ? 'Active' : 'Inactive'}
                                                          </span></td>
-                                                    <td className="font-medium text-gray-700 whitespace-nowrap dark:text-gray-700">{event.event_name}</td>     
                                                     <td className="px-6 py-4">
                                                         {event.is_active ? (
                                                             <button

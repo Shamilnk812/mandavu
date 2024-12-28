@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link,useNavigate} from "react-router-dom";
+import { Link,useNavigate,useLocation} from "react-router-dom";
 import { OwnerLogout } from "../../Redux/Slices/Owner";
 import { toast } from "react-toastify";
 import CommonNotification from "../Common/Notifications2";
@@ -15,15 +15,20 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
 
 
+
 export default function  Sidebar () {
     
     const dispatch = useDispatch()
     const navigate  = useNavigate()
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const location = useLocation();
+    
 
     const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
     };
+    const isActive = (path) => location.pathname === path ? 'bg-teal-500' : '';
+
 
     const handleOwnerLogout = async () =>{
         const refresh_token = localStorage.getItem('refresh_token');
@@ -170,7 +175,7 @@ export default function  Sidebar () {
           <ul className="space-y-2 font-medium">
             <li>
               <Link to='/owner/dashboard'
-                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
+                className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/dashboard')}`}
               >
                 <span className="ms-3"> <DashboardIcon/> Dashboard</span>
               </Link>
@@ -185,21 +190,21 @@ export default function  Sidebar () {
            
             <li>
               <Link to='/owner/events-management'
-                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
+                className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/events-management')} `}
               >
                 <span className="flex-1 ms-3 whitespace-nowrap"><CelebrationIcon/> Events</span>
               </Link>
             </li>
             <li>
               <Link to='/owner/facilities-management'
-                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
+                className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/facilities-management')}`}
               >
                 <span className="flex-1 ms-3 whitespace-nowrap"><TableViewIcon/> Facilities </span>
               </Link>
             </li>
             <li>
               <Link to='/owner/booking-packages'
-                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
+                className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/booking-packages')}`}
               >
                 <span className="flex-1 ms-3 whitespace-nowrap"><TableViewIcon/> Packages </span>
               </Link>
@@ -215,21 +220,24 @@ export default function  Sidebar () {
             <li>
               <Link to='/owner/details2'
                 
-                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
+                className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/details2')}`}
+
               >
                 <span className="flex-1 ms-3 whitespace-nowrap"><AccountBoxIcon/> Profile</span>
               </Link>
             </li>
             <li>
               <Link to='/owner/banner-management'
-                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
+                className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/banner-management')}`}
+
               >
                 <span className="flex-1 ms-3 whitespace-nowrap"><CollectionsIcon/> Photos</span>
               </Link>
             </li>
             <li>
               <Link to='/owner/chat'
-                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
+                  className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/chat')}`}
+
               >
                 <span className="flex-1 ms-3 whitespace-nowrap"><ChatIcon/> Inbox</span>
               </Link>

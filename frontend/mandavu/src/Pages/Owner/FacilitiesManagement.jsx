@@ -114,9 +114,9 @@ export default function FacilitesManagement () {
             <Sidebar/>
             <div className="flex flex-col flex-1 ml-64 mt-14 bg-customColor7 min-h-screen">
                 <div className="p-10">
-                <div className="bg-customColor8  pb-10 rounded-lg shadow-lg">
+                <div className="bg-white pb-10 border rounded-lg shadow-lg">
                      <div>
-                        <h1 className="text-2xl bg-gradient-to-r from-teal-500 to-gray-800 font-semibold py-3 rounded-tl-lg rounded-tr-lg text-center text-white" >Facilties</h1>
+                        <h1 className="text-2xl border-b border-gray-300 font-semibold py-3  text-center text-gray-700" >Facilties</h1>
                      </div>
 
                      <div className="px-16">
@@ -124,7 +124,7 @@ export default function FacilitesManagement () {
                         <div className="border-dashed border-2 border-gray-800 w-full h-40 mt-10 mb-10 rounded-lg flex items-center justify-center">
                             <button
                                 onClick={handleOpenModal}
-                                className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800"
+                                className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300"
                             >
                                 + Add Facilities
                             </button>

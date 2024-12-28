@@ -134,16 +134,16 @@ export default function BookingPackages() {
       <Sidebar />
       <div className="flex flex-col flex-1 ml-64 mt-14 bg-customColor7 min-h-screen">
         <div className="p-10">
-          <div className="bg-customColor8 pb-10 rounded-lg shadow-lg">
+          <div className="bg-white pb-10 border rounded-lg shadow-lg">
             <div>
-              <h1 className="text-2xl bg-gradient-to-r from-teal-500 to-gray-800 font-semibold py-3 rounded-tl-lg rounded-tr-lg text-center text-white">
+              <h1 className="text-2xl font-semibold py-4 border-b border-gray-300 text-center text-gray-700">
                 Booking Packages
               </h1>
             </div>
             <div className="px-10"> 
             <div className="flex justify-end items-center py-4 pr-2">
               <button
-                className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-gradient-to-r from-teal-500 to-gray-800"
+                className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300"
                 onClick={handleOpenModal} 
               >
                 + Add Package
