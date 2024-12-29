@@ -9,6 +9,7 @@ const initialState ={
     selectedPackage: null,
     addressAndEventDetails: null,
     toggleMenuOpen: false,
+    userLocation: { latitude: null, longitude: null },
 }
 
 const userSlice = createSlice({
@@ -20,10 +21,14 @@ const userSlice = createSlice({
             state.access_token = action.payload.access_token;
             state.refresh_token = action.payload.refresh_token;
         },
+        setUserLocation: (state, action) => { 
+            state.userLocation = action.payload;
+        },
         UserLogout:(state) =>{
             state.user =  null;
             state.access_token = null;
             state.refresh_token = null;
+            state.userLocation = { latitude: null, longitude: null };
         },
         setBookingDetails:(state, action)=> {
             if (action.payload.addressAndEventDetails) {
@@ -46,9 +51,10 @@ const userSlice = createSlice({
         },
         closeToggleMenu:(state) => {
             state.toggleMenuOpen = false
-        }
+        },
+       
     }
 })
 
-export const {UserLogin,UserLogout,setBookingDetails,clearBookingDetails,openToggleMenu,closeToggleMenu} = userSlice.actions;
+export const {UserLogin,UserLogout,setBookingDetails,clearBookingDetails,openToggleMenu,closeToggleMenu,setUserLocation} = userSlice.actions;
 export default userSlice.reducer;   

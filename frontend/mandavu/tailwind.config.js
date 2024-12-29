@@ -19,6 +19,9 @@ export default {
         customColor8:'#DEF2F1',
         
       },
+      fontFamily: {
+        macondo: ['"Macondo Swash Caps"', 'cursive'], // Add the font
+      },  
     },
   },
   plugins: [],

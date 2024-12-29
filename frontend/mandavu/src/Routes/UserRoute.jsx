@@ -22,6 +22,7 @@ import UserSetNewPassword from "../Pages/User/UserSetNewPassword";
 import { ChatProvider } from "../Utils/ChatContext/CreateChat";
 import VenueBookingStep1 from "../Pages/User/VenueBookingStep1";
 import VenueBookingStep2 from "../Pages/User/VenueBookingStep2";
+import UserLocationCheck from "../Utils/SetUserLocation/SetUserLocationCheck";
 // import ResetPasswordConfirm from "../Pages/User/ResetPasswordConfirm";
 
 export default function UserRoute() {
@@ -30,7 +31,7 @@ export default function UserRoute() {
         <Routes>
             <Route path="/signup" element={<UserLogoutAuth> <SignUp/> </UserLogoutAuth> }/>
             <Route path="/login" element={ <UserLogoutAuth> <Login/> </UserLogoutAuth>} />
-            <Route path="/home" element={<UserLoginAuth> <Home/> </UserLoginAuth>} />
+            <Route path="/home" element={<UserLoginAuth>  <Home/>  </UserLoginAuth>} />
             <Route path="/otp" element={<UserLogoutAuth><OtpVerification/> </UserLogoutAuth>} />
             <Route path="/reset-password-request" element={<UserLogoutAuth><ResetPasswordRequest/> </UserLogoutAuth>} />
             <Route path="/set-new-passwod" element={<UserLogoutAuth><UserSetNewPassword/> </UserLogoutAuth>} />
