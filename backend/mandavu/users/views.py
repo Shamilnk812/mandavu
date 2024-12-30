@@ -26,7 +26,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 import json
 from datetime import datetime
-from django.db.models import Avg,Count
+from django.db.models import Avg,Count,F,FloatField, ExpressionWrapper
+from django.db.models.functions import ACos, Cos, Radians, Sin
+from decimal import Decimal
+
 
 
 
@@ -251,6 +254,18 @@ class AllVenuesListView(GenericAPIView):
         auditorium_seat_count = request.GET.get('auditorium_seat_count')
         min_price = request.GET.get('min_price')
         max_price = request.GET.get('max_price')
+        # user_latitude = Decimal(request.GET.get('latitude'))
+        # user_longitude = Decimal(request.GET.get('longitude'))
+
+
+
+        user_latitude = request.GET.get('latitude')
+        user_longitude = request.GET.get('longitude')
+
+        # Convert user latitude and longitude to Decimal
+        user_latitude = Decimal(user_latitude) if user_latitude else None
+        user_longitude = Decimal(user_longitude) if user_longitude else None
+
 
         print(dining_seat_count)
         print(auditorium_seat_count)
@@ -263,6 +278,59 @@ class AllVenuesListView(GenericAPIView):
             queryset = queryset.filter(auditorium_seat_count__lte=auditorium_seat_count)
         if min_price and max_price:
             queryset = queryset.filter(price__gte=min_price, price__lte=max_price)    
+
+
+        if user_latitude is not None and user_longitude is not None:
+            # Distance calculation using Decimal
+            queryset = queryset.annotate(
+                distance=ExpressionWrapper(
+                    6371 * ACos(
+                        Cos(Radians(user_latitude)) *
+                        Cos(Radians(F('latitude'))) *
+                        Cos(Radians(F('longitude')) - Radians(user_longitude)) +
+                        Sin(Radians(user_latitude)) *
+                        Sin(Radians(F('latitude')))
+                    ),
+                    output_field=FloatField()
+                )
+            ).order_by('distance')    
+
+        # if user_latitude and user_longitude:
+           
+
+        #     # queryset = queryset.annotate(
+        #     #     distance=(
+        #     #         6371 *  # Earth's radius in km
+        #     #         ACos(
+        #     #             Cos(Radians(user_latitude)) *
+        #     #             Cos(Radians(F('latitude'))) *
+        #     #             Cos(Radians(F('longitude')) - Radians(user_longitude)) +
+        #     #             Sin(Radians(user_latitude)) *
+        #     #             Sin(Radians(F('latitude')))
+        #     #         )
+        #     #     )
+        #     # ).order_by('distance')    
+
+        #     queryset = Venue.objects.annotate(
+        #         distance=haversine(
+        #             user_latitude,
+        #             user_longitude,
+        #             F('latitude'),
+        #             F('longitude')
+        #         )
+        #     ).order_by('distance')
+
+
+        #     queryset = Venue.objects.filter(is_active=True, is_verified=True).annotate(
+        #         distance=haversine(
+        #             user_latitude,
+        #             user_longitude,
+        #             cast('latitude', DecimalField()),  # Cast to Decimal
+        #             cast('longitude', DecimalField()),  # Cast to Decimal
+        #         )
+        #     ).order_by('distance')
+
+
 
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(queryset, request)

@@ -8,6 +8,12 @@ from django.template.loader import render_to_string
 from datetime import datetime
 
 
+from decimal import Decimal
+from django.db.models import F
+from django.db.models.functions import Radians
+from math import cos, sin, asin, sqrt,radians
+
+
 def generateOtp() :
     otp = ""
     for i in range(6) :
@@ -99,3 +105,22 @@ def send_venue_booking_confirmation_email(booking , facilities):
 
 
 
+
+
+
+
+def haversine(lat1, lon1, lat2, lon2):
+    """
+    Calculate the distance between two points on Earth using the Haversine formula.
+    """
+    R = 6371  # Earth's radius in kilometers
+
+    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
+
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * asin(sqrt(a))
+
+    return c * R
