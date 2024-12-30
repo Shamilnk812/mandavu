@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eaeaea;
+        }
+        .header {
+            font-size: 20px;
+            font-weight: 400;
+            color: #095b54;;
+            margin-bottom: 18x;
+            text-align: center;
+        }
+        .divider {
+            border-top: 2px solid #eaeaea;
+            margin: 15px 0;
+        }
+        .message {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #d1d1d1;
+            font-size: 14px;
+            color: #555;
+        }
+        .footer {
+            margin-top: 25px;
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+        }
+       
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">New Inquiry Received</div>
+        <p><strong>User:</strong> {{ username }}</p>
+        <p><strong>Email:</strong> {{ email }}</p>
+        <p><strong>Message:</strong></p>
+        <div class="message">{{ message }}</div>
+        <div class="divider"></div>
+        <p class="footer">
+            This message was sent from the Mandavu Convention Center Booking website.<br>
+          
+        </p>
+    </div>
+</body>
+</html>

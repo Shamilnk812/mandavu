@@ -268,3 +268,10 @@ class GetReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ['id', 'rating', 'review', 'created_at', 'user_first_name', 'user_last_name']
+
+
+
+class UserInquirySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserInquiry
+        fields = '__all__'

@@ -34,5 +34,8 @@ urlpatterns = [
 
     path('add-review/',AddReviewView.as_view(),name='add-review'),
     path('get-ratings/<int:vid>/',ShowRatingView.as_view(),name='get-ratings'),
-    path('get-reviews/<int:vid>/',GetReviewsView.as_view(),name='get-reviews')
+    path('get-reviews/<int:vid>/',GetReviewsView.as_view(),name='get-reviews'),
+
+
+    path('user-inquiry/<int:uid>/',UserInquiryView.as_view(),name='user-inquiry')
 ]

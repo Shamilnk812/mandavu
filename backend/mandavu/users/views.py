@@ -254,11 +254,6 @@ class AllVenuesListView(GenericAPIView):
         auditorium_seat_count = request.GET.get('auditorium_seat_count')
         min_price = request.GET.get('min_price')
         max_price = request.GET.get('max_price')
-        # user_latitude = Decimal(request.GET.get('latitude'))
-        # user_longitude = Decimal(request.GET.get('longitude'))
-
-
-
         user_latitude = request.GET.get('latitude')
         user_longitude = request.GET.get('longitude')
 
@@ -281,7 +276,7 @@ class AllVenuesListView(GenericAPIView):
 
 
         if user_latitude is not None and user_longitude is not None:
-            # Distance calculation using Decimal
+            # Distance calculation 
             queryset = queryset.annotate(
                 distance=ExpressionWrapper(
                     6371 * ACos(
@@ -294,43 +289,6 @@ class AllVenuesListView(GenericAPIView):
                     output_field=FloatField()
                 )
             ).order_by('distance')    
-
-        # if user_latitude and user_longitude:
-           
-
-        #     # queryset = queryset.annotate(
-        #     #     distance=(
-        #     #         6371 *  # Earth's radius in km
-        #     #         ACos(
-        #     #             Cos(Radians(user_latitude)) *
-        #     #             Cos(Radians(F('latitude'))) *
-        #     #             Cos(Radians(F('longitude')) - Radians(user_longitude)) +
-        #     #             Sin(Radians(user_latitude)) *
-        #     #             Sin(Radians(F('latitude')))
-        #     #         )
-        #     #     )
-        #     # ).order_by('distance')    
-
-        #     queryset = Venue.objects.annotate(
-        #         distance=haversine(
-        #             user_latitude,
-        #             user_longitude,
-        #             F('latitude'),
-        #             F('longitude')
-        #         )
-        #     ).order_by('distance')
-
-
-        #     queryset = Venue.objects.filter(is_active=True, is_verified=True).annotate(
-        #         distance=haversine(
-        #             user_latitude,
-        #             user_longitude,
-        #             cast('latitude', DecimalField()),  # Cast to Decimal
-        #             cast('longitude', DecimalField()),  # Cast to Decimal
-        #         )
-        #     ).order_by('distance')
-
-
 
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(queryset, request)
@@ -693,5 +651,30 @@ class GetReviewsView(APIView) :
 
 
 
+#------------------ Inquiries from user side ------------   
+
+
+class UserInquiryView(GenericAPIView):
+    serializer_class = UserInquirySerializer
+    
+    def post(self, request, uid):
+        user = get_object_or_404(User, id=uid)
+        data = request.data
+        data['user'] = user.id
+
+        serializer = self.serializer_class(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            send_user_inquiry_message(
+            username=data.get('user_name'),
+            email=data.get('email'),
+            message=data.get('message')
+            )
+            return Response({"message":"Your message successfully submitted."},status=status.HTTP_201_CREATED)
         
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+     
+
+
          

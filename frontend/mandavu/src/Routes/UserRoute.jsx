@@ -23,6 +23,7 @@ import { ChatProvider } from "../Utils/ChatContext/CreateChat";
 import VenueBookingStep1 from "../Pages/User/VenueBookingStep1";
 import VenueBookingStep2 from "../Pages/User/VenueBookingStep2";
 import UserLocationCheck from "../Utils/SetUserLocation/SetUserLocationCheck";
+import ContactUs from "../Pages/User/ContactUsPage";
 // import ResetPasswordConfirm from "../Pages/User/ResetPasswordConfirm";
 
 export default function UserRoute() {
@@ -37,6 +38,7 @@ export default function UserRoute() {
             <Route path="/set-new-passwod" element={<UserLogoutAuth><UserSetNewPassword/> </UserLogoutAuth>} />
             <Route path="/profile" element={ <UserLoginAuth> <Profile/> </UserLoginAuth>} />
             <Route path="/profile2" element={ <UserLoginAuth> <UserProfile/> </UserLoginAuth>} />
+            <Route path="/contact-us" element={ <UserLoginAuth> <ContactUs/> </UserLoginAuth>} />
             <Route path="/show-booking-details" element={ <UserLoginAuth> <ShowBookingDetails/> </UserLoginAuth>} />
             <Route path="/view-booking-details/:bookingId" element={ <UserLoginAuth> <ShowSingleBookingDetails/> </UserLoginAuth>} />
             <Route path="/payment-success" element={ <UserLoginAuth> <PaymentSuccess/> </UserLoginAuth>} />

@@ -104,23 +104,44 @@ def send_venue_booking_confirmation_email(booking , facilities):
 
 
 
+def send_user_inquiry_message(username,email,message):
+    subject = f"New Inquiry from {username}"
+    recipient_list = [settings.DEFAULT_FROM_EMAIL]
+    print(recipient_list)
+
+    context = {
+        "username":username,
+        "email":email,
+        "message":message
+
+    }
+
+    message = render_to_string('emails/user_inquiry.html',context)
+    send_mail(subject,'',email,recipient_list, html_message=message)
+    print("email sented success")
 
 
 
 
 
-def haversine(lat1, lon1, lat2, lon2):
-    """
-    Calculate the distance between two points on Earth using the Haversine formula.
-    """
-    R = 6371  # Earth's radius in kilometers
 
-    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
 
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
 
-    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
-    c = 2 * asin(sqrt(a))
 
-    return c * R
+
+
+# def haversine(lat1, lon1, lat2, lon2):
+#     """
+#     Calculate the distance between two points on Earth using the Haversine formula.
+#     """
+#     R = 6371  # Earth's radius in kilometers
+
+#     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
+
+#     dlon = lon2 - lon1
+#     dlat = lat2 - lat1
+
+#     a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+#     c = 2 * asin(sqrt(a))
+
+#     return c * R
