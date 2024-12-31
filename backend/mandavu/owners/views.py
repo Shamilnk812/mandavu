@@ -19,6 +19,7 @@ from users.utils import decrypt_otp
 from django.db.models.functions import TruncDay, TruncWeek, TruncMonth, TruncYear
 from django.db.models import Sum,Q
 from datetime import datetime, timedelta
+from notifications.signals import notify_admin_on_maintenance_change
 
 # Create your views here.
 
@@ -985,11 +986,15 @@ class UpdateBookingStatusview(APIView):
 class SetVenueMaintenanceView(APIView):
     def patch(self, request, vid):
         venue = get_object_or_404(Venue, id=vid)
+        previous_status = venue.is_under_maintenance 
         venue.is_under_maintenance = True
         venue.maintenance_reason = request.data.get('reason')
         # venue.maintenance_start_date = request.data.get('start_date')
         # venue.maintenance_end_date = request.data.get('end_date')
         venue.save()
+
+        if previous_status != venue.is_under_maintenance:
+            notify_admin_on_maintenance_change(venue)
 
         return Response({'message':'Venue maintenance details have been successfully updated.'}, status=status.HTTP_200_OK)
 
@@ -1000,11 +1005,15 @@ class RemoveVenueMaintenanceView(APIView):
     
     def patch(self, request, vid):
         venue = get_object_or_404(Venue, id=vid)
+        previous_status = venue.is_under_maintenance 
         venue.is_under_maintenance = False
         venue.maintenance_reason = ''
         # venue.maintenance_start_date = ''
         # venue.maintenance_end_date = ''
         venue.save()
+
+        if previous_status != venue.is_under_maintenance:
+            notify_admin_on_maintenance_change(venue)
 
         return Response({'message':'Venue maintenance details Removed successfully.'}, status=status.HTTP_200_OK)
 

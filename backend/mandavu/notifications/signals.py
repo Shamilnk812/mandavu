@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from .models import Notification
 from chat.models import Messages
 from users.models import CustomUser,User,Booking,UserInquiry
-from owners.models import Owner,BookingPackages
+from owners.models import Owner,BookingPackages,Venue
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import json
@@ -262,3 +262,30 @@ def notify_new_user_inquiry(sender, instance, created, **kwargs):
 
         admin_user = CustomUser.objects.filter(is_superuser=True).first()
         create_notification(admin_user,message=message_content)
+
+
+
+# --------------------- Venue Maintenance ----------------
+
+
+def notify_admin_on_maintenance_change(venue):
+    admin_user = CustomUser.objects.filter(is_superuser=True).first()
+    if not admin_user:
+        return 
+
+    if venue.is_under_maintenance:
+        # Maintenance set
+        message_content = {
+            "type": "maintenance_set",
+            "content": f'The venue {venue.convention_center_name} is now under maintenance. Reason: "{venue.maintenance_reason}".',
+            "username": venue.convention_center_name,
+        }
+    else:
+        # Maintenance removed
+        message_content = {
+            "type": "maintenance_removed",
+            "content": f'The venue {venue.convention_center_name} is no longer under maintenance.',
+            "username": venue.convention_center_name,
+        }
+
+    create_notification(admin_user, message=message_content)
