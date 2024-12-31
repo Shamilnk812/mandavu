@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from .managers import UserManager
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta,date,datetime
 
 class CustomUser(AbstractBaseUser) :
     first_name = models.CharField(max_length=100)
@@ -93,10 +93,21 @@ class Booking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     payment_intent_id = models.CharField(max_length=255, blank=True, null=True)
 
+    @property
+    def is_completed(self):
+        """Check if the booking is completed based on the last date in 'dates'."""
+        if self.dates:
+        # Convert string dates to datetime.date objects
+            date_objects = [datetime.strptime(d, '%Y-%m-%d').date() for d in self.dates]
+            last_date = max(date_objects)  # Find the latest date
+            return date.today() > last_date
+        return False
+
+
+
 
 class BookingDetails(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
-
     facilities = models.CharField(max_length=225)
 
 
@@ -116,7 +127,6 @@ class Review(models.Model):
     def __str__(self):
         return f"{self.booking.venue.convention_center_name} - {self.rating} Stars"
     
-
 
 
 class UserInquiry(models.Model):

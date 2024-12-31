@@ -238,7 +238,42 @@ export default function BookingManagement() {
                                         </div>
                                     </div>
                                     <div className="flex justify-end gap-4 mt-6 px-6 pb-6">
-                                        {booking.status === 'Booking Confirmed' ? (
+                                    {booking.status === 'Booking Confirmed' ? (
+        booking.is_completed ? (
+            // Show "Update Status" button only
+            <button
+                className="focus:outline-none text-white bg-teal-700 hover:bg-teal-800 font-medium rounded-lg text-sm px-5 py-2"
+                onClick={() => handleUpdateStatus(booking.id)}
+            >
+                Update Status
+            </button>
+        ) : (
+            // Show "Cancel" button only
+            <button
+                className="focus:outline-none text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-2"
+                onClick={() => handleCancelClick(booking.id)}
+            >
+                Cancel
+            </button>
+        )
+    ) : (
+        // Disable both buttons for non-confirmed bookings
+        <>
+            <button
+                className="focus:outline-none text-white bg-gray-400 font-medium rounded-lg text-sm px-5 py-2 cursor-not-allowed"
+                disabled
+            >
+                Cancel
+            </button>
+            <button
+                className="focus:outline-none text-white bg-gray-400 font-medium rounded-lg text-sm px-5 py-2 cursor-not-allowed"
+                disabled
+            >
+                Update Status
+            </button>
+        </>
+    )}
+                                        {/* {booking.status === 'Booking Confirmed' ? (
                                             <>
                                                 <button
                                                     className="focus:outline-none text-white bg-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-2"
@@ -268,7 +303,7 @@ export default function BookingManagement() {
                                                     Update Status
                                                 </button>
                                             </>
-                                        )}
+                                        )} */}
                                     </div>
                                 </div>
                             ))}

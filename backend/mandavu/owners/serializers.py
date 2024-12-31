@@ -488,6 +488,7 @@ class BookingPackageTimeSlotesSerializer(serializers.ModelSerializer):
 
 class AllBookingDetailsSerializer(serializers.ModelSerializer) :
     venue_name = serializers.SerializerMethodField()
+    is_completed = serializers.SerializerMethodField()
     
     class Meta:
         model = Booking
@@ -495,5 +496,8 @@ class AllBookingDetailsSerializer(serializers.ModelSerializer) :
 
     def get_venue_name(self, obj):
         return obj.venue.convention_center_name      
+    
+    def get_is_completed(self, obj):
+        return obj.is_completed
 
 
