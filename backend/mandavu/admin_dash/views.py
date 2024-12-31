@@ -8,10 +8,10 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.db.models import Q,Sum
 from django.db.models.functions import Extract
-from users.models import Booking,CustomUser
+from users.models import Booking,CustomUser,UserInquiry
 
 from owners.models import Owner,Venue,BookingPackages
-from users.serializers import UserDetailsSerializer
+from users.serializers import UserDetailsSerializer,UserInquirySerializer
 from .serializers import *
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -433,4 +433,13 @@ class VeneuBookingPackageRejection(APIView):
 
 
 
-        
+#------------------ User Inquiries ------------------------
+
+
+class GetUserInquiriesView(GenericAPIView):
+    serializer_class =UserInquirySerializer 
+
+    def get(self, request):
+        user_inquiries = UserInquiry.objects.all().order_by('-id')
+        serializer = self.serializer_class(user_inquiries, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

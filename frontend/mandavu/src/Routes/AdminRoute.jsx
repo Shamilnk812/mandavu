@@ -11,6 +11,7 @@ import VenueList from "../Pages/Admin/VenueList";
 import ShowVenueDetails from "../Pages/Admin/ShowVenueDetails";
 import AdminViewAllBookings from "../Pages/Admin/AdminViewAllBookings";
 import ShowVenueDetails2 from "../Pages/Admin/ShowVenueDetails1";
+import UserInquiry from "../Pages/Admin/UserInquiry";
 
 
 export default function AdminRoute() {
@@ -23,6 +24,7 @@ export default function AdminRoute() {
             <Route path="/ownerslist" element={<AdminLoginAuth><OwnersList/> </AdminLoginAuth> }/>
             <Route path="/sidebar" element={<AdminLoginAuth> <Sidebar/> </AdminLoginAuth>}/>
             <Route path="/venuelist" element={<AdminLoginAuth> <VenueList/> </AdminLoginAuth>}/>
+            <Route path="/user-inquiry" element={<AdminLoginAuth> <UserInquiry/> </AdminLoginAuth>}/>
             <Route path="/show-venue-details/:venueId" element={<AdminLoginAuth> <ShowVenueDetails/> </AdminLoginAuth>}/>
             <Route path="/show-venue-details2/:venueId" element={<AdminLoginAuth> <ShowVenueDetails2/> </AdminLoginAuth>}/>
             <Route path="/view-all-bookings" element={<AdminLoginAuth> <AdminViewAllBookings/> </AdminLoginAuth>}/>

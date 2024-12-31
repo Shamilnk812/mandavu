@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from "framer-motion";
 import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 import Navb from '../../Components/User/Navb';
@@ -11,20 +12,34 @@ import { toast } from 'react-toastify';
 import { axiosUserInstance } from '../../Utils/Axios/axiosInstance';
 import TuneRoundedIcon from '@mui/icons-material/TuneRounded';
 import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import FooterCmp from '../../Components/User/Footer';
+import toPascalCase from '../../Utils/Extras/ConvertToPascalCase';
+import LoadingAnimation from '../../Components/Common/LoadingAnimation';
+import PaginationCmp from '../../Components/Admin/PaginationCmp';
+
 
 export default function ShowAllVenues() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [venuesList, setVenuesList] = useState([]);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
   const [diningSeatCount, setDiningSeatCount] = useState(0);
   const [auditoriumSeatCount, setAuditoriumSeatCount] = useState(0);
   // const [priceRange, setPriceRange] = useState([0, 10000]); // Example range
   const [priceRange, setPriceRange] = useState([0, 0]);
+  const [loading, setLoading] = useState(false)
+
+  const scrollVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" },
+    },
+  };
+
 
   const handleSliderChange = (values) => {
     setPriceRange(values);
@@ -35,6 +50,7 @@ export default function ShowAllVenues() {
   };
 
   const fetchVenuesList = async () => {
+    setLoading(true)
     try {
       const response = await axiosUserInstance.get(`venues-list/`, {
         params: {
@@ -48,6 +64,8 @@ export default function ShowAllVenues() {
       console.log(response.data);
     } catch (error) {
       console.error('fetching error', error);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -88,12 +106,17 @@ export default function ShowAllVenues() {
   }, [searchQuery, currentPage]);
 
 
+
+  if (loading) {
+    return <LoadingAnimation />
+  }
+
   return (
     <>
       <Navb />
 
       <div className="container mx-auto max-w-screen-xl px-4 py-4 border bg-customColor7">
-       
+
         <div className="py-6 px-2 bg-gradient-to-r from-teal-800 to-gray-800 shadow-xl rounded-t-lg">
 
           <div className='flex justify-center  rounded-t-lg mb-4'>
@@ -117,6 +140,7 @@ export default function ShowAllVenues() {
               />
             </div>
           </div>
+
         </div>
 
 
@@ -127,59 +151,71 @@ export default function ShowAllVenues() {
         <div className="flex">
           {isSidebarOpen && (
             // <div className="w-1/4 bg-gray-200 p-4 fixed top-[225px] left-[140px] h-full overflow-auto z-50">
-              <div className="w-1/4 bg-gray-200 p-4 shadow ">
+            <motion.div
+              className="w-1/4 bg-gray-200 p-4 shadow "
+              initial="hidden"
+              whileInView="visible"
+              variants={scrollVariants}
+              viewport={{ once: true }}
+            >
 
               <h2 className="text-xl font-semibold mb-4">Sidebar</h2>
               <div className="mb-4">
                 <label className="block text-gray-700">Dining Seat Count</label>
                 <input
                   type="number"
-                
+
                   onChange={(e) => setDiningSeatCount(parseInt(e.target.value, 10))}
                   className="border rounded-lg w-full py-2 px-4 mt-1"
                 />
               </div>
               <div className="mb-4">
-    <label className="block text-gray-700">Auditorium Seat Count</label>
-    <input
-      type="number"
-  
-      onChange={(e) => setAuditoriumSeatCount(parseInt(e.target.value, 10))}
-      className="border rounded-lg w-full py-2 px-4 mt-1"
-    />
-  </div>
-  
-  {/* Price Range */}
-  <div className="mb-4">
-      <label className="block text-gray-700">Price Range</label>
-      <Slider
-        range
-        min={0}
-        max={1000000}
-        step={100}
-        defaultValue={priceRange}
-        value={priceRange}
-        onChange={handleSliderChange}
-      
-        className="mt-2"
-      />
-      <p className="text-gray-600">
-        From ${priceRange[0]} to ${priceRange[1]}
-      </p>
-    </div>
-  
-  {/* Apply Button */}
-  <button
-    onClick={fetchFilteredVenues}
-    className="py-2 px-4 bg-teal-600 text-white rounded hover:bg-teal-700"
-  >
-    Apply
-  </button>
-            </div>
+                <label className="block text-gray-700">Auditorium Seat Count</label>
+                <input
+                  type="number"
+
+                  onChange={(e) => setAuditoriumSeatCount(parseInt(e.target.value, 10))}
+                  className="border rounded-lg w-full py-2 px-4 mt-1"
+                />
+              </div>
+
+              {/* Price Range */}
+              <div className="mb-4">
+                <label className="block text-gray-700">Price Range</label>
+                <Slider
+                  range
+                  min={0}
+                  max={1000000}
+                  step={100}
+                  defaultValue={priceRange}
+                  value={priceRange}
+                  onChange={handleSliderChange}
+
+                  className="mt-2"
+                />
+                <p className="text-gray-600">
+                  From ${priceRange[0]} to ${priceRange[1]}
+                </p>
+              </div>
+
+              {/* Apply Button */}
+              <button
+                onClick={fetchFilteredVenues}
+                className="py-2 px-4 bg-teal-600 text-white rounded hover:bg-teal-700"
+              >
+                Apply
+              </button>
+            </motion.div>
           )}
 
 
-          <div className={`grid grid-cols-1 px-2 py-10 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full ${isSidebarOpen ? 'ml-4' : ''}`}>
+          <motion.div
+            className={`grid grid-cols-1 px-2 py-10 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full ${isSidebarOpen ? 'ml-4' : ''}`}
+            initial="hidden"
+            whileInView="visible"
+            variants={scrollVariants}
+            viewport={{ once: true }}
+          >
             {venuesList.length === 0 ? (
               <div className="flex items-center justify-center w-full h-64">
                 <p className="text-xl font-semibold text-gray-600">No results found</p>
@@ -191,51 +227,33 @@ export default function ShowAllVenues() {
                     <img src={venue.images[0].venue_photo} alt={venue.images[0].name} className="w-full h-48 object-cover" />
                   )}
                   <div className="p-4">
-                    <h3 className="text-xl font-semibold text-gray-600 ">{venue.convention_center_name}</h3>
-                    
+                    <h3 className="text-xl font-semibold text-gray-600 text-center border-b border-gray-300 pb-1 mb-3 ">{venue.convention_center_name}</h3>
+
                     <p className="mb-2 text-gray-500 text-base">
                       {/* {venue.short_description} */}
-                      {venue.short_description.slice(0, 45)}{venue.short_description.length > 45 ? "..." : ""}
+                      {venue.short_description.slice(0, 80)}{venue.short_description.length > 80 ? "..." : ""}
 
                     </p>
-                    <p className="text-lg text-gray-600 mb-3">${venue.price}</p>
+                    <p className="text-sm text-gray-500 "><LocationOnIcon className="text-teal-600 inline-block mr-1" /> {venue.address}</p>
+                    <p className="text-sm text-gray-500 ml-6 mb-3">{toPascalCase(venue.city)},{toPascalCase(venue.district)}, {toPascalCase(venue.state)}</p>
+                    <p className="text-lg font-semibold text-gray-500 mb-3 ml-2">${venue.price}</p>
                     <div className='flex justify-end'>
-                    <Link to={`/user/show-single-venue/${venue.id}`} className="mt-2 inline-block bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700 transition-all duration-300">
-                      <CalendarMonthRoundedIcon className='mr-2'/>  Book Now
-                    </Link>
+                      <Link to={`/user/show-single-venue/${venue.id}`} className="mt-2 inline-block bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700 transition-all duration-300">
+                        <CalendarMonthRoundedIcon className='mr-2' />  Book Now
+                      </Link>
                     </div>
                   </div>
                 </div>
               ))
             )}
-          </div>
+          </motion.div>
         </div>
 
 
 
 
         {venuesList.length > 0 && (
-          <div className="flex justify-center mt-10 mb-5">
-            <div className="p-4 flex items-center">
-              <button
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className={`p-2 rounded-full text-white transition-colors duration-300 text-sm
-                ${currentPage === 1 ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'}`}
-              >
-                <NavigateBeforeIcon />
-              </button>
-              <span className="mx-4 text-sm">Page <span className="bg-blue-300 p-1.5">{currentPage}</span> of {totalPages}</span>
-              <button
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className={`p-2 rounded-full text-white transition-colors duration-300 text-sm
-                ${currentPage === totalPages ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 cursor-pointer'}`}
-              >
-                <NavigateNextIcon />
-              </button>
-            </div>
-          </div>
+           <PaginationCmp setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages}/>
         )}
       </div>
 
