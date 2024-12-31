@@ -351,17 +351,19 @@ class TotalRevenueView(APIView):
 class GetBookingsStatusView(APIView)  :
     def get(self, request) :
         venue = request.GET.get('venue_id')
+        venue_obj = get_object_or_404(Venue, id=venue)
         print('veneu id ',venue)
         confirmed_count = Booking.objects.filter(venue=venue,status='Booking Confirmed').count()
         completed_count = Booking.objects.filter(venue=venue,status='Booking Completed').count()
         cancelled_count = Booking.objects.filter(venue=venue,status='Booking Canceled').count()
         total_revenue = Booking.objects.filter(venue=venue,status='Booking Completed').aggregate(total_revenue=Sum('total_price'))['total_revenue'] or 0
-
+        maintenance_status = venue_obj.is_under_maintenance
         data = [
             {"label": "Confirmed", "value": confirmed_count},
             {"label": "Completed", "value": completed_count},
             {"label": "Canceled", "value": cancelled_count},
-            {"total_revenue":total_revenue}
+            {"total_revenue":total_revenue},
+            {"maintenance_status":maintenance_status}
         ]
 
         return Response(data,status=status.HTTP_200_OK)    
@@ -974,4 +976,35 @@ class UpdateBookingStatusview(APIView):
         booking_obj = get_object_or_404(Booking, id=b_id)
         booking_obj.status = 'Booking Completed'
         booking_obj.save()
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK) 
+    
+
+
+# ---------------- Set Veneu Miantenance --------------------
+
+class SetVenueMaintenanceView(APIView):
+    def patch(self, request, vid):
+        venue = get_object_or_404(Venue, id=vid)
+        venue.is_under_maintenance = True
+        venue.maintenance_reason = request.data.get('reason')
+        # venue.maintenance_start_date = request.data.get('start_date')
+        # venue.maintenance_end_date = request.data.get('end_date')
+        venue.save()
+
+        return Response({'message':'Venue maintenance details have been successfully updated.'}, status=status.HTTP_200_OK)
+
+
+
+
+class RemoveVenueMaintenanceView(APIView):
+    
+    def patch(self, request, vid):
+        venue = get_object_or_404(Venue, id=vid)
+        venue.is_under_maintenance = False
+        venue.maintenance_reason = ''
+        # venue.maintenance_start_date = ''
+        # venue.maintenance_end_date = ''
+        venue.save()
+
+        return Response({'message':'Venue maintenance details Removed successfully.'}, status=status.HTTP_200_OK)
+

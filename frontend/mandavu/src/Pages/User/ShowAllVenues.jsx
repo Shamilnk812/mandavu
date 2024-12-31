@@ -237,11 +237,19 @@ export default function ShowAllVenues() {
                     <p className="text-sm text-gray-500 "><LocationOnIcon className="text-teal-600 inline-block mr-1" /> {venue.address}</p>
                     <p className="text-sm text-gray-500 ml-6 mb-3">{toPascalCase(venue.city)},{toPascalCase(venue.district)}, {toPascalCase(venue.state)}</p>
                     <p className="text-lg font-semibold text-gray-500 mb-3 ml-2">${venue.price}</p>
-                    <div className='flex justify-end'>
-                      <Link to={`/user/show-single-venue/${venue.id}`} className="mt-2 inline-block bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700 transition-all duration-300">
-                        <CalendarMonthRoundedIcon className='mr-2' />  Book Now
-                      </Link>
-                    </div>
+                    {venue.is_under_maintenance ? (
+                      <div className="text-red-500 text-center ">
+                        <p className="text-base font-semibold">This venue is under maintenance. <br /> <span className='text-sm '>12/12/2024 to 19/12/2024 </span></p>
+
+                      </div>
+                    ) : (
+
+                      <div className='flex justify-end'>
+                        <Link to={`/user/show-single-venue/${venue.id}`} className="mt-2 inline-block bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700 transition-all duration-300">
+                          <CalendarMonthRoundedIcon className='mr-2' />  Book Now
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))
@@ -253,7 +261,7 @@ export default function ShowAllVenues() {
 
 
         {venuesList.length > 0 && (
-           <PaginationCmp setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages}/>
+          <PaginationCmp setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} />
         )}
       </div>
 

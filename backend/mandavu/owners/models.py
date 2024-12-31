@@ -61,6 +61,8 @@ class Venue(models.Model) :
     is_rejected = models.BooleanField(default=False)
     is_active  = models.BooleanField(default=True)
     is_under_maintenance = models.BooleanField(default=False)
+    # maintenance_start_date = models.DateField(null=True,blank=True)
+    # maintenance_end_date = models.DateField(null=True,blank=True)
     maintenance_reason = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)

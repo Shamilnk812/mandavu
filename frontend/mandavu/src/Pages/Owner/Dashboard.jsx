@@ -21,6 +21,7 @@ export default function Dashboard_Owner() {
   const venueId = useSelector((state) => state.owner?.venueId);
   const [bookingStatus,setBookingStatus] = useState([])
   const [totalRevenue, setTotalRevenue] = useState('')
+  const [maintenanceStatus, setMaintenanceStatus] = useState(null)
 
   const fetchBookingStatus = async ()=> {
     try{
@@ -32,6 +33,8 @@ export default function Dashboard_Owner() {
       console.log(response.data)
       const totalRevenue = data[3]?.total_revenue;
       setTotalRevenue(totalRevenue)
+      const maintenanceStatus = data[4]?.maintenance_status;
+      setMaintenanceStatus(maintenanceStatus)
       
     }catch(error){
       console.log('error is ',error)
@@ -50,8 +53,22 @@ export default function Dashboard_Owner() {
           <Sidebar/>
           <div className="p-4 sm:ml-64  ">
           <div className="p-4 border-2 border-gray-200 border-solid  rounded-lg dark:border-gray-700 mt-14">     
-              <OwnerChartBox1 title={'Revenue'} icon={<LeaderboardIcon/>} bchart={<OwnerRevenueChart/>} totalRevenue={totalRevenue}/>
-              <OwnerChartBox2 title={'Booking Status'} icon={<AnalyticsIcon/>} pchart={<ShowBookingStatusChart bookingStatus={bookingStatus}/>}/>
+              <OwnerChartBox1 
+                title={'Revenue'} 
+                icon={<LeaderboardIcon/>} 
+                bchart={<OwnerRevenueChart/>} 
+                totalRevenue={totalRevenue} 
+                maintenanceStatus={maintenanceStatus}
+                fetchBookingStatus={fetchBookingStatus}
+                 />
+
+              <OwnerChartBox2 
+                title={'Booking Status'} 
+                icon={<AnalyticsIcon/>} 
+                pchart={<ShowBookingStatusChart 
+                bookingStatus={bookingStatus}/>}
+              />
+
             </div>
             </div>
 

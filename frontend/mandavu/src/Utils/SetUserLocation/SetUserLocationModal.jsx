@@ -13,9 +13,9 @@ export default function SetUserLocationModal({ isOpen }) {
           {/* Header Section */}
           <div className="text-center mb-6">
             <img
-              src="/user/banner1.jpg"
+              src="/user/location_img.jpeg"
               alt="Enable location"
-              className="w-20 h-20 rounded-full mx-auto mb-4 object-cover border-4 border-gray-200"
+              className="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 border-gray-200"
             />
             <h2 className="text-xl font-semibold text-gray-800">
               Location Access Required
@@ -27,21 +27,6 @@ export default function SetUserLocationModal({ isOpen }) {
             Location access is needed to show nearby venues. Please enable location services in your browser or device settings.
           </p>
 
-          {/* Action Button */}
-          {/* <div className="flex justify-center gap-4">
-            <button
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
-              onClick={() => alert('Location enabled!')}
-            >
-              Enable Location
-            </button>
-            <button
-              className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 focus:outline-none focus:ring focus:ring-gray-300"
-              onClick={() => alert('Action canceled.')}
-            >
-              Cancel
-            </button>
-          </div> */}
         </div>
       </div>
         </>

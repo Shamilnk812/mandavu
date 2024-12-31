@@ -5,7 +5,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import toPascalCase from "../../Utils/Extras/ConvertToPascalCase";
 
-const SectionForShowingVenuesOnHomePage = ({scrollVariants,venues}) => {
+const SectionForShowingVenuesOnHomePage = ({ scrollVariants, venues }) => {
     return (
 
         <>
@@ -34,7 +34,7 @@ const SectionForShowingVenuesOnHomePage = ({scrollVariants,venues}) => {
                         >
                             Explore Our Venues
                         </motion.h2>
-                       
+
                         <motion.p
                             className="text-base text-gray-500 max-w-xl mx-auto"
                             initial="hidden"
@@ -58,7 +58,7 @@ const SectionForShowingVenuesOnHomePage = ({scrollVariants,venues}) => {
                             <motion.div
                                 key={venue.id}
                                 className="bg-white rounded shadow-md overflow-hidden transition-transform duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl"
-                           
+
                             >
                                 <img
                                     src={venue.images && venue.images[0]?.venue_photo}
@@ -68,18 +68,25 @@ const SectionForShowingVenuesOnHomePage = ({scrollVariants,venues}) => {
                                 <div className="p-4">
                                     <h3 className="text-xl font-semibold text-gray-600 text-center border-b border-gray-300 pb-1 mb-3">{venue.convention_center_name}</h3>
                                     <p className="mb-2 text-gray-500 text-base mb-3">{venue.short_description.slice(0, 80)}{venue.short_description.length > 80 ? "..." : ""}</p>
-                                    <p className="text-sm text-gray-500 "><LocationOnIcon className="text-teal-600 inline-block mr-1"/> {venue.address}</p>
+                                    <p className="text-sm text-gray-500 "><LocationOnIcon className="text-teal-600 inline-block mr-1" /> {venue.address}</p>
                                     <p className="text-sm text-gray-500 ml-6 mb-3">{toPascalCase(venue.city)},{toPascalCase(venue.district)}, {toPascalCase(venue.state)}</p>
 
                                     <p className="text-lg font-semibold text-gray-500 mb-3 ml-2">${venue.price}</p>
-                                    <div className="flex justify-end">
-                                        <Link
-                                            to={`/user/show-single-venue/${venue.id}`}
-                                            className="mt-2 inline-block bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700 transition-all duration-300"
-                                        >
-                                           <CalendarMonthIcon/>  Book Now
-                                        </Link>
-                                    </div>
+                                    {venue.is_under_maintenance ? (
+                                        <div className="text-red-500 text-center ">
+                                            <p className="text-base font-semibold">This venue is under maintenance. <br /> <span className='text-sm'>12/12/2024 to 19/12/2024 </span></p>
+
+                                        </div>
+                                    ) : (
+                                        <div className="flex justify-end">
+                                            <Link
+                                                to={`/user/show-single-venue/${venue.id}`}
+                                                className="mt-2 inline-block bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700 transition-all duration-300"
+                                            >
+                                                <CalendarMonthIcon />  Book Now
+                                            </Link>
+                                        </div>
+                                    )}
                                 </div>
                             </motion.div>
                         ))}
@@ -87,7 +94,7 @@ const SectionForShowingVenuesOnHomePage = ({scrollVariants,venues}) => {
 
                     {/* View All Venues Button */}
                     <motion.div
-                        
+
                         initial="hidden"
                         whileInView="visible"
                         variants={scrollVariants}
