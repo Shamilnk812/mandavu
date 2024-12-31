@@ -2,7 +2,7 @@ from django.db.models.signals import post_save,pre_save
 from django.dispatch import receiver
 from .models import Notification
 from chat.models import Messages
-from users.models import CustomUser,User,Booking
+from users.models import CustomUser,User,Booking,UserInquiry
 from owners.models import Owner,BookingPackages
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -242,4 +242,23 @@ def notify_recipient_on_new_message(sender, instance, created, **kwargs):
             "timestamp": instance.timestamp.isoformat(),
         }
 
-        create_notification(user=recipient_user,message=message_content)
+        create_notification(user=recipient_user,message=message_content) 
+
+
+
+
+# -------------------- User Inquiries -------------
+
+@receiver(post_save, sender=UserInquiry)
+def notify_new_user_inquiry(sender, instance, created, **kwargs):
+    if created:
+        user = instance.user
+        message_content = {
+            "type": "user_inquiry",
+            "content": instance.message,
+            "username": f"{user.first_name} {user.last_name}",
+        }
+
+
+        admin_user = CustomUser.objects.filter(is_superuser=True).first()
+        create_notification(admin_user,message=message_content)
