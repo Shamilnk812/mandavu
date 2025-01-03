@@ -140,8 +140,9 @@ export default function ChatLayout() {
         if (!user) return;
 
         if (vws.readyState === WebSocket.OPEN) {  // Ensure WebSocket is open
-            const appID = 1387710959;
-            const serverSecret = "3b21f678591c4f04ee738ad015fcf82b";
+            const appID = 286512327;
+            // const appID = 1387710959;
+            const serverSecret = "d2a103004c8c2ede0275eea726818ba4";
             const meetingId = `${user}-${userId}`;
 
             const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, meetingId, Date.now().toString(), userId);

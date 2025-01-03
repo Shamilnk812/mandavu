@@ -14,6 +14,7 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import PaginationCmp from "../../Components/Admin/PaginationCmp";
 import UserBookingCancelModal from "../../Components/User/UserBookingCancelModal";
 
+
 // Fixed the typo here
 
 export default function ShowBookingDetails() {
@@ -31,6 +32,8 @@ export default function ShowBookingDetails() {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [loading, setLoading] = useState(false)
+
 
     const { handleChat } = useChat()
 
@@ -85,18 +88,21 @@ export default function ShowBookingDetails() {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true)
         try {
             if (!cancelReason.trim()) {
                 toast.error('Please enter a valid reason');
                 return;
             }
-            await axiosUserInstance.post(`cancel-booking/${selectedBookingId}/`, { reason: cancelReason });
+            await axiosUserInstance.post(`cancel-booking/${selectedBookingId}/`, { reason: cancelReason , user:userId });
             handleCloseModal();
             toast.success('Booking Cancelled successfully')
             // Refresh the booking details after canceling
             fetchBookingDetails()
         } catch (error) {
             console.error('Something went wrong');
+        }finally{
+            setLoading(false)
         }
     };
 
@@ -264,7 +270,9 @@ export default function ShowBookingDetails() {
                 handleCloseModal={handleCloseModal} 
                 handleFormSubmit={handleFormSubmit} 
                 cancelReason={cancelReason} 
-                setCancelReason={setCancelReason}/>
+                setCancelReason={setCancelReason}
+                loading={loading}
+                />
            
             
 

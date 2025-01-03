@@ -72,8 +72,10 @@ const GlobalVideoCallInvitation = () => {
 
     const joinVideoCall = ()=> {
         if (videoCallLink) {
-            const appID = 1387710959;
-            const serverSecret = "3b21f678591c4f04ee738ad015fcf82b";
+            const appID = 286512327;
+            // const appID = 1387710959;
+            const serverSecret = "d2a103004c8c2ede0275eea726818ba4";
+            // const serverSecret = "3b21f678591c4f04ee738ad015fcf82b";
             const meetingId = videoCallLink.split('/join_call/')[1].split('/?token=')[0];
             const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, meetingId, Date.now().toString(), userId);
             const zc = ZegoUIKitPrebuilt.create(kitToken);

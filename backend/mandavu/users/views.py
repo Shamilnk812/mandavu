@@ -51,7 +51,7 @@ class RegisterUserView(GenericAPIView) :
             sent_otp_to_user(user['email'])
             return Response({
                 'data' :user,
-                'message' :f"hi thanks for singing up a OTP has be sent to your email "
+                'message' :f"Hi thanks for singing up a OTP has be sent to your email "
             },status=status.HTTP_201_CREATED)
         print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -590,26 +590,53 @@ class ShowSingleBookingDetails(GenericAPIView) :
 class CancelBookingView(GenericAPIView) :
     def post(self, request, bid) :
         cancel_reason = request.data.get('reason')
-        print(cancel_reason)
+        is_user = request.data.get('user')
+        
         booking_obj = get_object_or_404(Booking, id=bid)
-        booking_obj.cancel_reason = cancel_reason
-        booking_obj.status = 'Booking Canceled'
-        booking_obj.save()
+        # booking_obj.cancel_reason = cancel_reason
+        # booking_obj.status = 'Booking Canceled'
+        # booking_obj.save()
         # return Response({"message": "Booking canceled and refund processed successfully."}, status=status.HTTP_200_OK)
 
 
         try :
+            
+            refund_amount = booking_obj.booking_amount 
+            if is_user :
+                if booking_obj.dates:
+                    first_date = datetime.strptime(booking_obj.dates[0], '%Y-%m-%d').date()
+                    days_to_event = (first_date - date.today()).days
+
+                    if days_to_event > 30:
+                        refund_amount = booking_obj.booking_amount  # Full refund
+                    elif 15 <= days_to_event <= 30:
+                        refund_amount = booking_obj.booking_amount * Decimal('0.75')  # 75% refund
+                    elif 7 <= days_to_event < 15:
+                        refund_amount = booking_obj.booking_amount * Decimal('0.50')  # 50% refund
+                    elif 3 <= days_to_event < 7:
+                        refund_amount = booking_obj.booking_amount * Decimal('0.25')  # 25% refund
+                    else:
+                        refund_amount = booking_obj.booking_amount * Decimal('0.15')  # 15% refund
+ 
             if booking_obj.payment_intent_id :
                 refund = stripe.Refund.create(
                     payment_intent=booking_obj.payment_intent_id,
-                    amount=int(booking_obj.booking_amount * 100)
+                    amount=int(refund_amount * 100)
                 )
+
+                booking_obj.cancel_reason = cancel_reason
+                booking_obj.status = 'Booking Canceled'
+                booking_obj.save()
+
+
                 return Response({"message": "Booking canceled and refund processed successfully."}, status=status.HTTP_200_OK)
             else:
                  return Response({"error": "No payment information found."}, status=status.HTTP_400_BAD_REQUEST)
         
         except stripe.error.StripeError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 

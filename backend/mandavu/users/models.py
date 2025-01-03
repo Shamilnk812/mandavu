@@ -95,9 +95,8 @@ class Booking(models.Model):
 
     @property
     def is_completed(self):
-        """Check if the booking is completed based on the last date in 'dates'."""
+        # Check if the booking is completed based on the last date in 'dates'
         if self.dates:
-        # Convert string dates to datetime.date objects
             date_objects = [datetime.strptime(d, '%Y-%m-%d').date() for d in self.dates]
             last_date = max(date_objects)  # Find the latest date
             return date.today() > last_date

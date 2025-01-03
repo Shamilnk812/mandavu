@@ -9,6 +9,7 @@ import { VideoCallWebSocketProvider } from './Utils/VideoCallContext/VideoCallCo
 import GlobalVideoCallInvitation from './Utils/VideoCallContext/VideoCallContext'
 import CheckInternetConnection from './Utils/CheckConnection/CheckConnection'
 import NotificationProvider from './Utils/NotificationContext/NotificationContext'
+import Login from './Pages/User/Login'
 
 function App() {
 
@@ -22,7 +23,7 @@ function App() {
 
      {/* <WebSocketProvider> */}
       <Routes>
-        <Route path='/' element={<Dash />} />
+        <Route path='/' element={<Login />} />
         <Route path='/user/*' element={<UserRoute />} />
         <Route path='/owner/*' element={<OwnerRoute />} />
         <Route path='/admin/*' element={<AdminRoute />} />

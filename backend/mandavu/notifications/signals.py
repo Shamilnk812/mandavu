@@ -7,6 +7,7 @@ from owners.models import Owner,BookingPackages,Venue
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import json
+from datetime import datetime
 
 
 
@@ -42,12 +43,19 @@ def send_real_time_notification(user_id,message) :
 @receiver(post_save,sender=Booking)
 def send_booking_notification(sender,instance,created, **kwargs) :
     if created :
+        if instance.dates:
+            formatted_dates = "\n".join(
+                [datetime.strptime(d, '%Y-%m-%d').strftime('%B %d, %Y') for d in instance.dates]
+            )
+        else:
+            formatted_dates = "No dates provided"
       
         message_for_owners = {
             "type": "admin_notification",
             "content":  (f"New booking confirmed!\n"
                         f"Name: {instance.name}\n"
-                        f"Date: {instance.date.strftime('%B %d, %Y')}\n"
+                        f"Date: {formatted_dates}\n"
+                        # f"Date: {instance.date.strftime('%B %d, %Y')}\n"
                         f"Time: {instance.time}\n"
                         f"Please ensure everything is ready for the booking.")
         }
@@ -56,13 +64,15 @@ def send_booking_notification(sender,instance,created, **kwargs) :
             "content": (f"New booking confirmed!\n"
                         f"Venue: {instance.venue.convention_center_name}\n"
                         f"Name: {instance.name}\n"
-                        f"Date: {instance.date.strftime('%B %d, %Y')}\n"
+                        f"Date: {formatted_dates}\n"
+                        # f"Date: {instance.date.strftime('%B %d, %Y')}\n"
                         f"Time: {instance.time}\n")
         }
         message_for_user = {
             "type": "admin_notification",
             "content": (f"Your booking at {instance.venue.convention_center_name} is confirmed!\n"
-                        f"Date: {instance.date.strftime('%B %d, %Y')}\n"
+                        f"Date: {formatted_dates}\n"
+                        # f"Date: {instance.date.strftime('%B %d, %Y')}\n"
                         f"Time: {instance.time}\n"
                         f"We look forward to hosting you. If you have any questions, feel free to contact us.")
         }
@@ -87,14 +97,23 @@ def send_booking_notification(sender,instance,created, **kwargs) :
 def send_booking_cancellation_notification(sender, instance, **kwargs):
     if instance.status == 'Booking Canceled':
 
+        if instance.dates:
+            formatted_dates = "\n".join(
+                [datetime.strptime(d, '%Y-%m-%d').strftime('%B %d, %Y') for d in instance.dates]
+            )
+        else:
+            formatted_dates = "No dates provided"
+
       
         message_for_owner = {
             "type": "admin_notification",
-            "content": f"The booking for {instance.name} on {instance.date.strftime('%B %d, %Y')} at {instance.time} has been canceled."
+            "content": f"The booking for {instance.name} on {formatted_dates} at {instance.time} has been canceled."
+            # "content": f"The booking for {instance.name} on {instance.date.strftime('%B %d, %Y')} at {instance.time} has been canceled."
         }
         message_for_user = {
             "type": "admin_notification",
-            "content": f"Your booking on {instance.date.strftime('%B %d, %Y')} at {instance.time} has been canceled. If you have any questions, feel free to contact us."
+            "content": f"Your booking on {formatted_dates} at {instance.time} has been canceled. If you have any questions, feel free to contact us."
+            # "content": f"Your booking on {instance.date.strftime('%B %d, %Y')} at {instance.time} has been canceled. If you have any questions, feel free to contact us."
         }
 
 
@@ -102,7 +121,8 @@ def send_booking_cancellation_notification(sender, instance, **kwargs):
             "type": "admin_notification",
             "content": (f"Booking for venue {instance.venue.convention_center_name} has been canceled.\n"
                        f"Customer: {instance.name}\n"
-                       f"Date: {instance.date.strftime('%B %d, %Y')}\n"
+                       f"Date: {formatted_dates}\n"
+                    #    f"Date: {instance.date.strftime('%B %d, %Y')}\n"
                        f"Time: {instance.time}")
         }
 
