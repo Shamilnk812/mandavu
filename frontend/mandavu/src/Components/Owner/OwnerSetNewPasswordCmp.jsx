@@ -33,7 +33,7 @@ export default function OwnerSetNewPasswordCmp({ uidb64, token }) {
       try {
         const response = await axiosOwnerInstance.patch('owner-setnew-password/', values);
         toast.success(response.data.message);
-        navigate('/owner/login')
+        navigate('/owner/login',{replace : true})
       } catch (error) {
         toast.error('Failed to create new password. Please try again later.');
       }finally{

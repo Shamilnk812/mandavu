@@ -27,7 +27,7 @@ export default function OwnerResetPasswordRequest() {
 
       try {
         const response = await axiosOwnerInstance.post('owner-password-reset-request/', values);
-        navigate('/user/login')
+        navigate('/owner/login')
         toast.success(response.data.message)
       } catch (error) {
         toast.error('Failed to send password reset link.')
