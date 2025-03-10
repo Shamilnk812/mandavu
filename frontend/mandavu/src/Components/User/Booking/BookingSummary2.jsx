@@ -101,7 +101,7 @@ export default function BookingSummary2({ venue, venueId, selectedDates, selecte
 
 
             <div className="w-full md:w-5/12 px-4">
-                <div className="p-6 bg-customColor8 rounded-lg shadow-xl border border-gray-200">
+                <div className="p-6 bg-white rounded-lg shadow-xl border border-gray-200">
 
                     {/* Header Section */}
                     <HeaderSectionOfBookingSummary venue={venue} />
@@ -120,7 +120,7 @@ export default function BookingSummary2({ venue, venueId, selectedDates, selecte
                     <div>
                         <div className="flex items-start bg-white p-4 rounded-lg shadow-lg hover:shadow-xl transition">
                             <div className="mx-4  w-full">
-                                <div className="flex justify-center bg-gradient-to-r from-teal-500 to-gray-800 rounded-lg py-1 mb-4">
+                                <div className="flex justify-center bg-gradient-to-r from-teal-600 to-gray-800 rounded-lg py-1 mb-4">
                                     <h4 className="text-lg text-white font-semibold ">
                                         Selected Event & Package
                                     </h4>

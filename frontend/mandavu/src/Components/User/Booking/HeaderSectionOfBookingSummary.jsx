@@ -6,7 +6,7 @@ export default function HeaderSectionOfBookingSummary({ venue }) {
         <>
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-semibold text-gray-600">Booking Summary</h2>
+                <h2 className="text-xl font-semibold text-gray-600">Booking Summary</h2>
                 <span className="text-sm text-gray-500 italic">
                     {new Date().toLocaleDateString()}
                 </span>

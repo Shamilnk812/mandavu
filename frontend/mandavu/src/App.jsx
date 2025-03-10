@@ -10,12 +10,13 @@ import GlobalVideoCallInvitation from './Utils/VideoCallContext/VideoCallContext
 import CheckInternetConnection from './Utils/CheckConnection/CheckConnection'
 import NotificationProvider from './Utils/NotificationContext/NotificationContext'
 import Login from './Pages/User/Login'
+import LandingPage from './Pages/Common/LandingPage'
 
 function App() {
 
 
   return (
-    <CheckInternetConnection>
+    // <CheckInternetConnection>
       
     <div className="min-h-screen bg-customColor7">
       <NotificationProvider>
@@ -23,7 +24,8 @@ function App() {
 
      {/* <WebSocketProvider> */}
       <Routes>
-        <Route path='/' element={<Login />} />
+        {/* <Route path='/' element={<Login />} /> */}
+        <Route path='/' element={<LandingPage/>} />
         <Route path='/user/*' element={<UserRoute />} />
         <Route path='/owner/*' element={<OwnerRoute />} />
         <Route path='/admin/*' element={<AdminRoute />} />
@@ -48,7 +50,7 @@ function App() {
      
      </div>
 
-     </CheckInternetConnection>
+    //  </CheckInternetConnection>
   )
 }
 

@@ -190,7 +190,9 @@ class SetNewPasswordSerializer(serializers.ModelSerializer) :
         except Exception as e :
             return AuthenticationFailed("link is  invalid or has expired")
 
-          
+
+
+#-------------------Venue Details ---------------         
 
 class VenuesListSerializer(serializers.ModelSerializer) :
     images = BannerDetailsSerializer(many=True, read_only=True)
@@ -219,8 +221,7 @@ class SingleVenueEventsDetailsSerializer(serializers.ModelSerializer) :
         
 
 
-# ============= Show Bookings ============
-
+# ----------------- Bookings ----------------
 
 class ShowBookingDetailsForCalandarSerializer(serializers.ModelSerializer) :
 
@@ -244,7 +245,9 @@ class ShowBookingListSerializer(serializers.ModelSerializer) :
         # Check if a review exists for this booking
         return Review.objects.filter(booking=obj).exists()
     
-#===========CUSTOMUSER ===========
+
+    
+#----------------- Customuser -----------
 
 class CustomUserSerializer(serializers.ModelSerializer) :
     class Meta:
@@ -253,8 +256,8 @@ class CustomUserSerializer(serializers.ModelSerializer) :
 
 
 
-# ----------------- ADD VENUE REVIEWS ----------------
 
+# ----------------- Add Veneu Reviews --------------
 
 class AddReviewSerializer(serializers.ModelSerializer) :
     class Meta:
@@ -270,6 +273,9 @@ class GetReviewSerializer(serializers.ModelSerializer):
         fields = ['id', 'rating', 'review', 'created_at', 'user_first_name', 'user_last_name']
 
 
+
+
+#------------------- User Inquiry ------------------
 
 class UserInquirySerializer(serializers.ModelSerializer):
     class Meta:

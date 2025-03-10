@@ -1,5 +1,6 @@
 import { useParams,useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useState } from "react";
 import { lazy, Suspense, useEffect, useRef } from "react";
 const BookingFormForAddress = lazy(() => import("../../Components/User/Booking/BookingForm1"));
 const BookingSummary1 = lazy(() => import("../../Components/User/Booking/BookingSummary1"))
@@ -15,12 +16,15 @@ export default function VenueBookingStep1() {
     const formRef = useRef(); // Create a reference for the form
     const selectedPackage = useSelector((state) => state.user.selectedPackage);
     const selectedEvent = useSelector((state) => state.user.selectedEvent);
+    const [loading, setLoading] = useState(true);
 
 
     useEffect(() => {
         if (!selectedPackage || !selectedEvent) {
             navigate("/user/home"); 
         }
+        const timer = setTimeout(() => setLoading(false), 1000);
+        return () => clearTimeout(timer);
 
     }, [selectedPackage, selectedEvent, navigate]);
 
@@ -31,6 +35,10 @@ export default function VenueBookingStep1() {
             formRef.current.submitForm(); // Trigger the form submission
         }
     };
+    
+    if (loading) {
+        return <LoadingAnimation />;
+    }
 
 
     return (

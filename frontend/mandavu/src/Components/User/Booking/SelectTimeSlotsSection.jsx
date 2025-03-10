@@ -6,8 +6,8 @@ import { toast } from "react-toastify";
 
 const timeSlotsForRegular = [
     "Morning",
-    "Evenig",
-    "Full Day"
+    "Evening",
+    // "Full Day"
 ]
 
 
@@ -117,7 +117,7 @@ export default function SelectTimeSlotsSection({ packageTimeSlots, setSelectedTi
                     }`}
             >
                 <div className="py-4 bg-gray-100 rounded-lg shadow-xl">
-                    <h3 className="text-lg text-center text-gray-700 font-semibold mb-4">Select Time Slot</h3>
+                    <h3 className="text-lg text-center text-gray-700 font-semibold mb-4">Select Time</h3>
 
                     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4">
                         {packageTimeSlots.length === 0

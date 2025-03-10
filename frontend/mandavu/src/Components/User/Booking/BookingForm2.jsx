@@ -68,8 +68,8 @@ export default function BookingFormForDateAndTime({ venueId, setSelectedDates, s
     return (
         <>
             <div className="w-full md:w-7/12 px-4 mb-6 md:mb-0">
-                <div className="p-6 bg-customColor8 rounded-lg shadow-md">
-                    <h2 className="text-2xl bg-gradient-to-r from-teal-500 to-gray-800 rounded-lg py-2 text-center text-white font-semibold mb-4">
+                <div className="px-6 pt-6 pb-12 bg-white rounded-lg shadow-md">
+                    <h2 className="text-2xl bg-gradient-to-r from-teal-600 to-gray-800 rounded-lg py-2 text-center text-white font-semibold mb-4">
                         Booking Form
                     </h2>
 
