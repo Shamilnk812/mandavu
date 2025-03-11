@@ -6,12 +6,16 @@ import { useNavigate } from "react-router-dom";
 import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
 import { useState } from "react";
 import { CircularProgress } from "@mui/material";
+import PasswordVisibility from "../Common/PasswordVisibility";
 
 
 
 export default function OwnerSetNewPasswordCmp({ uidb64, token }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false)
+  const [showPassword1, setShowPassword1]  = useState(false);
+  const [showPassword2, setShowPassword2]  = useState(false);
+
 
   const formik = useFormik({
     initialValues: {
@@ -42,6 +46,13 @@ export default function OwnerSetNewPasswordCmp({ uidb64, token }) {
     },
   });
 
+  const togglePasswordVisibility1 = ()=> {
+    setShowPassword1((prev) => !prev)
+  }
+  const togglePasswordVisibility2 = ()=> {
+    setShowPassword2((prev)=> !prev)
+  }
+
   return (
     <div className="min-h-screen bg-teal-600 flex justify-center items-center px-4 sm:px-6">
       <div className="py-8 px-4 sm:px-12 bg-white rounded-2xl shadow-xl z-20 w-full max-w-lg">
@@ -62,8 +73,9 @@ export default function OwnerSetNewPasswordCmp({ uidb64, token }) {
           </p>
         </div>
         <form onSubmit={formik.handleSubmit}>
+          <div className="relative">
           <input
-            type="password"
+            type={showPassword1 ? "text" : "password"}
             name="password"
             id="password"
             value={formik.values.password}
@@ -72,12 +84,16 @@ export default function OwnerSetNewPasswordCmp({ uidb64, token }) {
             placeholder="Enter your new password"
             className="block text-sm py-3 px-4 mt-2 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
           />
+          <PasswordVisibility showPassword={showPassword1} togglePasswordVisibility={togglePasswordVisibility1}/>
+          </div>
           {formik.errors.password && formik.touched.password ? (
             <div className="text-red-500 text-sm">{formik.errors.password}</div>
           ) : null}
+          
 
+          <div className="relative">
           <input
-            type="password"
+            type={showPassword2 ? "text" : "password"}
             name="confirm_password"
             id="confirm_password"
             value={formik.values.confirm_password}
@@ -86,6 +102,8 @@ export default function OwnerSetNewPasswordCmp({ uidb64, token }) {
             placeholder="Confirm your new password"
             className="block text-sm py-3 px-4 mt-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
           />
+          <PasswordVisibility showPassword={showPassword2} togglePasswordVisibility={togglePasswordVisibility2}/>
+          </div>
           {formik.errors.confirm_password && formik.touched.confirm_password ? (
             <div className="text-red-500 text-sm">{formik.errors.confirm_password}</div>
           ) : null}

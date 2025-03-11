@@ -31,6 +31,28 @@ export default function ShowAllVenues() {
   const [priceRange, setPriceRange] = useState([0, 0]);
   const [loading, setLoading] = useState(false)
 
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500); 
+
+    return () => {
+      clearTimeout(handler); 
+    };
+  }, [searchQuery]);
+
+
+  useEffect(() => {
+    if (debouncedSearchQuery.trim() !== ""  || searchQuery === "") {
+      fetchVenuesList();
+    }
+  }, [debouncedSearchQuery, currentPage]);
+
+
+
   const scrollVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
@@ -54,7 +76,8 @@ export default function ShowAllVenues() {
     try {
       const response = await axiosUserInstance.get(`venues-list/`, {
         params: {
-          search: searchQuery,
+          search: debouncedSearchQuery,
+          // search: searchQuery,
           page: currentPage,
         },
       });
@@ -100,10 +123,15 @@ export default function ShowAllVenues() {
     }
   };
 
-  useEffect(() => {
 
-    fetchVenuesList();
-  }, [searchQuery, currentPage]);
+  // const handleSearchChange = (e) => {
+  //   setSearchQuery(e.target.value);
+  // };
+
+  // useEffect(() => {
+
+  //   fetchVenuesList();
+  // }, [searchQuery, currentPage]);
 
 
 
@@ -137,6 +165,7 @@ export default function ShowAllVenues() {
                 className="border w-2/3 sm:w-1/2 rounded-lg outline-teal-500 py-2 px-4"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                // onChange={handleSearchChange}
               />
             </div>
           </div>

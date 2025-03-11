@@ -6,12 +6,10 @@ import { UserLogin } from "../../Redux/Slices/User";
 import { toast } from 'react-toastify';
 import { axiosUserInstance } from "../../Utils/Axios/axiosInstance";
 import { useState } from "react";
-
-
-
 import StoreIcon from '@mui/icons-material/Store';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { CircularProgress } from "@mui/material";
+import PasswordVisibility from "../../Components/Common/PasswordVisibility";
 
 
 export default function Login() {
@@ -19,6 +17,12 @@ export default function Login() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev)
+  }
+
 
   const formik = useFormik({
     initialValues: {
@@ -123,15 +127,19 @@ export default function Login() {
               <div className="text-red-500 text-sm">{formik.errors.email}</div>
             ) : null}
 
-            <input
-              type="password"
-              name="password"
-              id="password"
-              value={formik.values.password}
-              onChange={formik.handleChange}
-              placeholder="Password"
-              className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
-            />
+
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                id="password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                placeholder="Password"
+                className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
+              />
+              <PasswordVisibility showPassword={showPassword} togglePasswordVisibility={togglePasswordVisibility}/>
+            </div>
             {formik.errors.password && formik.touched.password ? (
               <div className="text-red-500 text-sm">{formik.errors.password}</div>
             ) : null}

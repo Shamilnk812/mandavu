@@ -1,13 +1,18 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import SignupStep1Schema from '../../Validations/Owner/RegisterStep1Schema';
 import { axiosOwnerInstance } from '../../Utils/Axios/axiosInstance';
+import PasswordVisibility from '../../Components/Common/PasswordVisibility';
 
 export default function RegisterationStep1() {
   const navigate = useNavigate();
+  const [showPassword1, setShowPassword1]  = useState(false);
+  const [showPassword2, setShowPassword2]  =  useState(false);
+
+  
 
 
   useEffect(()=> {
@@ -78,7 +83,13 @@ export default function RegisterationStep1() {
   const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
   const progress = registrationData.progress || '0%';
 
-  
+  const togglePasswordVisibility1 = ()=> {
+    setShowPassword1((prev)=> !prev)
+  }
+
+  const togglePasswordVisibility2 = ()=> {
+    setShowPassword2((prev)=> !prev)
+  }
 
   return (
     <>
@@ -191,8 +202,9 @@ export default function RegisterationStep1() {
               </div>
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                <div className='relative'>
                 <input 
-                  type="password" 
+                  type={showPassword1 ? "text" : "password"} 
                   id="password" 
                   name='password' 
                   value={formik.values.password} 
@@ -200,14 +212,19 @@ export default function RegisterationStep1() {
                   placeholder="Password" 
                   className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500" 
                 />
+                <PasswordVisibility showPassword={showPassword1} togglePasswordVisibility={togglePasswordVisibility1}/>
+                </div>
                 {formik.errors.password && formik.touched.password ? (
                   <div className="text-red-500 text-sm mt-1">{formik.errors.password}</div>
                 ) : null}
               </div>
+
               <div>
+              
                 <label htmlFor="password2" className="block text-sm font-medium text-gray-700">Confirm Password</label>
+                <div className='relative'>
                 <input 
-                  type="password" 
+                  type={showPassword2 ? "text" : "password"}
                   id="password2" 
                   name='password2' 
                   value={formik.values.password2} 
@@ -215,6 +232,8 @@ export default function RegisterationStep1() {
                   placeholder="Confirm Password" 
                   className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500" 
                 />
+                <PasswordVisibility showPassword={showPassword2} togglePasswordVisibility={togglePasswordVisibility2}/>
+                </div>
                 {formik.errors.password2 && formik.touched.password2 ? (
                   <div className="text-red-500 text-sm mt-1">{formik.errors.password2}</div>
                 ) : null}

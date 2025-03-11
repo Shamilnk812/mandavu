@@ -7,6 +7,7 @@ import { axiosUserInstance } from '../../Utils/Axios/axiosInstance';
 import StoreIcon from '@mui/icons-material/Store';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { CircularProgress } from "@mui/material";
+import PasswordVisibility from '../../Components/Common/PasswordVisibility';
 
 
 
@@ -14,6 +15,8 @@ export default function SignUp() {
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showPassword1, setShowPassword1] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -51,6 +54,15 @@ export default function SignUp() {
       }
     },
   });
+
+
+  const togglePasswordVisibility1 = () => {
+    setShowPassword1((prev) => !prev)
+  }
+
+  const togglePasswordVisibility2 = ()=> {
+    setShowPassword2((prev)=> !prev)
+  }
 
 
 
@@ -102,14 +114,38 @@ export default function SignUp() {
             {formik.errors.email && formik.touched.email ? (
               <div className="text-red-500 text-sm">{formik.errors.email}</div>
             ) : null}
-            <input type="password" name="password" onChange={formik.handleChange} value={formik.values.password} id='password' placeholder="Password" className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500" />
+            
+            <div className='relative'>
+            <input 
+              type={showPassword1 ? 'text' : 'password'}
+              name="password" 
+              onChange={formik.handleChange} 
+              value={formik.values.password} 
+              id='password' placeholder="Password" 
+              className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500" />
+               <PasswordVisibility showPassword={showPassword1} togglePasswordVisibility={togglePasswordVisibility1} />
+             </div>
             {formik.errors.password && formik.touched.password ? (
               <div className="text-red-500 text-sm">{formik.errors.password}</div>
             ) : null}
-            <input type="password" name="password2" onChange={formik.handleChange} value={formik.values.confirmpassword} id='confirmpassword' placeholder="Confirm Password" className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500" />
+           
+
+            <div className='relative'>
+            <input 
+              type={showPassword2 ? "text" : "password"}
+              name="password2" 
+              onChange={formik.handleChange} 
+              value={formik.values.confirmpassword} 
+              id='confirmpassword' 
+              placeholder="Confirm Password" 
+              className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500" />
+              <PasswordVisibility  showPassword={showPassword2} togglePasswordVisibility={togglePasswordVisibility2}/>
+            </div>
             {formik.errors.password2 && formik.touched.password2 ? (
               <div className="text-red-500 text-sm">{formik.errors.password2}</div>
             ) : null}
+
+
             <div className="text-center mt-6">
               <button type="submit"
                 className={`w-full py-2 text-lg text-white bg-teal-600 rounded-lg hover:bg-teal-800 transition-all duration-300 ${loading ? 'cursor-not-allowed opacity-70' : ''
