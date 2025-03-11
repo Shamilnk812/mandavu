@@ -237,7 +237,7 @@ export default function ChatLayout() {
                                         }`}
                                 >
                                     {/* Header */}
-                                    <div className="flex items-center justify-between p-4 bg-gray-300 shadow-lg">
+                                    <div className="flex items-center justify-between p-4 bg-gray-100 shadow">
 
                                         {selectedChat && (
                                             <button
@@ -247,7 +247,7 @@ export default function ChatLayout() {
                                                 ← Back
                                             </button>
                                         )}
-                                        <h1 className="text-lg text-gray-700 font-semibold">
+                                        <h1 className="text-lg text-gray-600 font-semibold">
 
                                             {/* {username ?  <AccountCircleIcon/> ` ${username}` : 'Chat Area'} */}
                                             {username ? (
@@ -261,19 +261,21 @@ export default function ChatLayout() {
                                         </h1>
 
 
-                                        {user && (
+                                        {/* {user && (
                                             <button
                                                 onClick={startVideoCall}
                                                 className="bg-teal-700 text-white px-4 py-1 hover:bg-teal-800 transition-all duration-300 rounded"
                                             >
-                                                {/* <VideoCallIcon/>   */}
                                                 <DuoIcon />
                                             </button>
-                                        )}
+                                        )} */}
                                     </div>
 
                                     {/* Chat messages area */}
-                                    <div ref={chatArea} className="flex-1 p-4 overflow-y-auto">
+
+                                    {user && (
+                                    <div ref={chatArea} className="flex-1 p-4  overflow-y-auto bg-gradient-to-b from-white to-teal-50
+">
                                         <div className="flex flex-col space-y-4">
                                             {Array.isArray(messages) &&
                                                 messages
@@ -298,6 +300,9 @@ export default function ChatLayout() {
                                             }
                                         </div>
                                     </div>
+                                      )}
+
+
                                     {/* Input area */}
                                     {user && (
                                         <SendMessage sendMessage={sendMessage} />

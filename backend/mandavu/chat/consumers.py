@@ -4,6 +4,8 @@ from channels.db import database_sync_to_async
 from users.models import CustomUser,User
 from owners.models import Owner,Venue
 from .models import *
+
+
 class ChatConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):

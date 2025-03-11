@@ -24,7 +24,7 @@ export default function ChatUsersList({Chat,selectedChat}) {
                         `chat_users/${userId}/`
                     );
                     setChatUsers(response.data);
-                    console.log(response.data)
+                    console.log('all user',response.data)
                 } catch (error) {
                     console.error("Error while fetching users", error);
                 }
@@ -60,16 +60,21 @@ export default function ChatUsersList({Chat,selectedChat}) {
 
 const ChatUserItem = ({user, userId, Chat, index}) => { 
     const isUser = user.user1.id === userId;
+
     const displayUser = !isUser ? user.user1 : user.user2;
-    
+    const venueName = !isUser ? user.user1_venue : user.user2_venue;
+    const displayName = venueName ? venueName : `${displayUser.first_name} ${displayUser.last_name}`;
+
+
     return (
         <button
-        onClick={()=> Chat({id:displayUser.id, username: displayUser.first_name})}
-        className="w-full bg-gray-200 border-b border-gray-400 shadow-lg"
+        onClick={()=> Chat({id:displayUser.id, username: displayName})}
+        className="w-full bg-gray-100 border-b border-gray-300 shadow-lg"
         >
              <li key={index} className="flex items-center p-3 hover:bg-gray-300 hover:shadow-xl cursor-pointer">
                  <img src="/user/user_avatar.png" alt="User" className="rounded-full mr-3 w-12 h-12" />
-                <span className="font-medium ">{displayUser.first_name} {displayUser.last_name}</span>
+                <span className="font-medium text-gray-600"> {displayName}</span>
+                
             </li>
         </button>
     )
