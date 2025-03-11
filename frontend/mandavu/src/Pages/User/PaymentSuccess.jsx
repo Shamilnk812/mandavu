@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { clearBookingDetails } from "../../Redux/Slices/User";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+
 
 export default function PaymentSuccess() {
     const navigate = useNavigate();
@@ -34,22 +36,7 @@ export default function PaymentSuccess() {
         visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
     };
 
-    // Animation for buttons: bounce effect on hover
-    const buttonVariants = {
-        hidden: { opacity: 0, scale: 0.8 },
-        visible: {
-            opacity: 1,
-            scale: 1,
-            transition: { duration: 0.6, ease: "easeOut" },
-        },
-        hover: {
-            scale: 1.1,
-            boxShadow: "0px 8px 15px rgba(0, 128, 128, 0.4)",
-            transition: { duration: 0.3, ease: "easeInOut" },
-        },
-        tap: { scale: 0.95, transition: { duration: 0.2 } },
-    };
-
+   
     // Checkmark animation
     const checkmarkVariants = {
         hidden: { scale: 0, opacity: 0 },
@@ -79,7 +66,7 @@ export default function PaymentSuccess() {
         }, 1500); // Delay content for 1.5 seconds
 
         return () => clearTimeout(timer); // Cleanup the timer
-    }, [dispatch,navigate]);
+    }, [dispatch, navigate]);
 
     return (
         <>
@@ -115,51 +102,62 @@ export default function PaymentSuccess() {
 
                 {showContent && (
                     <motion.div
-                        className="p-8 bg-green-100 border border-green-300 rounded-md shadow-lg text-center"  // Centered content
+                        className="p-12 bg-white rounded-md shadow-lg text-center"  // Centered content
                         initial="hidden"
                         animate="visible"
                         variants={containerVariants}
                     >
                         {/* Fade and slide effect for the success message */}
                         <motion.h2
-                            className="text-3xl font-bold text-green-700 mb-4 text-center"
-                            variants={textVariants}
-                        >
-                            🎉 Booking Successful!
-                        </motion.h2>
-
-                        <motion.p
-                            className="text-lg text-green-600 text-center"
-                            variants={textVariants}
-                        >
-                            Your booking was completed successfully. Thank you for choosing our service!
-                        </motion.p>
-
-                        {/* Staggered buttons with bounce effect */}
-                        <motion.div
-                            className="flex justify-center space-x-4 mt-10 mb-10"
+                            className="text-3xl font-semibold text-teal-700 mb-4 text-center"
                             initial="hidden"
                             animate="visible"
                             variants={containerVariants}
                         >
+                          Booking Successful!
+                        </motion.h2>
+
+                        <motion.p
+                            className="text-md text-teal-600 text-center"
+                            initial="hidden"
+                            animate="visible"
+                            variants={containerVariants}
+                        >
+                            Your booking was completed successfully. Thank you for choosing our service!
+                        </motion.p>
+                        <motion.div
+                            initial="hidden"
+                            animate="visible"
+                            variants={containerVariants}
+                        >
+                        <DotLottieReact
+                            src="https://lottie.host/cfebd316-369c-44e0-8022-42ef1284edd8/odSGzefGhA.lottie"
+                            loop
+                            autoplay
+                            className="w-60 h-60 mx-auto my-6"
+                        />
+                        </motion.div>
+
+                        {/* Staggered buttons with bounce effect */}
+                        <motion.div
+                            className="flex justify-center space-x-4 mt-10 mb-10"
+                            variants={textVariants}
+
+                            
+                        >
                             <motion.button
                                 onClick={() => navigate('/user/show-booking-details')}
-                                className="mt-2 bg-teal-600 text-white text-sm py-2 px-4 rounded-full hover:bg-gradient-to-r from-teal-500 to-gray-800"
-                                variants={buttonVariants}
-                                whileHover="hover"
-                                whileTap="tap"
+                                className="mt-2 border border-teal-700 text-teal-600 px-8 py-3 rounded-xl shadow-lg transition text-md font-medium hover:bg-teal-700 hover:text-white"
+                                
                             >
                                 View Booking
                             </motion.button>
 
                             <motion.button
                                 onClick={() => navigate('/user/home')}
-                                className="mt-2 bg-teal-600 text-white text-sm py-2 px-4 rounded-full hover:bg-gradient-to-r from-teal-500 to-gray-800"
-                                variants={buttonVariants}
-                                whileHover="hover"
-                                whileTap="tap"
+                                className="mt-2 border border-teal-700 text-teal-600 px-8 py-3 rounded-xl shadow-lg transition text-md font-medium hover:bg-teal-700 hover:text-white"
                             >
-                                Go Back To Home
+                                Back To Home
                             </motion.button>
                         </motion.div>
                     </motion.div>
