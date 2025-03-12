@@ -6,6 +6,7 @@ urlpatterns = [
     path('add_chat_rooms/',AddChatRoomView.as_view(),name='add_chat_rooms'),
     path('chat_users/<int:user_id>/',ListChatUsersView.as_view(),name='chat_users'),
     path('create_meeting/',CreateMeetingView.as_view(),name='create_meeting'),
+    path('get_user_online_status/<int:user_id>/',GetUserOnlineStatus.as_view(),name='get_user_online_status')
 ]
 
 

@@ -64,6 +64,9 @@ const ChatUserItem = ({user, userId, Chat, index}) => {
     const displayUser = !isUser ? user.user1 : user.user2;
     const venueName = !isUser ? user.user1_venue : user.user2_venue;
     const displayName = venueName ? venueName : `${displayUser.first_name} ${displayUser.last_name}`;
+   
+    
+
 
 
     return (

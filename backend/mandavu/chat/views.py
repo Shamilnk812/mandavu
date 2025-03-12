@@ -106,3 +106,15 @@ class CreateMeetingView(APIView):
         # Save meeting ID to database or in-memory storage if needed
 
         return Response({'meetingId': meeting_id})
+    
+
+
+
+class GetUserOnlineStatus(APIView):
+    def get(self, request, user_id):
+        try:
+            user = CustomUser.objects.get(id=user_id)
+            return Response({"is_online": user.is_online})
+        except CustomUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+        

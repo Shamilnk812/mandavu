@@ -13,6 +13,7 @@ import VideoCallIcon from '@mui/icons-material/VideoCall';
 import DuoIcon from '@mui/icons-material/Duo';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 
 import { useSelector } from "react-redux";
 import { useVideoCallWebSocket } from "../../Utils/VideoCallContext/VideoCallContext";
@@ -46,8 +47,24 @@ export default function ChatLayout() {
     const [notifications, setNotifications] = useState([]);
 
 
+
+    const [isOnline, setIsOnline] = useState(null)
+    const [lastSeen, setLastSeen] = useState("")
+
+    const [trackId, setTrackId]  = useState(null)
+
+
     const closeNotification = (id) => {
         setNotifications((prev) => prev.filter((n) => n.id !== id));
+    };
+
+
+    const sendHeartbeat = (ws) => {
+        setInterval(() => {
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: "heartbeat" }));
+            }
+        }, 30000); // Send heartbeat every 30 seconds
     };
 
     // const openChat = () => {
@@ -63,12 +80,34 @@ export default function ChatLayout() {
 
     // console.log( "chat opened ",isChatOpen)
 
+    
+    const fetchUserOnlineStatus = async (uid) => {
+        try {
+            const response = await axiosChatInstance.get(`get_user_online_status/${uid}/`);
+            console.log(response.data)
+            setIsOnline(response.data.is_online)
+        } catch (error) {
+            console.error("Error fetching user online status:", error);
+            return false;
+        }
+    };
+
+
 
     const Chat = async ({ id, username }) => {
+
+    // here i want to call the funciotn 
+
+        
+        
+        
+
+
         setUser(id);
         setUsername(username);
         setSelectedChat('selected')
-        setupWebSocket(id, access);
+        fetchUserOnlineStatus(id)
+        setupWebSocket(id,  access);
 
         try {
             const response = await axiosChatInstance.get(`user_messages/${userId}/${id}/`, {
@@ -76,7 +115,9 @@ export default function ChatLayout() {
                     'Authorization': `Bearer ${access}`
                 }
             });
+            console.log(response.data)
             const data = response.data;
+            
 
             if (Array.isArray(data)) {
                 setMessages(data);
@@ -102,7 +143,8 @@ export default function ChatLayout() {
         const newWs = new WebSocket(socketUrl);
 
         newWs.onopen = () => {
-            console.log('WebSocket connection opened');
+            console.log('Chat WebSocket connection opened');
+            // sendHeartbeat(newWs); // Start heartbeat
         };
 
         newWs.onmessage = (event) => {
@@ -111,10 +153,32 @@ export default function ChatLayout() {
 
             setMessages((prevMessages) => [...prevMessages, data]);
 
+            // if (data.type === "message") {
+               
+            //     setMessages((prevMessages) => [...prevMessages, data]);
+            // } else if (data.type === "user_status") {
+            //     console.log('nooooooooww')
+            //     console.log('user is ',user)
+            //     console.log('chat with user',chatWithUserId)
+            //     console.log('track id is ',trackedId)
+            //     if (trackedId === chatWithUserId) {
+            //         console.log('updatiiiiiiiiiiiiiiiiiiiiiiii')
+            //         console.log(data.status)
+            //         console.log(data.last_seen)
+            //         setIsOnline(data.status === "online");
+
+                  
+                    
+                   
+            //     }
+            // }
+
+            
+
         };
 
         newWs.onclose = () => {
-            console.log('WebSocket connection closed');
+            console.log('Chat WebSocket connection closed');
         };
 
         newWs.onerror = (event) => {
@@ -125,7 +189,7 @@ export default function ChatLayout() {
     }
 
 
-
+  
 
 
     const sendMessage = (message) => {
@@ -134,7 +198,13 @@ export default function ChatLayout() {
         }
     };
 
-
+    
+    // const updateLastSeen = (status,lastSeen)=> {
+    //     console.log('bosssee')
+    //     setIsOnline(status)
+    //     setLastSeen(lastSeen)
+    //     console.log(' machhaaaaaaa')
+    // }
 
     const startVideoCall = async () => {
         if (!user) return;
@@ -254,11 +324,30 @@ export default function ChatLayout() {
                                                 <>
                                                     <AccountCircleIcon className="mr-2" fontSize="large" />
                                                     {username}
+                                                   
+
                                                 </>
                                             ) : (
                                                 'Chat Area'
                                             )}
                                         </h1>
+
+                                        {username && (
+                                            <div className="flex items-center mt-1">
+                                                <span
+                                                    className={`w-2 h-2 rounded-full mr-1 ${
+                                                        isOnline ? 'bg-green-500' : 'bg-gray-400'
+                                                    }`}
+                                                ></span>
+                                                <span className={`text-sm ${isOnline ? 'text-green-500' : 'text-gray-500'}`}>
+                                                    {isOnline ? 'Online' : 'Offline'}
+                                                </span>
+                                            </div>
+                                        )}
+
+
+
+                                     
 
 
                                         {/* {user && (
@@ -273,34 +362,41 @@ export default function ChatLayout() {
 
                                     {/* Chat messages area */}
 
-                                    {user && (
-                                    <div ref={chatArea} className="flex-1 p-4  overflow-y-auto bg-gradient-to-b from-white to-teal-50
-">
-                                        <div className="flex flex-col space-y-4">
-                                            {Array.isArray(messages) &&
-                                                messages
-                                                    .slice()
-                                                    .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
-                                                    .map((msg, index) => (
-                                                        msg && msg.content ? (
-                                                            <ChatMessages
-                                                                key={index}
-                                                                text={msg.content}
-                                                                send={msg.user}
-                                                                sender={userId}
-                                                                timestamp={msg.timestamp}
-                                                                seen={msg.seen}
-                                                            />
-                                                        ) : (
-                                                            <div key={index} className="text-red-500">
-                                                                Message content missing
-                                                            </div>
-                                                        )
-                                                    ))
-                                            }
+
+
+                                    {user ? (
+                                        <div ref={chatArea} className="flex-1 p-4  overflow-y-auto bg-gradient-to-b from-white to-teal-50">
+                                            <div className="flex flex-col space-y-4">
+                                                {Array.isArray(messages) &&
+                                                    messages
+                                                        .slice()
+                                                        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+                                                        .map((msg, index) => (
+                                                            msg && msg.content ? (
+                                                                <ChatMessages
+                                                                    key={index}
+                                                                    text={msg.content}
+                                                                    send={msg.user}
+                                                                    sender={userId}
+                                                                    timestamp={msg.timestamp}
+                                                                    seen={msg.seen}
+                                                                />
+                                                            ) : (
+                                                                <div key={index} className="text-red-500">
+                                                                    Message content missing
+                                                                </div>
+                                                            )
+                                                        ))
+                                                }
+                                            </div>
                                         </div>
-                                    </div>
-                                      )}
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                                            <QuestionAnswerIcon fontSize="large" />
+                                            <p className="text-lg font-semibold">No messages yet</p>
+                                            <p className="text-sm text-gray-400">Select a user to start a conversation</p>
+                                        </div>
+                                    )}
 
 
                                     {/* Input area */}
@@ -315,7 +411,7 @@ export default function ChatLayout() {
                         </div>
 
                         <div>
-                            
+
                         </div>
                     </main>
                 </div>
