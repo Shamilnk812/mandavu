@@ -16,7 +16,7 @@ function App() {
 
 
   return (
-    <CheckInternetConnection>
+    // <CheckInternetConnection>
       
     <div className="min-h-screen bg-customColor7">
       <NotificationProvider>
@@ -50,7 +50,7 @@ function App() {
      
      </div>
 
-     </CheckInternetConnection>
+    //  </CheckInternetConnection>
   )
 }
 
