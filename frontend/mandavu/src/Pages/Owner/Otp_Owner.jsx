@@ -25,8 +25,9 @@ export default function OtpVerification() {
       navigate('/owner/register-step-1');
     }
   }, [email, navigate]);
-
-
+  
+  console.log('emillll',email)
+  
   useEffect(() => {
     if (timeLeft > 0) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
@@ -76,7 +77,8 @@ export default function OtpVerification() {
       }
 
     }
-
+    
+    
 
   })
   return (

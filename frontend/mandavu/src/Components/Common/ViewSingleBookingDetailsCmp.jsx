@@ -4,6 +4,15 @@
 
 export default function ViewSingleBookingDetailsCmp({booking,id}){
     console.log('prorro',booking)
+     // Format dates
+     const formattedDates = booking.dates.length === 1
+     ? booking.dates[0]
+     : `${booking.dates[0]} to ${booking.dates[booking.dates.length - 1]}`;
+
+ // Format times
+ const formattedTimes = booking.times.some(time => typeof time === 'string')
+     ? booking.times.join(' | ')
+     : booking.times.map(slot => `${slot[0]} - ${slot[1]}`).join(' | ');
     return(
         <>
 
@@ -38,14 +47,14 @@ export default function ViewSingleBookingDetailsCmp({booking,id}){
                             </dd>
                         </div>
                     )}
-                    <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    {/* <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt className="text-sm font-medium text-gray-900">
                             Email address
                         </dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                             {booking.email}
                         </dd>
-                    </div>
+                    </div> */}
                     <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt className="text-sm font-medium text-gray-900">
                             Phone number
@@ -67,7 +76,8 @@ export default function ViewSingleBookingDetailsCmp({booking,id}){
                            Date
                         </dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                           {booking.date}
+                           {/* {formattedDates} */}
+                           {formattedDates}
                         </dd>
                     </div>
                     <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -75,7 +85,7 @@ export default function ViewSingleBookingDetailsCmp({booking,id}){
                            Time
                         </dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                           {booking.time}
+                           {formattedTimes}
                         </dd>
                     </div>
                     <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -99,7 +109,7 @@ export default function ViewSingleBookingDetailsCmp({booking,id}){
                            Remaining Amount
                         </dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                           {/* remaining amount */}
+                            {booking.remaining_amount}
                         </dd>
                     </div>
                     <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">

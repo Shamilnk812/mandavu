@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { axiosAdminInstance, axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
 import { toast } from "react-toastify";
 import BookingPackageRejectionModal from "./BookingPackageRejectionModal";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 
 export default function ShowVenueApprovalsCmp({ venueId }) {
     const [bookingPackages, setBookingPackages] = useState([]);
@@ -129,14 +131,23 @@ export default function ShowVenueApprovalsCmp({ venueId }) {
                                 <div className="flex flex-col items-end">
                                     <span className="text-red-600 font-semibold">Rejected</span>
                                     <button
-                                        className="text-blue-600 underline hover:text-blue-800"
+                                        className="text-teal-600 underline hover:text-teal-800"
                                         onClick={() => setExpanded((prev) => ({ ...prev, [pkg.id]: !prev[pkg.id] }))}
                                     >
-                                        {expanded[pkg.id] ? "Collapse" : "Expand"}
+                                        {/* {expanded[pkg.id] ?<ArrowDropUpIcon/> "Collapse" : <ArrowDropDownIcon /> 'view'} */}
+                                        {expanded[pkg.id] ? (
+                                            <>
+                                                Hide<ArrowDropUpIcon /> 
+                                            </>
+                                            ) : (
+                                            <>
+                                                 View<ArrowDropDownIcon />
+                                            </>
+                                            )}
                                     </button>
                                     {expanded[pkg.id] && (
-                                        <div className="text-gray-700 mt-2 border rounded p-2">
-                                            <span className="font-semibold">Rejection Reason:</span> {pkg.rejection_reason || "No reason provided"}
+                                        <div className="text-gray-500 mt-2 border rounded p-2">
+                                            <span className="font-md text-red-500 ">Rejection Reason:</span> {pkg.rejection_reason || "No reason provided"}
                                         </div>
                                     )}
                                 </div>

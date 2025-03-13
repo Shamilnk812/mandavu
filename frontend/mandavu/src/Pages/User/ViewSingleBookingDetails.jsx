@@ -67,7 +67,7 @@ export default function ShowSingleBookingDetails() {
                                         Booking Package
                                     </dt>
                                     <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
-                                        {/* add booking packge name */}
+                                       {booking.package_name}
                                     </dd>
                                 </div>
 
@@ -109,16 +109,6 @@ export default function ShowSingleBookingDetails() {
                                     </dd>
                                 </div>
 
-
-
-                                <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
-                                    <dt className="text-sm font-medium text-gray-600">
-                                        Email address
-                                    </dt>
-                                    <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
-                                        {booking.email}
-                                    </dd>
-                                </div>
                                 <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
                                     <dt className="text-sm font-medium text-gray-600">
                                         Phone number

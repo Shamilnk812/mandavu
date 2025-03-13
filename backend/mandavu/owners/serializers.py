@@ -222,9 +222,9 @@ class OwnerSetNewPasswordSerializer(serializers.ModelSerializer) :
 
 class RegisterVenueSerializer(serializers.ModelSerializer) :
     
-    class Meta:
+    class Meta: 
         model = Venue
-        fields = ['owner', 'convention_center_name', 'short_description' ,'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'state', 'district', 'city', 'pincode', 'address', 'latitude', 'longitude', 'terms_and_conditions', 'venue_license']
+        fields = ['owner', 'convention_center_name', 'short_description' ,'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'state', 'district', 'city', 'pincode', 'address', 'latitude', 'longitude', 'terms_and_conditions', 'venue_license','extra_ac_price']
 
     def create(self, validated_data):
         venue = Venue(**validated_data)

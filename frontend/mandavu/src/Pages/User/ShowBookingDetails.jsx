@@ -148,8 +148,14 @@ export default function ShowBookingDetails() {
                         <h3 className="text-xl  font-semibold mb-8 py-4 text-center text-gray-600 border-b border-gray-200 ">
                             Booking Details
                         </h3>
-
+                        {bookedDetails.length < 1 && (
+                                <p className="p-12 text-center text-gray-600">Looks like you haven’t booked a venue yet. Find the perfect space for your event!</p>
+                            )}
                         <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
+
+                           
+
+
                             {bookedDetails.map((booking) => {
 
                                 const formattedDates = booking.dates.length === 1
@@ -176,8 +182,8 @@ export default function ShowBookingDetails() {
                                         </div>
                                         <div className="flex justify-between border-b py-2">
                                             <span className="font-medium text-gray-600">Package:</span>
-                                            {/* add packge name here  */}
-                                            <span className="text-gray-800"></span>
+                                           
+                                            <span className="text-gray-800">{booking.package_name}</span>
                                         </div>
                                         <div className="flex justify-between border-b py-2">
                                             <span className="font-medium text-gray-600">Date:</span>
@@ -253,10 +259,14 @@ export default function ShowBookingDetails() {
                                 )
 
                             })}
-                        </div>
 
-                         {/* Pagination Section */}
+
+
+                        </div>
+                         
+                         {bookedDetails.length > 0 &&(
                          <PaginationCmp setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages}/>
+                         )}
 
 
                     </div>

@@ -12,6 +12,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import WysiwygIcon from '@mui/icons-material/Wysiwyg';
 import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
 
 
@@ -180,13 +181,13 @@ export default function  Sidebar () {
                 <span className="ms-3"> <DashboardIcon/> Dashboard</span>
               </Link>
             </li>
-            {/* <li>
-              <Link to='/owner/venue-management'
-                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
+             <li>
+              <Link to='/owner/booking-management'
+                className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/booking-management')}`}
               >
-                <span className="flex-1 ms-3 whitespace-nowrap">Venue Management</span>
+                <span className="flex-1 ms-3 whitespace-nowrap"><WysiwygIcon/> View Bookings</span>
               </Link>
-            </li> */}
+            </li> 
            
             <li>
               <Link to='/owner/events-management'

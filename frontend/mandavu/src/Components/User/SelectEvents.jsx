@@ -55,7 +55,14 @@ export default function SelectEventsModal({ venueId, isEventModalOpen, handleClo
   };
 
   const handleBooking = () => {
-
+    
+    const packageName = selectedPackage.package_name
+    if (selectedEvent === "Wedding" && packageName !== "regular") {
+      toast.error(
+        "If you're looking for a wedding event, you must choose the Regular package, which is more suitable for you."
+      );
+      return; 
+    }
     dispatch(setBookingDetails({ selectedEvent, selectedPackage }))
     console.log("Booking event:", selectedEvent, "with package:", selectedPackage);
     handleCloseEventModal();

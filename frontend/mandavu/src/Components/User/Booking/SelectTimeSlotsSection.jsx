@@ -12,7 +12,7 @@ const timeSlotsForRegular = [
 
 
 
-export default function SelectTimeSlotsSection({ packageTimeSlots, setSelectedTimeSlot, selectedTimeSlot, showTimeSlots, selectedDates, packageName, packagePrice, venueId, setAdvanceAmount, setTotalAmount, totalAmount }) {
+export default function SelectTimeSlotsSection({ packageTimeSlots, setSelectedTimeSlot, selectedTimeSlot, showTimeSlots, selectedDates, packageName, packagePrice, packagePricePerHour, venueId, setAdvanceAmount, setTotalAmount, totalAmount }) {
 
 
     const [bookedTimeSlots, setBookedTimeSlots] = useState([])
@@ -50,7 +50,10 @@ export default function SelectTimeSlotsSection({ packageTimeSlots, setSelectedTi
 
 
     const handleTimeSlotClick = (slot) => {
-        const packageAmount = parseFloat(packagePrice) || 0;
+        // const packageAmount = parseFloat(packagePrice) || 0;
+        const packageAmount = packagePricePerHour !== 'Not Allowed' 
+        ? parseFloat(packagePricePerHour) || 0 
+        : parseFloat(packagePrice) || 0;
         
         if (packageTimeSlots.length === 0) {
             setSelectedTimeSlot([slot]);

@@ -184,7 +184,9 @@ export default function RegistrationStep4() {
             });
 
             toast.success(response.data.message || 'Registration successful!');
-            localStorage.setItem('email', registrationData.email);
+            // localStorage.setItem('email', registrationData.email);
+            console.log('registration 4',registrationData.email)
+            console.log('step 4 data',registrationData)
             sessionStorage.removeItem('registrationData');
             navigate('/owner/otp');
 

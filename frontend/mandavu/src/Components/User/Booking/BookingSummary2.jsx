@@ -49,13 +49,15 @@ export default function BookingSummary2({ venue, venueId, selectedDates, selecte
 
         const bookingDetails = {
             ...userBookingDetails,
-            email: "jacktest@gmail.com",
+            // email: "jacktest@gmail.com",    
             dates: selectedDates,
             times: selectedTimeSlot,
-            bookingAmount: totalAmount,
-            date: "2024-12-12",
-            timeOfDay: "morning",
+            bookingAmount: advanceAmount,
+            // date: "2024-12-12",
+            // timeOfDay: "morning",
             airConditioning: airConditionSelection,
+            extraAcAmount: selectedPackage?.extra_price_for_aircondition,
+            packageName: selectedPackage?.package_name,
             eventName: selectedEvent,
             bookingPackage: selectedPackage?.id,
             facilities: selectedFacilities,
@@ -64,7 +66,8 @@ export default function BookingSummary2({ venue, venueId, selectedDates, selecte
             venueId: venue?.id,
             userId: userId,
             totalAmount: totalAmount,
-            advanceAmount: advanceAmount,
+            remainingAmount: totalAmount - advanceAmount,
+            // advanceAmount: advanceAmount,
 
         }
         console.log("Submitted with ", bookingDetails)
@@ -211,6 +214,12 @@ export default function BookingSummary2({ venue, venueId, selectedDates, selecte
                                     <span className="font-semibold">Packge Amount:</span>
                                     <span>₹{Number(selectedPackage.price)} </span>
                                 </div>
+                                {selectedPackage.price_for_per_hour !== 'Not Allowed' && (
+                                <div className="flex justify-between text-gray-600 text-base mt-1 font-medium">
+                                    <span className="font-semibold">Price Per Hour:</span>
+                                    <span>₹{Number(selectedPackage.price_for_per_hour)} </span>
+                                </div>
+                                )}
 
                                 <div className="flex justify-between text-gray-600 text-base mt-1 font-medium">
                                     <span className="font-semibold">Total Amount:</span>
@@ -225,7 +234,7 @@ export default function BookingSummary2({ venue, venueId, selectedDates, selecte
 
                                 <div className="flex justify-between text-gray-600 text-lg mt-3 font-medium">
                                     <span className="font-semibold">Advance Amount:</span>
-                                    <span>₹{advanceAmount}</span>
+                                    <span>₹{advanceAmount.toFixed(2)}</span>
                                 </div>
 
 
@@ -269,7 +278,7 @@ export default function BookingSummary2({ venue, venueId, selectedDates, selecte
                             </a>{' '}
                             and{' '}
                             <a
-                                href="/path-to-refund-policy.pdf"
+                                href="/user/Mandavu_Refund_Policy.pdf"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-teal-600 font-semibold hover:underline"

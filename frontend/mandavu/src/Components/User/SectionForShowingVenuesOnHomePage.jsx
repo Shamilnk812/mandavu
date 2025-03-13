@@ -74,7 +74,7 @@ const SectionForShowingVenuesOnHomePage = ({ scrollVariants, venues }) => {
                                     <p className="text-lg font-semibold text-gray-500 mb-3 ml-2">${venue.price}</p>
                                     {venue.is_under_maintenance ? (
                                         <div className="text-red-500 text-center ">
-                                            <p className="text-base font-semibold">This venue is under maintenance. <br /> <span className='text-sm'>12/12/2024 to 19/12/2024 </span></p>
+                                            <p className="text-base font-semibold">This venue is under maintenance. <br /> <span className='text-sm'> {new Date(venue.maintenance_start_date).toLocaleDateString("en-GB")} to {new Date(venue.maintenance_end_date).toLocaleDateString("en-GB")}</span></p>
 
                                         </div>
                                     ) : (

@@ -116,15 +116,15 @@ export default function AdminViewAllBookings() {
                                     className="flex flex-col bg-white rounded-lg shadow-md p-6 border h-[400px] transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:border-gray-300"
                                 >
                                     {/* Row for each detail */}
-                                    <div className="flex justify-between items-center mb-4">
+                                    <div className="flex justify-between items-center mb-4 border-b">
                                         <span className="font-medium text-gray-500 ">User :</span>
                                         <span className="text-gray-600 ">{booking_data.name}</span>
                                     </div>
-                                    <div className="flex justify-between items-center mb-4">
+                                    <div className="flex justify-between items-center mb-4 border-b">
                                         <span className="font-medium text-gray-500 ">Venue :</span>
                                         <span className="text-gray-600 ">{booking_data.venue_name}</span>
                                     </div>
-                                    <div className="flex justify-between items-start mb-4">
+                                    <div className="flex justify-between items-start mb-4 border-b">
                                         <span className="font-medium text-gray-500 ">Dates :</span>
                                         <div className="text-gray-600 ">
                                             {booking_data.dates && booking_data.dates.length > 0
@@ -134,7 +134,7 @@ export default function AdminViewAllBookings() {
                                                 : 'No Dates'}
                                         </div>
                                     </div>
-                                    <div className="flex justify-between items-start mb-4">
+                                    <div className="flex justify-between items-start mb-4 border-b">
                                         <span className="font-medium text-gray-500 ">Times :</span>
                                         <div className="text-gray-600 ">
                                             {Array.isArray(booking_data.times) && booking_data.times.length > 0
@@ -148,17 +148,17 @@ export default function AdminViewAllBookings() {
                                                 : 'No Times'}
                                         </div>
                                     </div>
-                                    <div className="flex justify-between items-center mb-4">
+                                    <div className="flex justify-between items-center mb-4 border-b">
                                         <span className="font-medium text-gray-500 ">Advance Amount :</span>
                                         <span className="text-gray-600 ">{booking_data.booking_amount}</span>
                                     </div>
                                     {/* add remainign amount */}
-                                    <div className="flex justify-between items-center mb-4">
+                                    <div className="flex justify-between items-center mb-4 border-b">
                                         <span className="font-medium text-gray-500 ">Remaining Amount :</span>
                                         <span className="text-gray-600 ">{booking_data.total_price}</span>
                                     </div>
 
-                                    <div className="flex justify-between items-center mb-4">
+                                    <div className="flex justify-between items-center mb-4 border-b">
                                         <span className="font-medium text-gray-500 ">Total Amount :</span>
                                         <span className="text-gray-600 ">{booking_data.total_price}</span>
                                     </div>

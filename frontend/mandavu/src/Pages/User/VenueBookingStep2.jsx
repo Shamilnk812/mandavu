@@ -37,8 +37,18 @@ export default function VenueBookingStep2() {
 
     const [selectedFacilities, setSelectedFacilities] = useState([])
 
-    const [totalAmount, setTotalAmount] = useState(selectedPackage?.price)
-    const [advanceAmount, setAdvanceAmount] = useState(selectedPackage?.price * 0.15)
+    // const [totalAmount, setTotalAmount] = useState(selectedPackage?.price)
+    const [totalAmount, setTotalAmount] = useState(
+        selectedPackage?.price_for_per_hour !== 'Not Allowed' 
+            ? selectedPackage?.price_for_per_hour 
+            : selectedPackage?.price
+    );
+    const [advanceAmount, setAdvanceAmount] = useState(
+        selectedPackage?.price_for_per_hour !== 'Not Allowed' 
+            ? selectedPackage?.price_for_per_hour * 0.15
+            : selectedPackage?.price * 0.15
+    )
+    // const [advanceAmount, setAdvanceAmount] = useState(selectedPackage?.price * 0.15)
 
     const [venue, setVenue] = useState(null)
 
@@ -98,6 +108,7 @@ export default function VenueBookingStep2() {
                             selectedTimeSlot={selectedTimeSlot}
                             airConditionSelection={airConditionSelection}
                             selectedFacilities={selectedFacilities}
+                            pricePerHour={selectedPackage?.price_for_per_hour }
                             totalAmount={totalAmount}
                             advanceAmount={advanceAmount}
                         />

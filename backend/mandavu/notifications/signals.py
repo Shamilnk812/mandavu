@@ -45,18 +45,30 @@ def send_booking_notification(sender,instance,created, **kwargs) :
     if created :
         if instance.dates:
             formatted_dates = "\n".join(
-                [datetime.strptime(d, '%Y-%m-%d').strftime('%B %d, %Y') for d in instance.dates]
+                [datetime.strptime(d, "%Y-%m-%d").strftime("%B %d, %Y") for d in instance.dates]
             )
         else:
             formatted_dates = "No dates provided"
+
+        if instance.package_type and instance.package_type.price_for_per_hour != "Not Allowed":
+            # Flatten the nested list and join times
+            formatted_times = ", ".join([", ".join(time_slot) for time_slot in instance.times])
+        else:
+            # Directly join times
+            formatted_times = ", ".join(instance.times)
+
+            
+        # if instance.times:
+        #     formatted_times = ", ".join(instance.times)  
+        # else:
+        #     formatted_times = "No times provided"
       
         message_for_owners = {
             "type": "admin_notification",
             "content":  (f"New booking confirmed!\n"
                         f"Name: {instance.name}\n"
                         f"Date: {formatted_dates}\n"
-                        # f"Date: {instance.date.strftime('%B %d, %Y')}\n"
-                        f"Time: {instance.time}\n"
+                        f"Time: {formatted_times}\n"
                         f"Please ensure everything is ready for the booking.")
         }
         message_for_admin = {
@@ -65,15 +77,13 @@ def send_booking_notification(sender,instance,created, **kwargs) :
                         f"Venue: {instance.venue.convention_center_name}\n"
                         f"Name: {instance.name}\n"
                         f"Date: {formatted_dates}\n"
-                        # f"Date: {instance.date.strftime('%B %d, %Y')}\n"
-                        f"Time: {instance.time}\n")
+                        f"Time: {formatted_times}\n")
         }
         message_for_user = {
             "type": "admin_notification",
             "content": (f"Your booking at {instance.venue.convention_center_name} is confirmed!\n"
                         f"Date: {formatted_dates}\n"
-                        # f"Date: {instance.date.strftime('%B %d, %Y')}\n"
-                        f"Time: {instance.time}\n"
+                        f"Time: {formatted_times}\n"
                         f"We look forward to hosting you. If you have any questions, feel free to contact us.")
         }
 
@@ -103,17 +113,28 @@ def send_booking_cancellation_notification(sender, instance, **kwargs):
             )
         else:
             formatted_dates = "No dates provided"
+        
 
+        if instance.package_type and instance.package_type.price_for_per_hour != "Not Allowed":
+            # Flatten the nested list and join times
+            formatted_times = ", ".join([", ".join(time_slot) for time_slot in instance.times])
+        else:
+            # Directly join times
+            formatted_times = ", ".join(instance.times)
+
+
+        # if instance.times:
+        #     formatted_times = ", ".join(instance.times)  
+        # else:
+        #     formatted_times = "No times provided"
       
         message_for_owner = {
             "type": "admin_notification",
-            "content": f"The booking for {instance.name} on {formatted_dates} at {instance.time} has been canceled."
-            # "content": f"The booking for {instance.name} on {instance.date.strftime('%B %d, %Y')} at {instance.time} has been canceled."
+            "content": f"The booking for {instance.name} on {formatted_dates} at {formatted_times} has been canceled."
         }
         message_for_user = {
             "type": "admin_notification",
-            "content": f"Your booking on {formatted_dates} at {instance.time} has been canceled. If you have any questions, feel free to contact us."
-            # "content": f"Your booking on {instance.date.strftime('%B %d, %Y')} at {instance.time} has been canceled. If you have any questions, feel free to contact us."
+            "content": f"Your booking on {formatted_dates} at {formatted_times} has been canceled. If you have any questions, feel free to contact us."
         }
 
 
@@ -122,8 +143,7 @@ def send_booking_cancellation_notification(sender, instance, **kwargs):
             "content": (f"Booking for venue {instance.venue.convention_center_name} has been canceled.\n"
                        f"Customer: {instance.name}\n"
                        f"Date: {formatted_dates}\n"
-                    #    f"Date: {instance.date.strftime('%B %d, %Y')}\n"
-                       f"Time: {instance.time}")
+                       f"Time: {formatted_times}")
         }
 
         venue_owner = instance.venue.owner

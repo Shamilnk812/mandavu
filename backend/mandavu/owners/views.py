@@ -226,13 +226,14 @@ class RegisterCombinedView(APIView):
 
 
         booking_package_description = description_for_regular_bookingpackages(venue.dining_seat_count,venue.auditorium_seat_count)
+        
         BookingPackages.objects.create(
             package_name='regular',
             venue = venue,
             price = venue.price,
             price_for_per_hour = 'Not Allowed',
             air_condition = venue.condition,
-            extra_price_for_aircondition=0,   # venue.extra_ac_price
+            extra_price_for_aircondition=venue.extra_ac_price,
             description=booking_package_description
 
         )
@@ -434,9 +435,12 @@ class ChangeOwnerPassword(GenericAPIView) :
    
 class VerifyOwerOtp(GenericAPIView) :
     def post(self, request) :
+        print('heeee')
         otp_code = request.data.get('otp')
         email = request.data.get('email')
-        print(email,otp_code)
+        print('emiail is ',email)
+        print('otp',otp_code)
+        print('ottttttt')
         try :
             owner = Owner.objects.get(email=email)
             otp_entry = OneTimePasswordForOwner.objects.get(owner=owner)
@@ -989,8 +993,8 @@ class SetVenueMaintenanceView(APIView):
         previous_status = venue.is_under_maintenance 
         venue.is_under_maintenance = True
         venue.maintenance_reason = request.data.get('reason')
-        # venue.maintenance_start_date = request.data.get('start_date')
-        # venue.maintenance_end_date = request.data.get('end_date')
+        venue.maintenance_start_date = request.data.get('start_date')
+        venue.maintenance_end_date = request.data.get('end_date')
         venue.save()
 
         if previous_status != venue.is_under_maintenance:
@@ -1008,8 +1012,8 @@ class RemoveVenueMaintenanceView(APIView):
         previous_status = venue.is_under_maintenance 
         venue.is_under_maintenance = False
         venue.maintenance_reason = ''
-        # venue.maintenance_start_date = ''
-        # venue.maintenance_end_date = ''
+        venue.maintenance_start_date = None
+        venue.maintenance_end_date = None
         venue.save()
 
         if previous_status != venue.is_under_maintenance:

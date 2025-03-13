@@ -12,6 +12,7 @@ import FestivalIcon from '@mui/icons-material/Festival';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import LogoutIcon from '@mui/icons-material/Logout';
 import InboxIcon from '@mui/icons-material/Inbox';
+import WysiwygIcon from '@mui/icons-material/Wysiwyg';
 
 
 export default function Sidebar() {
@@ -161,6 +162,11 @@ export default function Sidebar() {
          <li>
             <Link to='/admin/dashboard' className={`flex items-center p-2  rounded-lg text-white hover:bg-gray-700  group ${isActive('/admin/dashboard')}`}>
                <span className="ms-3"><DashboardIcon /> Dashboard</span>
+            </Link>
+         </li>
+         <li>
+            <Link to='/admin/view-all-bookings' className={`flex items-center p-2  rounded-lg text-white hover:bg-gray-700  group ${isActive('/admin/view-all-bookings')}`}>
+               <span className="ms-3"><WysiwygIcon /> View Bookings</span>
             </Link>
          </li>
          <li>

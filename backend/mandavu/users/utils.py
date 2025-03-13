@@ -78,8 +78,8 @@ def send_password_reset_email(data) :
 def send_venue_booking_confirmation_email(booking , facilities):
     subject = f"Booking Confirmation - {booking.venue.convention_center_name}"
     logo_url = f"{settings.MEDIA_URL}logo/mandavu-logo.png"
-    recipient_list = ['shamilnk0458@gmail.com']
-    # recipient_list = [booking.user.email]
+    # recipient_list = ['shamilnk0458@gmail.com']
+    recipient_list = [booking.user.email]
 
     print('user email is ',recipient_list)
     print('facilitis', facilities)

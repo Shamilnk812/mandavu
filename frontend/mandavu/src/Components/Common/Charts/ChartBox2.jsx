@@ -22,11 +22,11 @@ export default function ChartBox2({ baarchart, titel, icon3, totalRevenue }) {
       <Grid item xs={3} sx={{ minHeight: '500px', padding: '30px', display: 'flex', flexDirection: 'column', }}>
         
         {/* Button at the Top */}
-        <Box sx={{display:"flex", justifyContent:'end'}}>
+        {/* <Box sx={{display:"flex", justifyContent:'end'}}>
           <button onClick={() => navigate('/admin/view-all-bookings')} className="bg-purple-600 text-white  py-2 px-4 rounded">
             View All Details
           </button>
-        </Box>
+        </Box> */}
 
         {/* Total Revenue Box */}
         <Box sx={{height:'150px', marginTop:'100px', padding: '20px', backgroundColor: '#f0f0f0', borderRadius: '8px', textAlign: 'center', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', }}>

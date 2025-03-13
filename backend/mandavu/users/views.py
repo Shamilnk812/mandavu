@@ -264,7 +264,7 @@ class AllVenuesListView(GenericAPIView):
 
         print(dining_seat_count)
         print(auditorium_seat_count)
-        queryset = Venue.objects.filter(is_active=True, is_verified=True)
+        queryset = Venue.objects.filter(is_active=True, is_verified=True,owner__is_active=True )
         if search_query:
             queryset = queryset.filter(convention_center_name__icontains=search_query)
         if dining_seat_count:
@@ -408,37 +408,46 @@ def strip_webhook_view(request) :
         # user = get_object_or_404(User, id=user_id)
         # venue = get_object_or_404(Venue, id=venue_id)
 
-        try:
-            date = datetime.strptime(booking_details['date'], '%Y-%m-%d').date()  # Adjust the format if necessary
-        except ValueError:
-            return Response(status=400)  # Invalid date format
+        # try:
+        #     date = datetime.strptime(booking_details['date'], '%Y-%m-%d').date()  # Adjust the format if necessary
+        # except ValueError:
+        #     return Response(status=400)  # Invalid date format
 
 
         booking = Booking.objects.create(
             user=temp_booking.user,  # Set to None if user info is not available
             venue=temp_booking.venue,
             name=booking_details['fullName'],  # Data from frontend
-            email=booking_details['email'],
+            # email=booking_details['email'],  ############
             phone=booking_details['phoneNumber'],
             additional_phone=booking_details['additionalPhoneNumber'],
             city=booking_details['city'],
             state=booking_details['state'],
             address=booking_details['fullAddress'],
-            time=booking_details['timeOfDay'],
-            date=date,
+            # time=booking_details['timeOfDay'],  ########
+            # date=date, ########
             condition=booking_details['airConditioning'],
+            extra_ac_price=booking_details['extraAcAmount'],
             total_price=booking_details['totalAmount'],
             booking_amount=booking_details['bookingAmount'],  # Assuming 15% booking amount
+            remaining_amount=booking_details['remainingAmount'],
             payment_intent_id=session['payment_intent'] ,
             times = booking_details['times'],
             dates = booking_details['dates'],
             event_name = booking_details['eventName'],
             event_details = booking_details['eventDetails'],
-            package_type = booking_package
+            package_type = booking_package,
+            package_name=booking_details['packageName']
             
         )
 
         facilities = booking_details['facilities']
+        print('cheeeeking ', facilities)
+        for f in facilities:
+            BookingDetails.objects.create(
+                booking=booking,
+                facilities=f"{f['facility']} - {f['price']}"
+            )
 
         # Send Booking confirmation Email 
         send_venue_booking_confirmation_email(booking, facilities)
@@ -448,13 +457,6 @@ def strip_webhook_view(request) :
         
 
 
-        # facilities = booking_details.get('facilities', [])
-        # for facility in facilities:
-        #     # facility_str = f"{facility['facility']} - {facility['price']}"
-        #     BookingDetails.objects.create(
-        #         booking=booking,
-        #         facilities=facility
-        #     )
 
         print('Booking created successfully with facilities', session)
 

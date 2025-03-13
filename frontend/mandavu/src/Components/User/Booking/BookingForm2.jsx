@@ -129,6 +129,7 @@ export default function BookingFormForDateAndTime({ venueId, setSelectedDates, s
                         selectedDates={selectedDates}
                         packageName={selectedPackage?.package_name}
                         packagePrice={selectedPackage?.price}
+                        packagePricePerHour={selectedPackage?.price_for_per_hour}
                         setAdvanceAmount={setAdvanceAmount}
                         setTotalAmount={setTotalAmount}
                         totalAmount={totalAmount}

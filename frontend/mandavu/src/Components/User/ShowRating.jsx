@@ -66,7 +66,7 @@ export default function ShowRating({ venueId, scrollVariants }) {
           viewport={{ once: true }}
           className="pl-4 py-5 md:flex md:justify-between md:pl-5"
         >
-          {reviews.length > 0 ? (
+          {reviews.length > 0 && (
             <div className="w-full md:w-2/5 bg-white border p-4 mr-2 rounded shadow-xl mb-6 md:mb-0">
               <div className="flex justify-center mb-6">
                 <h2 className="font-semibold text-gray-600 text-md">Overall Rating</h2>
@@ -116,11 +116,11 @@ export default function ShowRating({ venueId, scrollVariants }) {
                 </div>
               ))}
             </div>
-          ) : (
-            <p className="text-md text-gray-500">No reviews added yet.</p>
+          
+          
           )}
 
-          <div className="py-5 md:px-10 bg-gray-200 h-[320px] rounded shadow overflow-y-auto px-4 lg:mx-4 w-full">
+          <div className="py-5 md:px-10 bg-gray-100 h-[320px] rounded shadow overflow-y-auto px-4 lg:mx-4 w-full">
             {reviews.length > 0 ? (
               reviews.map((review) => (
                 <div
@@ -151,7 +151,7 @@ export default function ShowRating({ venueId, scrollVariants }) {
                 </div>
               ))
             ) : (
-              <p className="text-sm text-gray-500">No reviews available.</p>
+              <p className="text-lg text-gray-500 text-center">No reviews available.</p>
             )}
           </div>
         </motion.div>
