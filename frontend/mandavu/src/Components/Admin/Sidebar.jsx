@@ -196,7 +196,7 @@ export default function Sidebar() {
          
          
          <li>
-            <a onClick={handleAdminLogout} className="flex items-center p-2  rounded-lg text-white hover:bg-gray-700  group">
+            <a onClick={handleAdminLogout} className="flex items-center p-2  rounded-lg text-white hover:bg-gray-700  group cursor-pointer">
                <span className="flex-1 ms-3 whitespace-nowrap"><LogoutIcon/> Log Out</span>
             </a>
          </li>

@@ -9,13 +9,16 @@ import BookingPackagesShcema from '../../Validations/Owner/BookingPackagesSchema
 import AddBookingPackageModal from './AddBookingPackageModal';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { CircularProgress } from "@mui/material";
 
-export default function BookingPackageCard({ bookingPackage, onUpdateBookingPackage, handleBlockBookingPackage, handleUnblockBookingPackage }) {
+
+export default function BookingPackageCard({ bookingPackage, onUpdateBookingPackage, handleBlockBookingPackage, handleUnblockBookingPackage}) {
   
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [initialFormValues, setInitialFormValues] = useState(null);
   const [isAcSelected, setIsAcSelected] = useState(false);
+  const [isLoading,setIsLoading] = useState(false);
 
   const navigate = useNavigate()
 
@@ -233,8 +236,10 @@ export default function BookingPackageCard({ bookingPackage, onUpdateBookingPack
         isModalOpen={isEditModalOpen} 
         handleCloseModal={handleCloseEditModal} 
         isAcSelected={isAcSelected} 
-        setIsAcSelected={setIsAcSelected} />
-
+        setIsAcSelected={setIsAcSelected} 
+        
+        />
+        
     </>
 
   );

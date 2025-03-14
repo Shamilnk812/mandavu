@@ -7,6 +7,9 @@ import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import BookingPackageCard from "../../Components/Owner/BookingPackageCard";
+import { CircularProgress } from "@mui/material";
+
+
 
 
 export default function BookingPackages() {
@@ -15,7 +18,7 @@ export default function BookingPackages() {
   const [bookingPackages, setBookingPackages] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAcSelected, setIsAcSelected] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null); 
 
   const handleToggleDetails = (bookingPackage) => {
@@ -39,6 +42,8 @@ export default function BookingPackages() {
     },
     validationSchema:BookingPackagesShcema,
     onSubmit: async (values) => {
+      setLoading(true);
+     
       try{
         const response = await axiosOwnerInstance.post(`/add-booking-package/${venueId}/`,values)
         console.log(response.data)
@@ -56,12 +61,16 @@ export default function BookingPackages() {
         } else {
           toast.error('Failed to create new booking package. Please try again');
         }
+      }finally{
+        setLoading(false);
       }
      
     }
   });
 
   const updateBookingPakcage = async(id, updatedValues)=> {
+   
+   
     try{
       const response = await axiosOwnerInstance.put(`update-booking-package/${venueId}/`,{...updatedValues, package_id:id})
       toast.success('Booking package updated successfully.')
@@ -79,6 +88,7 @@ export default function BookingPackages() {
   }
 
   const blockBookingPackage = async (id)=> {
+   
     try {
       const response = await axiosOwnerInstance.patch(`block-booking-package/${venueId}/`,{package_id:id})
       toast.success('Booking packages is blocked')
@@ -90,6 +100,7 @@ export default function BookingPackages() {
   }
 
   const unBlockBookingPackage = async (id)=> {
+ 
     try{
       await axiosOwnerInstance.patch(`unblock-booking-package/${venueId}/`,{package_id:id})
       toast.success('Booking pachage is unblocked.')
@@ -223,6 +234,7 @@ export default function BookingPackages() {
                   onUpdateBookingPackage={updateBookingPakcage}
                   handleBlockBookingPackage={blockBookingPackage}
                   handleUnblockBookingPackage={unBlockBookingPackage}
+                  
          
                 />
               ))}
@@ -232,7 +244,7 @@ export default function BookingPackages() {
         </div>
       </div>
 
-      <AddBookingPackageModal formik={formik} isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} isAcSelected={isAcSelected} setIsAcSelected={setIsAcSelected} />
+      <AddBookingPackageModal formik={formik} isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} isAcSelected={isAcSelected} setIsAcSelected={setIsAcSelected} loading={loading}/>
 
      
     </>

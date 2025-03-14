@@ -4,15 +4,17 @@
 
 export default function ViewSingleBookingDetailsCmp({booking,id}){
     console.log('prorro',booking)
-     // Format dates
-     const formattedDates = booking.dates.length === 1
-     ? booking.dates[0]
-     : `${booking.dates[0]} to ${booking.dates[booking.dates.length - 1]}`;
+   
+        const formattedDates = booking.dates && booking.dates.length
+        ? (booking.dates.length === 1 ? booking.dates[0] : `${booking.dates[0]} to ${booking.dates[booking.dates.length - 1]}`)
+        : "No dates available";
 
- // Format times
- const formattedTimes = booking.times.some(time => typeof time === 'string')
-     ? booking.times.join(' | ')
-     : booking.times.map(slot => `${slot[0]} - ${slot[1]}`).join(' | ');
+        const formattedTimes = booking.times && booking.times.length
+            ? (booking.times.some(time => typeof time === 'string') 
+            ? booking.times.join(' | ') 
+            : booking.times.map(slot => `${slot[0]} - ${slot[1]}`).join(' | '))
+            : "No times available";
+
     return(
         <>
 
@@ -76,8 +78,8 @@ export default function ViewSingleBookingDetailsCmp({booking,id}){
                            Date
                         </dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                           {/* {formattedDates} */}
                            {formattedDates}
+                           {/* {formattedDates} */}
                         </dd>
                     </div>
                     <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -93,7 +95,7 @@ export default function ViewSingleBookingDetailsCmp({booking,id}){
                            Total Price
                         </dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                           {booking.total_price}
+                         ₹{booking.total_price}
                         </dd>
                     </div>
                     <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -101,7 +103,7 @@ export default function ViewSingleBookingDetailsCmp({booking,id}){
                            Booking Amount
                         </dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                           {booking.booking_amount}
+                         ₹{booking.booking_amount}
                         </dd>
                     </div>
                     <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -109,7 +111,7 @@ export default function ViewSingleBookingDetailsCmp({booking,id}){
                            Remaining Amount
                         </dt>
                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            {booking.remaining_amount}
+                        ₹{booking.remaining_amount}
                         </dd>
                     </div>
                     <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">

@@ -4,6 +4,7 @@ import Sidebar from "../../Components/User/Sidebar";
 import axios from "axios";
 import { axiosUserInstance } from "../../Utils/Axios/axiosInstance";
 import { useParams } from "react-router-dom";
+import LoadingAnimation from "../../Components/Common/LoadingAnimation";
 
 
 
@@ -31,7 +32,7 @@ export default function ShowSingleBookingDetails() {
         fetchSingleBookingDetails();
     }, [bookingId]);
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <LoadingAnimation/>
     if (error) return <p>{error}</p>;
 
 

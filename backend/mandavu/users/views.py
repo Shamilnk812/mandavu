@@ -347,7 +347,7 @@ class CreateCheckOutSession(APIView):
                 line_items=[
                     {
                         'price_data': {
-                            'currency': 'usd',
+                            'currency': 'inr',
                             'unit_amount': int(amount) * 100,  # Convert to cents
                             'product_data': {
                                 'name': venue_name,
