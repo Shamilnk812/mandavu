@@ -88,7 +88,7 @@ export default function LandingPageV5() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="mt-8 bg-white text-teal-700 px-8 py-4 rounded-xl shadow-lg hover:bg-teal-50 transition text-lg font-medium"
-          onClick={() => (window.location.href = "/login")}
+          onClick={() => navigate('/user/login')}
         >
           <TouchAppIcon />  Get Started
         </motion.button>

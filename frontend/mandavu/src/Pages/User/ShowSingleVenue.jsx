@@ -350,7 +350,7 @@ export default function ShowSingleVenueDetails() {
                       className="flex justify-between items-center border-b border-gray-300 py-2"
                     >
                       <span className="text-md font-medium text-gray-600"> <PlayArrowRoundedIcon /> {facility.facility}</span>
-                      <span className="text-gray-800">$ {facility.price || 'Included'}</span>
+                      <span className="text-gray-800">₹ {facility.price || 'Included'}</span>
                     </div>
                   ) : null
                 )

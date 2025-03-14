@@ -91,7 +91,7 @@ export default function OwnerChartBox1({ title, icon, bchart, totalRevenue, main
 
           <Box sx={{ height: '150px', marginTop: '100px', padding: '20px', backgroundColor: '#f0f0f0', borderRadius: '8px', textAlign: 'center', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', }}>
             <Box sx={{ fontWeight: 'bold', fontSize: '18px' }}>Total Revenue</Box>
-            <Box sx={{ fontSize: '24px', marginTop: '10px' }}>${totalRevenue}</Box>
+            <Box sx={{ fontSize: '24px', marginTop: '10px' }}>₹{totalRevenue}</Box>
           </Box>
 
           <Box sx={{ display: "flex", justifyContent: 'center', marginTop: '50px' }}>

@@ -31,7 +31,7 @@ export default function ChartBox2({ baarchart, titel, icon3, totalRevenue }) {
         {/* Total Revenue Box */}
         <Box sx={{height:'150px', marginTop:'100px', padding: '20px', backgroundColor: '#f0f0f0', borderRadius: '8px', textAlign: 'center', boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', }}>
           <Box sx={{ fontWeight: 'bold', fontSize: '18px' }}>Total Revenue</Box>
-          <Box sx={{ fontSize: '24px', marginTop: '10px' }}>${totalRevenue}</Box> {/* Placeholder for revenue amount */}
+          <Box sx={{ fontSize: '24px', marginTop: '10px' }}>₹{totalRevenue}</Box> {/* Placeholder for revenue amount */}
         </Box>
 
         {/* <Box sx={{ height:'150px', marginTop:'100px', padding: '20px', backgroundColor: '#f0f0f0', borderRadius: '8px', textAlign: 'center',  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', }}>

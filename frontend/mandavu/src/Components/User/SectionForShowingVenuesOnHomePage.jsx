@@ -71,7 +71,7 @@ const SectionForShowingVenuesOnHomePage = ({ scrollVariants, venues }) => {
                                     <p className="text-sm text-gray-500 "><LocationOnIcon className="text-teal-600 inline-block mr-1" /> {venue.address}</p>
                                     <p className="text-sm text-gray-500 ml-6 mb-3">{toPascalCase(venue.city)},{toPascalCase(venue.district)}, {toPascalCase(venue.state)}</p>
 
-                                    <p className="text-lg font-semibold text-gray-500 mb-3 ml-2">${venue.price}</p>
+                                    <p className="text-lg font-semibold text-gray-500 mb-3 ml-2">₹{venue.price}</p>
                                     {venue.is_under_maintenance ? (
                                         <div className="text-red-500 text-center ">
                                             <p className="text-base font-semibold">This venue is under maintenance. <br /> <span className='text-sm'> {new Date(venue.maintenance_start_date).toLocaleDateString("en-GB")} to {new Date(venue.maintenance_end_date).toLocaleDateString("en-GB")}</span></p>
