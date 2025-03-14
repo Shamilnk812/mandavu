@@ -214,16 +214,16 @@ export default function ShowAllVenues() {
                 <Slider
                   range
                   min={0}
-                  max={1000000}
+                  max={300000}
                   step={100}
                   defaultValue={priceRange}
                   value={priceRange}
                   onChange={handleSliderChange}
-
+                  
                   className="mt-2"
                 />
                 <p className="text-gray-600">
-                  From ${priceRange[0]} to ${priceRange[1]}
+                  From ₹{priceRange[0]} to ₹{priceRange[1]}
                 </p>
               </div>
 

@@ -102,7 +102,7 @@ export default  function Navb() {
               <Link to='/user/contact-us' className="block py-2 px-3 md:p-0 text-white hover:text-white hover:bg-orange-600 rounded  md:hover:bg-transparent md:hover:text-orange-600 ">Contact Us</Link>
             </li>
             <li>
-              <a onClick={handleLogout} className="block py-2 px-3 md:p-0 text-white hover:text-white hover:bg-orange-600 rounded  md:hover:bg-transparent md:hover:text-orange-600 ">Logout</a>
+              <a onClick={handleLogout} className="block py-2 px-3 md:p-0 text-white hover:text-white hover:bg-orange-600 rounded  md:hover:bg-transparent md:hover:text-orange-600 cursor-pointer">Logout</a>
             </li>
             <li className="block text-center py-2 px-3 md:p-0 text-white hover:text-white hover:bg-orange-600 rounded  md:hover:bg-transparent md:hover:text-orange-600 "
             >
