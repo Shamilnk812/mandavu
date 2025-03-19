@@ -6,15 +6,20 @@ import AddEventModal from "../../Components/Owner/AddEventModal";
 import { toast } from "react-toastify";
 import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { CircularProgress } from "@mui/material";
+
 
 
 export default function RegisterationStep3() {
     const [showModal, setShowModal] = useState(false);
     const [events, setEvents] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [cancelLoading, setCancelLoading] = useState(false);
     const navigate = useNavigate();
     const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
     const progress = registrationData.progress;
     const tempVenueId = registrationData.registrationId;
+
 
     useEffect(() => {
         const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
@@ -50,7 +55,7 @@ export default function RegisterationStep3() {
         onSubmit: (values, { resetForm }) => {
 
             const isDuplicate = events.some(event => event.name.toLowerCase() === values.eventName.toLowerCase());
-        
+
             if (isDuplicate) {
                 toast.warning('This Event already exists!');
                 return;
@@ -109,19 +114,23 @@ export default function RegisterationStep3() {
 
 
     const handleCancel = async () => {
-        try{
+        setCancelLoading(true);
+        try {
             const response = await axiosOwnerInstance.delete(`cancel-registration/${tempVenueId}/`)
             sessionStorage.removeItem('registrationData'); // Remove registration data from sessionStorage
             toast.success("Registration Cancelled")
             navigate('/owner/register-step-1');
-        }catch(error){
+        } catch (error) {
             toast.error("Failed to cancel registration.")
+        } finally {
+            setCancelLoading(false);
         }
     };
 
 
 
     const handleNext = async () => {
+        setIsLoading(true);
         try {
 
             const response = await axiosOwnerInstance.post(`registration-step3/${tempVenueId}/`, events)
@@ -147,10 +156,12 @@ export default function RegisterationStep3() {
             console.error("Error response:", error.response); // Log the error for debugging
             const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
             toast.error(errorMessage); // Display error message in toast
+        } finally {
+            setIsLoading(false);
         }
     };
 
-   
+
 
     return (
         <>
@@ -218,7 +229,7 @@ export default function RegisterationStep3() {
                                                         className="bg-red-600 text-white py-1 px-3 rounded hover:bg-red-800 transition-all duration-300"
                                                         onClick={() => handleDeleteEvent(index)}
                                                     >
-                                                        <DeleteIcon/>
+                                                        <DeleteIcon />
                                                     </button>
                                                 </td>
                                             </tr>
@@ -227,11 +238,27 @@ export default function RegisterationStep3() {
                                 </table>
                             </div>
                             <div className="flex justify-center gap-4">
-                                <button onClick={handleCancel} type="button" className="mt-6 w-24 bg-red-600 text-white py-2 rounded-lg hover:bg-red-800 transition-colors duration-300 ease-in-out hover:shadow-lg">
-                                    cancel
+                                <button
+                                    onClick={handleCancel}
+                                    type="button"
+                                    disabled={cancelLoading || isLoading}
+                                    className={`mt-6 w-24 bg-red-600 text-white py-2 rounded-lg hover:bg-red-800 transition-colors duration-300 ease-in-out hover:shadow-lg ${cancelLoading || isLoading ? 'cursor-not-allowed opacity-70' : ''}`}>
+                                    {cancelLoading ? (
+                                        <CircularProgress size={20} style={{ color: 'white' }} />
+                                    ) : (
+                                        'Cancel'
+                                    )}
                                 </button>
-                                <button onClick={handleNext} type="button" className="mt-6 w-24 bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-800 transition-colors duration-300 ease-in-out hover:shadow-lg">
-                                    Next
+                                <button
+                                    onClick={handleNext}
+                                    type="button"
+                                    disabled={isLoading || cancelLoading}
+                                    className={`mt-6 w-24 bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-800 transition-colors duration-300 ease-in-out hover:shadow-lg ${isLoading || cancelLoading ? 'cursor-not-allowed opacity-70' : ''}`}>
+                                    {isLoading ? (
+                                        <CircularProgress size={20} style={{ color: 'white' }} />
+                                    ) : (
+                                        'Next'
+                                    )}
                                 </button>
                             </div>
 

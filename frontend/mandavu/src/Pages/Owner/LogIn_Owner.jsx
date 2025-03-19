@@ -34,17 +34,21 @@ export default function LogIn() {
       try {
         const response = await axiosOwnerInstance.post('login/', values);
         console.log(response.data)
-        const { access_token, refresh_token, owner_id, venue_id } = response.data
+        const { access_token, refresh_token, owner_id, venue_id, role } = response.data
+        
 
         dispatch(OwnerLogin({
           owner: { id: owner_id },
+          role: role,
           access_token,
-          refresh_token
+          refresh_token,
+          
         }))
         dispatch(SetVenueId(venue_id))
 
         localStorage.setItem('access_token', access_token);
         localStorage.setItem('refresh_token', refresh_token);
+        localStorage.setItem('role', role);
         localStorage.setItem('owner_id', JSON.stringify({ owner_id }));
         toast.success('Your successfully loggedin')
         navigate('/owner/dashboard')

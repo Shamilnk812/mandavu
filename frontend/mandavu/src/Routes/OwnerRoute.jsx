@@ -33,11 +33,67 @@ export default function OwnerRoute() {
     return(
         <>  
         <Routes>
+
+            <Route element={<OwnerLogoutAuth allowedRole='owner'/>}>
+                <Route path="/signup" element={ <SignUp/> } />
+                <Route path="/login" element={ <LogIn/> } />
+                <Route path="/otp" element={ <OtpVerification/> } />
+                <Route path="/reset-password-request" element={ <OwnerResetPasswordRequest/> } />
+                <Route path="/set-new-passwod" element={ <OwnerSetNewPassword/> } />
+                
+                <Route path="/register-step-1" element={ <RegisterationStep1/> } />
+                <Route path="/register-step-2" element={ <RegisterationStep2/> } />
+                <Route path="/register-step-3" element={ <RegisterationStep3/> } />
+                <Route path="/register-step-4" element={ <RegisterationStep4/> } />
+                <Route path="/venue_approval_waiting" element={ <VenueApprovalWaiting/> } />
+
+            </Route>
+
+        
+
+            <Route element={<OwnerLoginAuth allowedRole='owner'/> }>
+                <Route path="/dashboard" element={ <Dashboard_Owner/>} />
+                <Route path="/details" element={ <OwnerDetails/>} />
+                <Route path="/venue-management" element={ <VenueManagement/>} />
+                <Route path="/success-register" element={ <SuccessRegisterPage/>} />
+                <Route path="/banner-management" element={ <VenuePhotosManagement/>} />
+                <Route path="/events-management" element={ <EventsManagement/>} />
+                <Route path="/facilities-management" element={ <FacilitesManagement/>} />
+                <Route path="/booking-packages" element={ <BookingPackages/>} />
+                <Route path="/manage-time-slotes/:id" element={ <ManageTimeSlotesForPackages/>} />
+                <Route path="/booking-management" element={ <BookingManagement/>} />
+                <Route path="/view-single-booking-details/:id" element={ <OwnerViewSingleBookingDetails/>} />
+                <Route path="/chat" element={ <OwnerChat/>} />
+                <Route path="/details2" element={ <OwnerDetails2/>}/>
+            </Route>
+
+
+            
+        </Routes>
+
+
+        {/* <Routes>
+
+            <Route element={<OwnerLogoutAuth allowedRole='owner'/>}>
             <Route path="/signup" element={<OwnerLogoutAuth> <SignUp/> </OwnerLogoutAuth>} />
             <Route path="/login" element={<OwnerLogoutAuth> <LogIn/> </OwnerLogoutAuth>} />
             <Route path="/otp" element={<OwnerLogoutAuth> <OtpVerification/> </OwnerLogoutAuth>} />
             <Route path="/reset-password-request" element={<OwnerLogoutAuth> <OwnerResetPasswordRequest/> </OwnerLogoutAuth>} />
             <Route path="/set-new-passwod" element={<OwnerLogoutAuth> <OwnerSetNewPassword/> </OwnerLogoutAuth>} />
+
+
+            
+            <Route path="/register-step-1" element={ <RegisterationStep1/> } />
+            <Route path="/register-step-2" element={ <RegisterationStep2/> } />
+            <Route path="/register-step-3" element={ <RegisterationStep3/> } />
+            <Route path="/register-step-4" element={ <RegisterationStep4/> } />
+            <Route path="/venue_approval_waiting" element={ <VenueApprovalWaiting/> } />
+
+            </Route>
+
+
+
+
             <Route path="/dashboard" element={<OwnerLoginAuth> <Dashboard_Owner/> </OwnerLoginAuth>} />
             <Route path="/details" element={<OwnerLoginAuth> <OwnerDetails/> </OwnerLoginAuth>} />
             <Route path="/venue-management" element={<OwnerLoginAuth> <VenueManagement/> </OwnerLoginAuth>} />
@@ -53,16 +109,10 @@ export default function OwnerRoute() {
 
             <Route path="/details2" element={<OwnerLoginAuth> <OwnerDetails2/> </OwnerLoginAuth>}/>
 
-            <Route path="/register-step-1" element={ <RegisterationStep1/> } />
-            <Route path="/register-step-2" element={ <RegisterationStep2/> } />
-            <Route path="/register-step-3" element={ <RegisterationStep3/> } />
-            <Route path="/register-step-4" element={ <RegisterationStep4/> } />
-            <Route path="/venue_approval_waiting" element={ <VenueApprovalWaiting/> } />
-
 
 
             
-        </Routes>
+        </Routes> */}
         </>
     )
 }

@@ -43,6 +43,7 @@ export default function  Sidebar () {
                 dispatch(OwnerLogout())
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
+                localStorage.removeItem('role');
                 localStorage.removeItem('owner_id');
                 toast.success("Logout successfully");
                 navigate("/owner/login");

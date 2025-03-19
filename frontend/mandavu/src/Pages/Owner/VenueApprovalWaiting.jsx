@@ -1,12 +1,23 @@
-import { useNavigate } from "react-router-dom"
+import { useNavigate,useLocation } from "react-router-dom"
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 
 
 
 
 export default function VenueApprovalWaiting() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search);
+  const token = queryParams.get("token");
+
+  useEffect(()=> {
+    if (!token){
+      navigate("/owner/login", { replace: true });
+    }
+  },[token,navigate]);
+
   const containerVariants = {
     hidden: { opacity: 0, y: -50, scale: 0.9 },
     visible: {

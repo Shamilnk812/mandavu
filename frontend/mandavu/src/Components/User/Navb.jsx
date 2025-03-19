@@ -58,6 +58,7 @@ export default  function Navb() {
               dispatch(UserLogout())
               localStorage.removeItem('access_token');
               localStorage.removeItem('refresh_token');
+              localStorage.removeItem('role');
               localStorage.removeItem('user_email');
               localStorage.removeItem('user_id');
               navigate("/user/login");

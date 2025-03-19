@@ -37,12 +37,13 @@ export default function Login() {
 
       try {
         const response = await axiosUserInstance.post('login/', values);
-        console.log(response.data);
-        const { access_token, refresh_token, email, user_id } = response.data;
+        console.log('loging dataaaaaaaaa',response.data);
+        const { access_token, refresh_token, email, user_id,role } = response.data;
 
 
         dispatch(UserLogin({
           user: { id: user_id, email },
+          role,
           access_token,
           refresh_token,
         }));
@@ -50,6 +51,7 @@ export default function Login() {
 
         localStorage.setItem('access_token', access_token);
         localStorage.setItem('refresh_token', refresh_token);
+        localStorage.setItem('role', role);
         localStorage.setItem('user_email', JSON.stringify({ email }));
         localStorage.setItem('user_id', JSON.stringify({ user_id }))
         toast.success('You successfully logged in');

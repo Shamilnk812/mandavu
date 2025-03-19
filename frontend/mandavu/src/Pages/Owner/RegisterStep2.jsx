@@ -8,6 +8,7 @@ import Cropper from 'react-easy-crop';
 import { getCroppedImg } from '../../Utils/ImageCropping/CroppingImage';
 import RegisterationStep2Schema from '../../Validations/Owner/RegisterStep2Schema';
 import { axiosOwnerInstance } from '../../Utils/Axios/axiosInstance';
+import { CircularProgress } from "@mui/material";
 
 
 
@@ -21,6 +22,8 @@ export default function RegisterationStep2() {
   const [currentImage, setCurrentImage] = useState(null);
   const [cropping, setCropping] = useState(false);
   const [showExtraPrice, setShowExtraPrice] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
 
 
   const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
@@ -41,12 +44,12 @@ export default function RegisterationStep2() {
     }
   }, [navigate]);
 
-  useEffect(()=> {
+  useEffect(() => {
     const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
     if (registrationData.step_2 === 'completed') {
       navigate('/owner/register-step-3'); // Redirect to Step 1
     }
-  },[navigate])
+  }, [navigate])
 
 
   const handleImageChange = (event) => {
@@ -77,6 +80,7 @@ export default function RegisterationStep2() {
 
 
   const handleCancel = async () => {
+    setCancelLoading(true);
     try {
 
       const response = await axiosOwnerInstance.delete(`cancel-registration/${tempVenueId}`)
@@ -87,9 +91,13 @@ export default function RegisterationStep2() {
     } catch (error) {
       console.error(error)
       toast.error("Failed to cancel registration. Please try again later.")
+    }finally{
+      setCancelLoading(false);
     }
 
   };
+
+
 
   const formik = useFormik({
     initialValues: {
@@ -161,6 +169,7 @@ export default function RegisterationStep2() {
 
 
   const handleRegistrationStep2 = async (formData) => {
+    setIsLoading(true);
     try {
       const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
       const tempVenueId = registrationData.registrationId;
@@ -180,6 +189,8 @@ export default function RegisterationStep2() {
       console.error("Error response:", error.response); // Log the error for debugging
       const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
       toast.error(errorMessage); // Display error message in toast
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -568,11 +579,27 @@ export default function RegisterationStep2() {
             </div>
           </div>
           <div className='flex justify-center gap-4'>
-            <button type="button" onClick={handleCancel} className="mt-6 w-24 bg-red-600 text-white py-2 rounded-lg hover:bg-red-800 transition-colors duration-300 ease-in-out hover:shadow-lg">
-              Cancel
+            <button 
+              type="button" 
+              onClick={handleCancel} 
+              disabled={cancelLoading || isLoading}
+              className={`mt-6 w-24 bg-red-600 text-white py-2 rounded-lg hover:bg-red-800 transition-colors duration-300 ease-in-out hover:shadow-lg ${cancelLoading || isLoading ? 'cursor-not-allowed opacity-70' : ''}`}>
+              {cancelLoading ? (
+                <CircularProgress size={20} style={{ color: 'white' }} />
+              ) : (
+                'Cancel'
+              )}
             </button>
-            <button type="submit" className="mt-6 w-24 bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-800 transition-colors duration-300 ease-in-out hover:shadow-lg">
-              Next
+
+            <button
+              type="submit"
+              disabled={isLoading || cancelLoading}
+              className={`mt-6 w-24 bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-800 transition-colors duration-300 ease-in-out hover:shadow-lg ${isLoading || cancelLoading ? 'cursor-not-allowed opacity-70' : ''}`}>
+              {isLoading ? (
+                <CircularProgress size={20} style={{ color: 'white' }} />
+              ) : (
+                'Next'
+              )}
             </button>
           </div>
           <div>
@@ -583,7 +610,7 @@ export default function RegisterationStep2() {
           </div>
         </form>
       </div>
-      
+
     </div>
   );
 }

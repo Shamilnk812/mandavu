@@ -20,6 +20,8 @@ export default function RegistrationStep4() {
     const tempVenueId = registrationData.registrationId;
     const progress = registrationData.progress;
     const [loading, setLoading] = useState(false)
+    const [iscancelLoading, setIsCancelLoading] = useState(false)
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -98,6 +100,7 @@ export default function RegistrationStep4() {
     };
 
     const handleCancel = async () => {
+        setIsCancelLoading(true);
         try {
             const response = await axiosOwnerInstance.delete(`cancel-registration/${tempVenueId}`)
             sessionStorage.removeItem('registrationData'); // Remove registration data from sessionStorage
@@ -106,71 +109,14 @@ export default function RegistrationStep4() {
 
         } catch (error) {
             toast.error("Failed to cancel registration.")
+        }finally{
+            setIsCancelLoading(false);
         }
     };
 
 
 
-    // const splitAndSendData = async () => {
-    //     setLoading(true)
-    //     const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
 
-        // Prepare the data
-        // const formData = {
-        //     owner: {
-        //         first_name: registrationData.first_name,
-        //         last_name: registrationData.last_name,
-        //         email: registrationData.email,
-        //         phone: registrationData.phone,
-        //         phone2: registrationData.phone2,
-        //         id_proof: registrationData.id_proof,  
-        //         password: registrationData.password,
-        //         password2: registrationData.password2,
-        //     },
-        //     venue: {
-        //         convention_center_name: registrationData.convention_center_name,
-        //         short_description: registrationData.short_description,
-        //         description: registrationData.description,
-        //         dining_seat_count: registrationData.dining_seat_count,
-        //         auditorium_seat_count: registrationData.auditorium_seat_count,
-        //         condition: registrationData.condition,
-        //         state: registrationData.state,
-        //         price: registrationData.price,
-        //         district: registrationData.district,
-        //         city: registrationData.city,
-        //         pincode: registrationData.pincode,
-        //         address: registrationData.full_address,
-        //         terms_and_conditions: registrationData.terms_conditions, // Assuming it's base64 encoded
-        //         venue_license: registrationData.venue_license, // Assuming it's base64 encoded
-        //     },
-        //     venue_images: registrationData.venue_images, // Array of image blobs or URLs
-        //     events: registrationData.events, // Array of events
-        //     facilities: registrationData.facilities, // Array of facilities
-        // };
-
-        // try {
-
-        //     const response = await axiosOwnerInstance.post(`register/${tempVenueId}/`, facilities, {
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         },
-        //     });
-
-        //     toast.success(response.data.message || 'Registration successful!');
-            // localStorage.setItem('email', registrationData.email);
-            // sessionStorage.removeItem('registrationData');
-            // navigate('/owner/otp');
-
-            // Handle success, maybe navigate to another page or show a success message
-        // } catch (error) {
-        //     const errorMessage = error.response?.data?.error || 'An error occurred during registration.';
-        //     toast.error(errorMessage);
-        //     console.error('Error during registration:', error);
-
-        // } finally {
-        //     setLoading(false)
-        // }
-    // };
 
 
     const handleRegister = async () => {
@@ -283,16 +229,20 @@ export default function RegistrationStep4() {
                                 <button
                                     type="button"
                                     onClick={handleCancel}
-                                    disabled={loading}
-                                    className="mt-6 w-24 bg-red-600 text-white py-2 rounded-lg hover:bg-red-800 transition-colors duration-300 ease-in-out hover:shadow-lg"
+                                    disabled={iscancelLoading || loading}
+                                    className={ `mt-6 w-24 bg-red-600 text-white py-2 rounded-lg hover:bg-red-800 transition-colors duration-300 ease-in-out hover:shadow-lg ${iscancelLoading || loading ? 'cursor-not-allowed opacity-70' : ''} `}
                                 >
-                                    Cancel
+                                   {iscancelLoading ? (
+                                        <CircularProgress size={20} style={{ color: 'white' }} />
+                                    ) : (
+                                        'Cancel'
+                                    )}
                                 </button>
                                 <button
                                     type="button"
                                     onClick={handleRegister}
-                                    disabled={loading}
-                                    className={`mt-6 w-24 bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-800 transition-colors duration-300 ease-in-out hover:shadow-lg ${loading ? 'cursor-not-allowed opacity-70' : ''}`}
+                                    disabled={loading || iscancelLoading}
+                                    className={`mt-6 w-24 bg-teal-500 text-white py-2 rounded-lg hover:bg-teal-800 transition-colors duration-300 ease-in-out hover:shadow-lg ${loading || iscancelLoading ? 'cursor-not-allowed opacity-70' : ''}`}
                                 >
                                     {loading ? (
                                         <CircularProgress size={20} style={{ color: 'white' }} />

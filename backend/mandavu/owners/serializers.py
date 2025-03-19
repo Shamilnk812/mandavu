@@ -105,6 +105,7 @@ class OwnerLoginSerializer(serializers.ModelSerializer) :
         attrs['email'] = owner.email   
         attrs['access_token'] = str(owner_token.get('access'))
         attrs['refresh_token'] = str(owner_token.get('refresh'))
+        attrs['role'] = 'owner'
         attrs['venue_id'] = venue.id
         return attrs
   

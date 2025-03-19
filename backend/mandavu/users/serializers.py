@@ -84,6 +84,7 @@ class UserLoginSerializer(serializers.ModelSerializer) :
         attrs.pop('password', None)
         attrs['user_id'] = user.id    
         attrs['email'] = user.email   
+        attrs['role'] = 'user'
         attrs['access_token'] = str(user_token.get('access'))
         attrs['refresh_token'] = str(user_token.get('refresh'))
           # Adding user_id to attrs

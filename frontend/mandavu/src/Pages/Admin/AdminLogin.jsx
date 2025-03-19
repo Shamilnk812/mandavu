@@ -8,6 +8,7 @@ import { axiosAdminInstance } from "../../Utils/Axios/axiosInstance"
 import { CircularProgress } from "@mui/material";
 import { useFormik } from "formik"
 import * as Yup from "yup";
+import PasswordVisibility from "../../Components/Common/PasswordVisibility"
 
 
 
@@ -17,6 +18,7 @@ export default function AdminLogin() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false);
+    const [showPassword,setShowPassword] = useState(false);
 
     const formik = useFormik({
         initialValues: {
@@ -39,10 +41,12 @@ export default function AdminLogin() {
                     // }
                 )
                 console.log(response.data)
-                const { access_token, refresh_token } = response.data;
+                const { access_token, refresh_token,role } = response.data;
+                console.log('rollllll',response.data.role)
                 localStorage.setItem('access_token', access_token);
                 localStorage.setItem('refresh_token', refresh_token);
-                dispatch(AdminLoginSlice({ access_token, refresh_token }));
+                localStorage.setItem('role',role)
+                dispatch(AdminLoginSlice({ access_token, refresh_token, role }));
 
                 toast.success('You are successfully logged in')
                 navigate('/admin/dashboard/')
@@ -55,6 +59,10 @@ export default function AdminLogin() {
             }
         }
     })
+
+    const togglePasswordVisibility = ()=> {
+        setShowPassword((prev)=> !prev)
+    }
 
 
 
@@ -93,8 +101,9 @@ export default function AdminLogin() {
                             </div>
 
                             <div>
+                                <div className="relative">
                                 <input
-                                    type="password"
+                                    type={showPassword ? 'text' : 'password'}
                                     name="password"
                                     value={formik.values.password}
                                     onChange={formik.handleChange}
@@ -102,6 +111,8 @@ export default function AdminLogin() {
                                     placeholder="Password"
                                     className="block text-sm py-3 px-4 rounded-lg w-full border border-gray-400 outline-teal-600"
                                 />
+                                <PasswordVisibility showPassword={showPassword} togglePasswordVisibility={togglePasswordVisibility}/>
+                                </div>
                                 {formik.touched.password && formik.errors.password ? (
                                     <div className="text-red-500 text-sm">{formik.errors.password}</div>
                                 ) : null}

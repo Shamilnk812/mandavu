@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState ={
     user: null,
+    role: null,
     access_token: null,
     refresh_token: null,
     selectedEvent: null,
@@ -20,6 +21,7 @@ const userSlice = createSlice({
             state.user = action.payload.user;
             state.access_token = action.payload.access_token;
             state.refresh_token = action.payload.refresh_token;
+            state.role = action.payload.role;
         },
         setUserLocation: (state, action) => { 
             state.userLocation = action.payload;
@@ -28,6 +30,7 @@ const userSlice = createSlice({
             state.user =  null;
             state.access_token = null;
             state.refresh_token = null;
+            state.role =  null;
             state.userLocation = { latitude: null, longitude: null };
         },
         setBookingDetails:(state, action)=> {

@@ -9,6 +9,7 @@ import { CircularProgress } from "@mui/material";
 
 
 
+
 export default function OtpVerification() {
 
   const email = localStorage.getItem('email')
@@ -63,7 +64,9 @@ export default function OtpVerification() {
         const response = await axiosOwnerInstance.post('verify-otp/', { ...values, email });
         toast.success('OTP verified successfully!');
         localStorage.removeItem('email')
-        navigate('/owner/venue_approval_waiting');
+        const randomNumber = Math.floor(Math.random() * 1000000); 
+        navigate(`/owner/venue_approval_waiting?token=${randomNumber}`);
+        // navigate('/owner/venue_approval_waiting');
       } catch (error) {
         if (error.response && error.response.data) {
           const errorMessage = error.response.data.error || 'OTP verification failed';
