@@ -61,36 +61,5 @@ export default function UserRoute() {
         </Routes>
         </ChatProvider>
 
-
-
-        // <ChatProvider>
-        // <Routes>
-        //     <Route path="/signup" element={<UserLogoutAuth allowedRole="user"> <SignUp/> </UserLogoutAuth> }/>
-        //     <Route path="/login" element={ <UserLogoutAuth allowedRole="user"> <Login/> </UserLogoutAuth>} />
-        //     <Route path="/otp" element={<UserLogoutAuth allowedRole="user"><OtpVerification/> </UserLogoutAuth>} />
-        //     <Route path="/reset-password-request" element={<UserLogoutAuth allowedRole="user"><ResetPasswordRequest/> </UserLogoutAuth>} />
-        //     <Route path="/set-new-passwod" element={<UserLogoutAuth allowedRole="user"><UserSetNewPassword/> </UserLogoutAuth>} />
-
-             
-        //     <Route path="/home" element={<UserLoginAuth  allowedRole="user">  <Home/>  </UserLoginAuth>} />
-        //     <Route path="/profile" element={ <UserLoginAuth allowedRole="user"> <Profile/> </UserLoginAuth>} />
-        //     <Route path="/profile2" element={ <UserLoginAuth allowedRole="user"> <UserProfile/> </UserLoginAuth>} />
-        //     <Route path="/contact-us" element={ <UserLoginAuth allowedRole="user"> <ContactUs/> </UserLoginAuth>} />
-        //     <Route path="/show-booking-details" element={ <UserLoginAuth allowedRole="user"> <ShowBookingDetails/> </UserLoginAuth>} />
-        //     <Route path="/view-booking-details/:bookingId" element={ <UserLoginAuth allowedRole="user"> <ShowSingleBookingDetails/> </UserLoginAuth>} />
-        //     <Route path="/payment-success" element={ <UserLoginAuth allowedRole="user"> <PaymentSuccess/> </UserLoginAuth>} />
-        //     <Route path="/payment-cancelled" element={ <UserLoginAuth allowedRole="user"> <PaymentCanclled/> </UserLoginAuth>} />
-        //     <Route path="/show-all-venues" element={ <UserLoginAuth allowedRole="user"> <ShowAllVenues/> </UserLoginAuth>} />
-        //     <Route path="/show-single-venue/:venueId" element={ <UserLoginAuth allowedRole="user"> <ShowSingleVenueDetails/> </UserLoginAuth>} />
-        //     <Route path="/venue-booking/:venueId" element={ <UserLoginAuth allowedRole="user"> <VenueBooking/> </UserLoginAuth>} />
-        //     <Route path="/venue-booking-step1/:venueId" element={ <UserLoginAuth allowedRole="user"> <VenueBookingStep1/> </UserLoginAuth>} />
-        //     <Route path="/venue-booking-step2/:venueId" element={ <UserLoginAuth allowedRole="user"> <VenueBookingStep2/> </UserLoginAuth>} />
-        //     <Route path="/view-slot/:venueId" element={ <UserLoginAuth allowedRole="user"> <ViewSlote/> </UserLoginAuth>} />
-        //     <Route path="/chat" element={ <UserLoginAuth allowedRole="user"> <UserChat/> </UserLoginAuth>} />
-
-            
-            
-        // </Routes>
-        // </ChatProvider>
     )
 }

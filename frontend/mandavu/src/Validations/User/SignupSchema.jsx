@@ -1,28 +1,38 @@
 import * as Yup from "yup" ;
 
 const SignupSchema = Yup.object().shape({
+    
     first_name: Yup.string()
     .required("First Name is required")
+    .matches(/^[A-Za-z0-9]+$/, "Only alphabets and numbers are allowed")
     .test(
-        "min-characters",
-        "First Name must be at least 3 characters long",
-        function (value){
-            const alphabeticCharacters = value
-            ? value.replace(/[^a-zA-Z]/g, "")
-            : "";
-            return alphabeticCharacters.length >=3 ;
-        }
+      "not-numeric",
+      "First Name cannot contain only numbers",
+      (value) => isNaN(value)
+    )
+    .test(
+      "min-characters",
+      "First Name must be at least 3 characters long",
+      (value) => {
+        return value && value.replace(/[^a-zA-Z]/g, "").length >= 3;
+      }
     ),
     last_name: Yup.string()
-    .required(" Last Name is required")
+    .required("Last Name is required")
+    .matches(/^[A-Za-z0-9]+$/, "Only alphabets and numbers are allowed")
     .test(
-        "min-characters",
-        "Last Name must be at least 2 characters long",
-        function(value) {
-            const alphabeticCharacters = value ? value.replace(/[^a-zA-Z]/g, "") : "";
-            return alphabeticCharacters.length >=2 ;
-        }
+      "not-numeric",
+      "Last Name cannot contain only numbers",
+      (value) => isNaN(value)
+    )
+    .test(
+      "min-characters",
+      "Last Name must be at least 2 characters long",
+      (value) => {
+        return value && value.replace(/[^a-zA-Z]/g, "").length >= 2;
+      }
     ),
+
     email: Yup.string().email("Invalid email address").required("The Email field is required"),
     password: Yup.string()
     .required("The Password field is required")

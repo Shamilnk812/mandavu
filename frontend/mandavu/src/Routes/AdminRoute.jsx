@@ -46,25 +46,3 @@ export default function AdminRoute() {
 
 
 
-
-    {/* <Route path="/notifications" element={<AdminLoginAuth> <AdminNotification/> </AdminLoginAuth>}/> */}
-
-
-
-{/* <Route path="/notifications" element={<AdminLoginAuth> <AdminNotification/> </AdminLoginAuth>}/> */}
-
-           {/* <Routes>
-            <Route path="/" element={<AdminLogoutAuth allowedRole='admin'> <AdminLogin/> </AdminLogoutAuth>} />
-
-            <Route>
-                <Route path="/dashboard" element={<AdminLoginAuth> <Dashboard/> </AdminLoginAuth>} />
-                <Route path="/userslist" element={ <AdminLoginAuth> <UserList/> </AdminLoginAuth>} />
-                <Route path="/ownerslist" element={<AdminLoginAuth><OwnersList/> </AdminLoginAuth> }/>
-                <Route path="/sidebar" element={<AdminLoginAuth> <Sidebar/> </AdminLoginAuth>}/>
-                <Route path="/venuelist" element={<AdminLoginAuth> <VenueList/> </AdminLoginAuth>}/>
-                <Route path="/user-inquiry" element={<AdminLoginAuth> <UserInquiry/> </AdminLoginAuth>}/>
-                <Route path="/show-venue-details/:venueId" element={<AdminLoginAuth> <ShowVenueDetails/> </AdminLoginAuth>}/>
-                <Route path="/show-venue-details2/:venueId" element={<AdminLoginAuth> <ShowVenueDetails2/> </AdminLoginAuth>}/>
-                <Route path="/view-all-bookings" element={<AdminLoginAuth> <AdminViewAllBookings/> </AdminLoginAuth>}/>
-            </Route>
-           </Routes> */}

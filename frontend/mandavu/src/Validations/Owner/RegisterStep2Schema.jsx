@@ -10,6 +10,11 @@ const alphaNumericWithSpecialCharsPattern = /^[a-zA-Z0-9\s.,-]+$/;
 const RegisterationStep2Schema= Yup.object({
   convention_center_name: Yup.string()
     .matches(alphaNumericPattern, 'Convention center name can only contain alphanumeric characters')
+    .test(
+      'not-only-numbers',
+      'Convention center name cannot contain only numbers',
+      (value) => !/^\d+$/.test(value) 
+    )
     .required('Convention center name is required'),
 
   short_description: Yup.string()

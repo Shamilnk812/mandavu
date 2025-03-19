@@ -72,47 +72,7 @@ export default function OwnerRoute() {
         </Routes>
 
 
-        {/* <Routes>
-
-            <Route element={<OwnerLogoutAuth allowedRole='owner'/>}>
-            <Route path="/signup" element={<OwnerLogoutAuth> <SignUp/> </OwnerLogoutAuth>} />
-            <Route path="/login" element={<OwnerLogoutAuth> <LogIn/> </OwnerLogoutAuth>} />
-            <Route path="/otp" element={<OwnerLogoutAuth> <OtpVerification/> </OwnerLogoutAuth>} />
-            <Route path="/reset-password-request" element={<OwnerLogoutAuth> <OwnerResetPasswordRequest/> </OwnerLogoutAuth>} />
-            <Route path="/set-new-passwod" element={<OwnerLogoutAuth> <OwnerSetNewPassword/> </OwnerLogoutAuth>} />
-
-
-            
-            <Route path="/register-step-1" element={ <RegisterationStep1/> } />
-            <Route path="/register-step-2" element={ <RegisterationStep2/> } />
-            <Route path="/register-step-3" element={ <RegisterationStep3/> } />
-            <Route path="/register-step-4" element={ <RegisterationStep4/> } />
-            <Route path="/venue_approval_waiting" element={ <VenueApprovalWaiting/> } />
-
-            </Route>
-
-
-
-
-            <Route path="/dashboard" element={<OwnerLoginAuth> <Dashboard_Owner/> </OwnerLoginAuth>} />
-            <Route path="/details" element={<OwnerLoginAuth> <OwnerDetails/> </OwnerLoginAuth>} />
-            <Route path="/venue-management" element={<OwnerLoginAuth> <VenueManagement/> </OwnerLoginAuth>} />
-            <Route path="/success-register" element={<OwnerLoginAuth> <SuccessRegisterPage/> </OwnerLoginAuth>} />
-            <Route path="/banner-management" element={<OwnerLoginAuth> <VenuePhotosManagement/> </OwnerLoginAuth>} />
-            <Route path="/events-management" element={<OwnerLoginAuth> <EventsManagement/> </OwnerLoginAuth>} />
-            <Route path="/facilities-management" element={<OwnerLoginAuth> <FacilitesManagement/> </OwnerLoginAuth>} />
-            <Route path="/booking-packages" element={<OwnerLoginAuth> <BookingPackages/> </OwnerLoginAuth>} />
-            <Route path="/manage-time-slotes/:id" element={<OwnerLoginAuth> <ManageTimeSlotesForPackages/> </OwnerLoginAuth>} />
-            <Route path="/booking-management" element={<OwnerLoginAuth> <BookingManagement/> </OwnerLoginAuth>} />
-            <Route path="/view-single-booking-details/:id" element={<OwnerLoginAuth> <OwnerViewSingleBookingDetails/> </OwnerLoginAuth>} />
-            <Route path="/chat" element={<OwnerLoginAuth> <OwnerChat/> </OwnerLoginAuth>} />
-
-            <Route path="/details2" element={<OwnerLoginAuth> <OwnerDetails2/> </OwnerLoginAuth>}/>
-
-
-
-            
-        </Routes> */}
+      
         </>
     )
 }

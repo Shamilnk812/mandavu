@@ -14,10 +14,3 @@ export default function OwnerLogoutAuth({allowedRole}) {
 }
 
 
-
-  // const hasToken = Boolean(localStorage.getItem('access_token'));
-    // return hasToken ? <Navigate to='/owner/dashboard'/>  : children
-// export default function OwnerLogoutAuth({children}) {
-//     const hasToken = Boolean(localStorage.getItem('access_token'));
-//     return hasToken ? <Navigate to='/owner/dashboard'/>  : children
-// }

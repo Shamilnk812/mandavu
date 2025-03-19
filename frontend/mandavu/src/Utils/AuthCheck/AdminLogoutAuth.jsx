@@ -13,12 +13,3 @@ export default function AdminLogoutAuth({allowedRole,children}) {
   
 }
 
-
-  // const hasToken = Boolean(localStorage.getItem('access_token'));
-    // return hasToken ?<Navigate to='/admin/dashboard'/> : children
-
-
-// export default function AdminLogoutAuth({children}) {
-//     const hasToken = Boolean(localStorage.getItem('access_token'));
-//     return hasToken ?<Navigate to='/admin/dashboard'/> : children
-// }
