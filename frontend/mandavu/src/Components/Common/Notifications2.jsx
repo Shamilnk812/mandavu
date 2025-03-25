@@ -69,7 +69,7 @@ const CommonNotification = () => {
       });
       const data = await response.json();
       setNotifications(data);
-      console.log("this is the data", data)
+      // console.log("this is the data", data)
       updateUnreadCount(data); // Update the unread count after fetching notifications
       setLoading(false);
     } catch (error) {

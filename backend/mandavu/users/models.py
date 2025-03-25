@@ -17,9 +17,8 @@ class CustomUser(AbstractBaseUser) :
     is_user      = models.BooleanField(default=False)
     is_owner     = models.BooleanField(default=False)
     date_joined  = models.DateTimeField(auto_now_add=True)
-    is_online = models.BooleanField(default=False)
     last_seen = models.DateTimeField(null=True, blank=True)
-    
+    is_online = models.BooleanField(default=False)
     
     
     USERNAME_FIELD  ='email'

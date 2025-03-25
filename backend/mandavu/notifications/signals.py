@@ -8,6 +8,7 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import json
 from datetime import datetime
+from django.core.cache import cache
 
 
 
@@ -267,14 +268,52 @@ def send_notification_owner_registration(sender,instance,created, **kwargs) :
 def notify_recipient_on_new_message(sender, instance, created, **kwargs):
 
     if created:
+
         chat_room = instance.chat_room
         sender_user = instance.user
+        print(chat_room)
 
         recipient_user = (
             chat_room.user2 if chat_room.user1 == sender_user else chat_room.user1
         )
+    
+
+#new --------------------
+        
+        # if recipient_user == chat_room.user1:
+        #         chat_room.unread_count_user1 += 1
+        # else:
+        #     chat_room.unread_count_user2 += 1
+
+        # is_recipient_active = is_user_active_in_chat(chat_room.id, recipient_user.id) 
+
+        # if is_recipient_active:
+        #     instance.seen = True
+        #     instance.save()
+
+        # if not is_recipient_active:
+        #     if recipient_user == chat_room.user1:
+        #         chat_room.unread_count_user1 += 1
+        #     else:
+        #         chat_room.unread_count_user2 += 1
+        
+        chat_room.last_message_timestamp = instance.timestamp
+        chat_room.save()
 
 
+        # if is_recipient_active:
+        #     instance.seen = True
+        #     instance.save()
+
+        # unread_count = (
+        #     chat_room.unread_count_user1 if recipient_user == chat_room.user1
+        #     else chat_room.unread_count_user2
+        # )
+
+        # print('unreaddddddd message cout',unread_count)    
+
+#--------------------------
+       
         message_content = {
             "type": "chat_notification",
             "content": instance.content,
@@ -283,6 +322,40 @@ def notify_recipient_on_new_message(sender, instance, created, **kwargs):
         }
 
         create_notification(user=recipient_user,message=message_content) 
+
+        # -----------------------------------
+        # new 
+        # print('neeeeeeeecount',unread_count)
+        # channel_layer = get_channel_layer()
+        # async_to_sync(channel_layer.group_send)(
+        #      f"user_{recipient_user.id}_chat_notification",
+        #      {
+        #         "type": "chat_notification",
+        #         "message": instance.content,
+        #         "sender_id": sender_user.id,
+        #         "chat_room_id": chat_room.id,
+        #         "unread_count": unread_count,  # Pass the updated unread count
+        #         "last_message_timestamp": instance.timestamp.isoformat(), 
+        #         "seen": instance.seen, 
+        #     }
+        # )
+
+        
+        
+
+
+#-------- 
+
+def is_user_active_in_chat(chat_room_id, user_id):
+    active_chats = cache.get(f'active_chats_{chat_room_id}', {})
+    return active_chats.get(user_id, False)
+
+
+def get_active_users_in_chat(chat_room_id):
+    active_chats = cache.get(f'active_chats_{chat_room_id}', {})
+    return list(active_chats.keys())
+
+
 
 
 

@@ -48,6 +48,11 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
 
 
+
+
+
+
+
 # class VideoCallConsumer(AsyncWebsocketConsumer):
 #     async def connect(self):
 #         self.user_id = self.scope['url_route']['kwargs']['user_id']

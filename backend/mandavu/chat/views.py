@@ -7,9 +7,11 @@ from .models import *
 from .serializers import *
 import traceback
 from django.utils.crypto import get_random_string
-
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotAuthenticated
+from django.core.cache import cache
 
 
 # Create your views here.
@@ -81,40 +83,13 @@ class AddChatRoomView(APIView) :
 class ListChatUsersView(APIView) :
     def get(self, request,user_id):
         try :
-            users = ChatRooms.objects.filter(Q(user1_id = user_id) | Q(user2_id = user_id))
+            users = ChatRooms.objects.filter(Q(user1_id = user_id) | Q(user2_id = user_id)).order_by('-last_message_timestamp')
             if not users:
                 return Response({'message':'No chat rooms found '})
-            serializer = ChatroomSerializer(users,many = True)
-            return Response(serializer.data)
+            serializer = ChatroomSerializer(users, many = True, context={'user': user_id})
+            return Response(serializer.data) 
         
         except ChatRooms.DoesNotExist :
             return ChatRooms.objects.none()
 
 
-
-class CreateMeetingView(APIView):
-    def post(self, request):
-        print('Request data:', request.data)
-        user_id = request.data.get('userId')
-        recipient_id = request.data.get('recipientId')
-        print('User ID:', user_id)
-        print('Recipient ID:', recipient_id)
-
-        meeting_id = get_random_string(length=10)  # Generate a random meeting ID
-        print('Generated Meeting ID:', meeting_id)
-
-        # Save meeting ID to database or in-memory storage if needed
-
-        return Response({'meetingId': meeting_id})
-    
-
-
-
-class GetUserOnlineStatus(APIView):
-    def get(self, request, user_id):
-        try:
-            user = CustomUser.objects.get(id=user_id)
-            return Response({"is_online": user.is_online})
-        except CustomUser.DoesNotExist:
-            return Response({"error": "User not found"}, status=404)
-        
