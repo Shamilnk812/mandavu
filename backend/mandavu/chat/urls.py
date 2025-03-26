@@ -6,6 +6,3 @@ urlpatterns = [
     path('add_chat_rooms/',AddChatRoomView.as_view(),name='add_chat_rooms'),
     path('chat_users/<int:user_id>/',ListChatUsersView.as_view(),name='chat_users'),
 ]
-
-
-  

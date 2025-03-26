@@ -120,6 +120,14 @@ class ChangeUserPassword(GenericAPIView) :
         return Response({'message':'Password changed successfully'},status=status.HTTP_200_OK)
 
 
+
+class VerifyToken(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self , request):
+        print('tooooooooken chekking ---------------------------------------------------')
+        return Response({"message":"token is valid"},status=status.HTTP_200_OK)
+
 #=====================================================================
 
     

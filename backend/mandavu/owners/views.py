@@ -289,6 +289,8 @@ class OwnerDetailsView(GenericAPIView) :
 
 
 class TotalRevenueView(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request):
         selected_view = request.GET.get('view', 'monthly')
         venue_id = request.GET.get('venue_id')  # Get venue_id from query params

@@ -12,6 +12,7 @@ urlpatterns = [
     path('update/<int:uid>/',UpdateUserView.as_view(),name='update'),
     path('change-password/<int:uid>/',ChangeUserPassword.as_view(),name='change-password'),
     path('token/refresh/',TokenRefreshView.as_view(),name='token/refresh'),
+    path('verify-token/',VerifyToken.as_view(),name='verify-token'),
     path('verify-otp/',VerifyUserOtp.as_view(),name='verify-otp'),
     path('resend-otp/',ResendUserOtp.as_view(),name='resend-otp'),
     path('password-reset-request/',PasswordResetRequestView.as_view(),name='password-reset'),

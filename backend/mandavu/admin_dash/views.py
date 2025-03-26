@@ -215,6 +215,7 @@ class GetTotalRevenueView(APIView):
 
 class UserListView(GenericAPIView):
     # permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
     serializer_class = UserDetailsSerializer
     pagination_class = CustomPagination
 

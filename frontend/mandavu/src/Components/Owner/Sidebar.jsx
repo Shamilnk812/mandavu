@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import { useDispatch } from "react-redux";
 import { Link,useNavigate,useLocation} from "react-router-dom";
 import { OwnerLogout } from "../../Redux/Slices/Owner";
@@ -53,7 +53,23 @@ export default function  Sidebar () {
             toast.error("Logout failed. Please try again.");
         }
     };
+    
 
+    useEffect(() => {
+        const handleStorageChange = (event) => {
+            if (event.key === "access_token" && !event.newValue) {
+                dispatch(OwnerLogout());
+                navigate("/owner/login");
+            }
+        };
+        window.addEventListener("storage", handleStorageChange);
+        
+        return () => {
+            window.removeEventListener("storage", handleStorageChange);
+        };
+       }, []);
+    
+    
 
     return (
         

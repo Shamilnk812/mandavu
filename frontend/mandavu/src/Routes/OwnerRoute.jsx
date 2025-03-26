@@ -6,7 +6,6 @@ import Dashboard_Owner from "../Pages/Owner/Dashboard";
 import OwnerDetails from "../Pages/Owner/OwnerDetails";
 import VenueManagement from "../Pages/Owner/Venue_Management";
 import SuccessRegisterPage from "../Pages/Owner/SuccessRegister";
-
 import OwnerLogoutAuth from "../Utils/AuthCheck/OwnerLogoutAuth";
 import OwnerLoginAuth from "../Utils/AuthCheck/OwnerLoginAuth";
 // import BannerManagement from "../Pages/Owner/BannerManagement";
@@ -27,9 +26,12 @@ import OwnerSetNewPassword from "../Pages/Owner/OwnerSetNewPassword";
 import OwnerViewSingleBookingDetails from "../Pages/Owner/OwnerViewSingleBookingDetails";
 import BookingPackages from "../Pages/Owner/BookingPackages";
 import ManageTimeSlotesForPackages from "../Pages/Owner/ManageTimeSlotes";
-
+import { useDispatch } from "react-redux";
 
 export default function OwnerRoute() {
+  
+
+ 
     return(
         <>  
         <Routes>
