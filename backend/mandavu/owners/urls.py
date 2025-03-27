@@ -58,6 +58,8 @@ urlpatterns = [
     path('get-owner-venue-details/<int:uid>/',OwnerAndVenueDetailsView.as_view(),name='get-owner-venue-details'),
     path('set-maintenance/<int:vid>/',SetVenueMaintenanceView.as_view(),name='set-maintenance'),
     path('remove-maintenance/<int:vid>/',RemoveVenueMaintenanceView.as_view(),name='remove-maintenance'),
+
+    path('generate-sales-report/',GenerateSalesReport.as_view(),name='generate-sales-report'),
     
     
 ]

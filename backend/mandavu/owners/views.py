@@ -12,7 +12,7 @@ from django.shortcuts import redirect
 from .serializers import *
 from .models import *
 from users.models import Booking
-from .utils import sent_otp_to_owner,decode_base64_file,description_for_regular_bookingpackages
+from .utils import *
 import base64
 from django.core.files.base import ContentFile
 from users.utils import decrypt_otp
@@ -21,6 +21,20 @@ from django.db.models import Sum,Q
 from datetime import datetime, timedelta
 from notifications.signals import notify_admin_on_maintenance_change
 
+
+from reportlab.lib.pagesizes import A4,A3
+from reportlab.pdfgen import canvas
+import io
+from django.http import HttpResponse
+
+
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from io import BytesIO
+from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
+from reportlab.lib.enums import TA_CENTER, TA_RIGHT
+from reportlab.lib.units import inch
 # Create your views here.
 
 
@@ -813,6 +827,8 @@ class UnblockBookingPackagesView(APIView) :
         booking_package_obj.save()
         return Response({"message":"Event is unblocked successfully"},status=status.HTTP_200_OK)
 
+
+
 #============= PACKAGE TIME SLOTES ===============
 
 class GetPackageTimeSlotes(GenericAPIView):
@@ -893,38 +909,16 @@ class OwnerPagination(PageNumberPagination):
 class AllBookingDetailsView(GenericAPIView):
     serializer_class = AllBookingDetailsSerializer
     pagination_class = OwnerPagination
-
+    permission_classes = [IsAuthenticated]
+    
     def get(self, request, vid):
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
-        venue = get_object_or_404(Venue, id=vid)
-        all_bookings = Booking.objects.filter(venue=venue).order_by('-id')
-
-        # if start_date and end_date:
-        #     all_bookings = all_bookings.filter(date__range=[start_date, end_date])
-        if start_date and end_date:
-            # Convert start and end dates to datetime.date objects
-            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
-            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
-
-            # Generate the range of dates between start_date and end_date
-            date_range = [start_date + timedelta(days=x) for x in range((end_date - start_date).days + 1)]
-            date_range_str = [d.strftime("%Y-%m-%d") for d in date_range]
-            print(date_range)
-
-            # Filter bookings manually by checking if any booking date intersects with the range
-            filtered_bookings = []
-            for booking in all_bookings:
-                booking_dates = booking.dates  # Assuming 'dates' is a list of dates (e.g., in a JSONField)
-
-                # Check if any of the booking dates fall within the range
-                if any(date in date_range_str for date in booking_dates):
-                    filtered_bookings.append(booking)
-
-            # Assign the filtered bookings to the all_bookings queryset
-            all_bookings = filtered_bookings
-
        
+        all_bookings  = get_bookings_in_date_range(venue_id=vid,is_descending_order=True)     
+
+        if start_date and end_date:
+            all_bookings = get_bookings_in_date_range(venue_id=vid,start_date=start_date,end_date=end_date,is_descending_order=True)
 
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(all_bookings, request)
@@ -932,32 +926,6 @@ class AllBookingDetailsView(GenericAPIView):
         serializer = self.serializer_class(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
     
-
-
-
-
-
-     # if start_date and end_date:
-        #     # Convert dates to datetime objects for comparison
-        #     start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
-        #     end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
-
-        #     # Filter bookings where any date in 'dates' falls in the range
-        #     # all_bookings = all_bookings.filter(
-        #     #     Q(dates__contains=[start_date.strftime("%Y-%m-%d")]) |
-        #     #     Q(dates__contains=[end_date.strftime("%Y-%m-%d")]) |
-        #     #     Q(dates__overlap=[str(date) for date in [start_date, end_date]])
-        #     # )   
-
-        #     all_bookings = all_bookings.filter(
-        #         Q(dates__contains=[start_date.strftime("%Y-%m-%d")]) |
-        #         Q(dates__contains=[end_date.strftime("%Y-%m-%d")]) |
-        #         Q(dates__overlap=[
-        #             start_date.strftime("%Y-%m-%d"),
-        #             end_date.strftime("%Y-%m-%d")
-        #         ])
-        #     ) 
-
 
 
 class GetSingleBookingDetailsView(GenericAPIView) :
@@ -1023,3 +991,108 @@ class RemoveVenueMaintenanceView(APIView):
 
         return Response({'message':'Venue maintenance details Removed successfully.'}, status=status.HTTP_200_OK)
 
+
+
+
+
+# ------------------- Download sales report ---------------
+
+
+class GenerateSalesReport(APIView):
+
+    def post(self, request):
+
+        start_date = request.data.get('start_date')
+        end_date = request.data.get('end_date')
+        venue_id = request.data.get('venue_id')
+
+        print(request.data)
+
+        if not start_date or not end_date or not venue_id:
+            return Response({"error": "Missing required parameters"}, status=400)
+        
+
+        try:
+            
+            formatted_start_date = datetime.strptime(start_date, "%Y-%m-%d").strftime("%d %B, %Y")
+            formatted_end_date = datetime.strptime(end_date, "%Y-%m-%d").strftime("%d %B, %Y")
+            all_booking = get_bookings_in_date_range(venue_id=venue_id ,start_date = start_date, end_date=end_date, is_descending_order=False)   
+            
+            
+            buffer = BytesIO()
+            doc = SimpleDocTemplate(buffer, pagesize=A3)
+            elements = []
+
+            # Heading
+            styles = getSampleStyleSheet()
+            heading_style = ParagraphStyle('Heading1', parent=styles['Heading1'], alignment=TA_CENTER)
+            elements.append(Paragraph("Sales Report", heading_style))
+
+           
+            subheading_style = ParagraphStyle('Subheading',
+                                            parent=styles['Normal'],
+                                            fontSize=14,  
+                                            alignment=TA_CENTER)
+            
+            elements.append(Paragraph(f"From {formatted_start_date} to {formatted_end_date}", subheading_style))
+            elements.append(Spacer(1, 0.2 * inch))  
+
+            data = [["ID", "Username", "Event", "Package Name", "Date", "Total Price", "Status"]]  # Table header
+            all_total_price = 0
+
+            for index, booking in enumerate(all_booking, start=1):
+                if booking.status == 'Booking Completed':
+                    all_total_price += booking.total_price
+
+                formatted_dates = "\n".join([datetime.strptime(date, "%Y-%m-%d").strftime("%d %b, %Y") for date in booking.dates])
+
+               
+                formatted_price = int(float(booking.total_price))  
+
+    
+                
+              
+                data.append([
+                    str(index),
+                    booking.user.first_name,
+                    booking.event_name,
+                    (booking.package_name[:25] + "...") if booking.package_name and len(booking.package_name) > 25 else (booking.package_name or "N/A"),
+                    formatted_dates,
+                    f"{formatted_price}",
+                    booking.status,
+                ])
+
+            # Table creation
+            table = Table(data, colWidths=[0.5 * inch, 1.5 * inch, 2 * inch, 2 * inch, 1.5 * inch, 1 * inch, 2 * inch])
+
+            # Table styling
+            style = TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ])
+
+            table.setStyle(style)
+            elements.append(table)
+            elements.append(Spacer(1, 0.2 * inch)) 
+            total_price_style = ParagraphStyle('TotalPrice',
+                                            parent=styles['Normal'],
+                                            fontSize=14,  
+                                            alignment=TA_RIGHT)
+            elements.append(Paragraph(f"Total Price = {all_total_price}", total_price_style))
+
+            doc.build(elements)
+            buffer.seek(0)
+
+            response = HttpResponse(buffer, content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="sales_report.pdf"'
+            return response
+            
+            
+        except Exception as e:
+            print(e)
+            return Response({"error": str(e)}, status=500)

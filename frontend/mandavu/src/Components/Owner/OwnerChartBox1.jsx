@@ -9,11 +9,14 @@ import { useFormik } from "formik";
 import MaintenanceValidationSchema from "../../Validations/Owner/MaintenanaceSchema";
 import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
 import { toast } from "react-toastify";
+import DownloadSalesReoport from "./SalesReportModal";
+import DownloadIcon from '@mui/icons-material/Download';
 
 export default function OwnerChartBox1({ title, icon, bchart, totalRevenue, maintenanceStatus, fetchBookingStatus }) {
   const navigate = useNavigate();
 
   const [isOpenModal, setIsOpenModal] = useState(false)
+  const [isSalesReportModalOpen, setIsSalesReportModalOpen] = useState(false);
   const venueId = useSelector((state) => state.owner.venueId);
 
 
@@ -48,6 +51,16 @@ export default function OwnerChartBox1({ title, icon, bchart, totalRevenue, main
   const handleCloseModal = () => {
     setIsOpenModal(false)
     formik.resetForm()
+  }
+
+
+  const handleOpenSalesReportModal = ()=> {
+    setIsSalesReportModalOpen(true);
+
+  }
+
+  const handleCloseSalesReportModal = ()=> {
+    setIsSalesReportModalOpen(false);
   }
 
 
@@ -95,10 +108,18 @@ export default function OwnerChartBox1({ title, icon, bchart, totalRevenue, main
           </Box>
 
           <Box sx={{ display: "flex", justifyContent: 'center', marginTop: '50px' }}>
+            <button className="w-full border border-purple-600 text-purple-600 py-3 px-4 rounded hover:bg-purple-600 hover:text-white transition-all duration-300"
+            onClick={handleOpenSalesReportModal}
+            >
+             <DownloadIcon/>  Sales Report 
+            </button>
+          </Box>
+
+          <Box sx={{ display: "flex", justifyContent: 'center', marginTop: '50px' }}>
             {maintenanceStatus === false ? (
               <button
                 onClick={handleOpenModal}
-                className="border border-red-600 text-red-600 py-3 px-4 rounded hover:bg-red-600 hover:text-white transition-all duration-300"
+                className="w-full border border-red-600 text-red-600 py-3 px-4 rounded hover:bg-red-600 hover:text-white transition-all duration-300"
               >
                 <EngineeringIcon className="mr-2" />
                 Set Maintenance
@@ -106,7 +127,7 @@ export default function OwnerChartBox1({ title, icon, bchart, totalRevenue, main
             ) : (
               <button
                 onClick={removeMaintenance}
-                className="border border-green-600 text-green-600 py-3 px-4 rounded hover:bg-green-600 hover:text-white transition-all duration-300"
+                className="w-full border border-green-600 text-green-600 py-3 px-4 rounded hover:bg-green-600 hover:text-white transition-all duration-300"
               >
                 <EngineeringIcon className="mr-2" />
                 Remove Maintenance
@@ -114,6 +135,8 @@ export default function OwnerChartBox1({ title, icon, bchart, totalRevenue, main
             )}
           
           </Box>
+
+          
 
         
 
@@ -125,6 +148,11 @@ export default function OwnerChartBox1({ title, icon, bchart, totalRevenue, main
 
         <MaintenanceModal isOpen={isOpenModal} formik={formik} handleCloseModal={handleCloseModal} />
       )}
+      
+      {isSalesReportModalOpen &&(
+        <DownloadSalesReoport isOpen={isSalesReportModalOpen} onClose={handleCloseSalesReportModal} venueId={venueId}/>
+      )}
+      
     </>
   )
 }
