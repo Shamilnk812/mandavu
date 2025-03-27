@@ -1,7 +1,8 @@
+import { CircularProgress } from "@mui/material";
 
 
 
-export default function UserDetailsEditModal ({isUserDetailsEditModalOpen, formik, handleCloseUserDetailsEditModal}) {
+export default function UserDetailsEditModal ({isUserDetailsEditModalOpen, formik, handleCloseUserDetailsEditModal, loading}) {
     if (!isUserDetailsEditModalOpen) return null;
     return(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -54,8 +55,15 @@ export default function UserDetailsEditModal ({isUserDetailsEditModalOpen, formi
                             </div>
                             
                             <div className="flex justify-center pt-4">
-                                <button type="submit" className="w-1/2 mt-2 bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-600 transition-all duration-300">
-                                    Update
+                                <button 
+                                type="submit" 
+                                disabled={loading}
+                                className={`w-1/2 mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300 ${loading ? 'cursor-not-allowed opacity-70' : ''}`}>
+                                {loading ? (
+                                        <CircularProgress size={20} style={{ color: 'white' }} />
+                                    ) : (
+                                        'Save Changes'
+                                    )}
                                 </button>
                             </div>
                         </form>

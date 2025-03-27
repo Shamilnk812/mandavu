@@ -27,6 +27,9 @@ export default function OwnerDetails2() {
     const [showOwnerDetailsEditModal, setShowOwnerDetailsEditModal] = useState(false);
     const [changePasswordModal, setChangePasswordModal] = useState(false)
     const [showVenueDetailsEditModal, setShowVenueDetailsEditModal] = useState(false)
+    const [ownerDetailsUpdating , setOwnerDetaislUpdating] = useState(false);
+    const [venueDetailsUpdating, setVenueDetailsUpdating]  = useState(false);
+    const [passwordUpdating, setPasswordUpdating] = useState(false);
 
     const fetchingOwnerAllDetails = async () => {
         if (!ownerId) return; // Avoid making the API call if ownerId is not available
@@ -73,6 +76,7 @@ export default function OwnerDetails2() {
                 toast.warning('No changes detected. Please update the form before submitting.');
                 return;
             }
+            setOwnerDetaislUpdating(true);
             try {
                 await axiosOwnerInstance.put(`update/${ownerId}/`, updatedValues);
                 toast.success('Owner details updated successfully!');
@@ -80,6 +84,8 @@ export default function OwnerDetails2() {
                 handleCloseOwnerDetailsEditModal();
             } catch (error) {
                 toast.error('Failed to update owner details. Please try again later');
+            }finally{
+                setOwnerDetaislUpdating(false);
             }
         }
     });
@@ -103,7 +109,7 @@ export default function OwnerDetails2() {
             price: owner?.venue?.price || '',
             dining_seat_count: owner?.venue?.dining_seat_count || '',
             auditorium_seat_count: owner?.venue?.auditorium_seat_count || '',
-            condition: owner?.venue?.condition || '',
+            // condition: owner?.venue?.condition || '',
             state: owner?.venue?.state || '',
             district: owner?.venue?.district || '',
             city: owner?.venue?.city || '',
@@ -113,10 +119,11 @@ export default function OwnerDetails2() {
         validationSchema:VenueRegisterSchema,
         onSubmit: async (updataedValues)=> {
             console.log('updated values ',updataedValues)
-            if (!formik1.dirty) { 
+            if (!formik2.dirty) { 
                 toast.warning('No changes detected. Please update venue details before submitting.');
                 return;
             }
+            setVenueDetailsUpdating(true);
             try{
                 const response = await axiosOwnerInstance.put(`update-venue/${owner?.venue?.id}/`, updataedValues);
                 toast.success('Venue details updated successfully')
@@ -125,6 +132,8 @@ export default function OwnerDetails2() {
             }catch(error) {
                 console.error('error',error)
                 toast.error('Failed to update venue details. please try again later')
+            }finally{
+                setVenueDetailsUpdating(false);
             }
         }
     })
@@ -152,7 +161,7 @@ export default function OwnerDetails2() {
                 old_password: values.old_password,
                 new_password: values.new_password,
             };
-
+            setPasswordUpdating(true);
             try {
                 const response = await axiosOwnerInstance.post(`change-password/${owner?.id}/`, payload);
                 // Display success message
@@ -166,6 +175,8 @@ export default function OwnerDetails2() {
                     console.error('dfadsfs',error)
                     toast.error("An error occurred. Please try again.");
                 }
+            }finally{
+                setPasswordUpdating(false);
             }
         }
     })
@@ -380,15 +391,29 @@ export default function OwnerDetails2() {
         )}
 
         {showOwnerDetailsEditModal && (
-            <EditOwnerDetailsModal isOwnerDetailsEditModalOpen={showOwnerDetailsEditModal} formik1={formik1} handleCloseOwnerDetailsEditModal={handleCloseOwnerDetailsEditModal}/>
+            <EditOwnerDetailsModal 
+                isOwnerDetailsEditModalOpen={showOwnerDetailsEditModal} 
+                formik1={formik1} 
+                handleCloseOwnerDetailsEditModal={handleCloseOwnerDetailsEditModal} 
+                loading={ownerDetailsUpdating}/>
         )}
           
          {showVenueDetailsEditModal && (
-            <VenueDetailsEditModal  isVenueDetailsEditModalOpen={showVenueDetailsEditModal} formik2={formik2} handleCloseVenueDetailsEditModal={handleCloseVenueDetailsEditModal} />
+            <VenueDetailsEditModal  
+                isVenueDetailsEditModalOpen={showVenueDetailsEditModal} 
+                formik2={formik2} 
+                handleCloseVenueDetailsEditModal={handleCloseVenueDetailsEditModal} 
+                loading={venueDetailsUpdating}
+                />
          )} 
 
          {changePasswordModal && (
-            <OwnerChangePasswordModal isOwnerChangePasswordModalOpen={changePasswordModal} formik3={formik3} handleCloseOwnerChangePasswordModal={handleCloseChangePasswordModal}/>
+            <OwnerChangePasswordModal 
+                isOwnerChangePasswordModalOpen={changePasswordModal} 
+                formik3={formik3} 
+                handleCloseOwnerChangePasswordModal={handleCloseChangePasswordModal}
+                loading={passwordUpdating}
+                />
          )}
         </>
     )

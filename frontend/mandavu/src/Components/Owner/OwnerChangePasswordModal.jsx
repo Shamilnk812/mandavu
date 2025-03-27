@@ -1,7 +1,23 @@
+import { CircularProgress } from "@mui/material";
+import { useState } from "react";
+import PasswordVisibility from "../Common/PasswordVisibility";
 
-
-export default function OwnerChangePasswordModal({ isOwnerChangePasswordModalOpen, formik3, handleCloseOwnerChangePasswordModal }) {
+export default function OwnerChangePasswordModal({ isOwnerChangePasswordModalOpen, formik3, handleCloseOwnerChangePasswordModal, loading }) {
     if (!isOwnerChangePasswordModalOpen) return null;
+
+    const [showPassword1 , setShowPassword1] = useState(false);
+    const [showPassword2, setShowPassword2] = useState(false)
+    const [showPassword3, setShowPassword3] = useState(false)
+
+    const togglePasswordVisibility1 = ()=> {
+        setShowPassword1((prev) => ! prev)
+    }
+    const togglePasswordVisibility2 = ()=> {
+        setShowPassword2((prev) => ! prev)
+    }
+    const togglePasswordVisibility3 = ()=> {
+        setShowPassword3((prev) => ! prev)
+    }
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -26,42 +42,51 @@ export default function OwnerChangePasswordModal({ isOwnerChangePasswordModalOpe
                         <form className="space-y-4" onSubmit={formik3.handleSubmit}>
                             <div>
                                 <label htmlFor="old_password" className="block mb-2 text-sm font-medium text-gray-700">Old Password</label>
+                                <div className="relative">
                                 <input
-                                    type="password"
+                                    type={showPassword1 ? "text" : "password"}
                                     name="old_password"
                                     id="old_password"
                                     className="bg-customColor7 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
                                     onChange={formik3.handleChange}
                                     value={formik3.values.old_password}
                                 />
+                                <PasswordVisibility showPassword={showPassword1} togglePasswordVisibility={togglePasswordVisibility1}/>
+                                </div>
                                 {formik3.touched.old_password && formik3.errors.old_password ? (
                                     <div className="text-red-500 text-sm mt-1">{formik3.errors.old_password}</div>
                                 ) : null}
                             </div>
                             <div>
                                 <label htmlFor="new_password" className="block mb-2 text-sm font-medium text-gray-700">New Password</label>
+                                <div className="relative">
                                 <input
-                                    type="password"
+                                    type={showPassword2 ? "text" : "password"}
                                     name="new_password"
                                     id="new_password"
                                     className="bg-customColor7 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 "
                                     onChange={formik3.handleChange}
                                     value={formik3.values.new_password}
                                 />
+                                <PasswordVisibility showPassword={showPassword2} togglePasswordVisibility={togglePasswordVisibility2}/>
+                                </div>
                                 {formik3.touched.new_password && formik3.errors.new_password ? (
                                     <div className="text-red-500 text-sm mt-1">{formik3.errors.new_password}</div>
                                 ) : null}
                             </div>
                             <div>
                                 <label htmlFor="confirm_password" className="block mb-2 text-sm font-medium text-gray-700">Confirm Password</label>
+                                <div className="relative">
                                 <input
-                                    type="password"
+                                    type={showPassword3 ? "text" : "password"}
                                     name="confirm_password"
                                     id="confirm_password"
                                     className="bg-customColor7 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
                                     onChange={formik3.handleChange}
                                     value={formik3.values.confirm_password}
                                 />
+                                <PasswordVisibility showPassword={showPassword3} togglePasswordVisibility={togglePasswordVisibility3}/>
+                                </div>
                                 {formik3.touched.confirm_password && formik3.errors.confirm_password ? (
                                     <div className="text-red-500 text-sm mt-1">{formik3.errors.confirm_password}</div>
                                 ) : null}
@@ -69,9 +94,15 @@ export default function OwnerChangePasswordModal({ isOwnerChangePasswordModalOpe
                             <div className="flex justify-center pt-4">
                                 <button
                                     type="submit"
-                                    className="w-1/2 mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300"
+                                    disabled={loading}
+                                    className={`w-1/2 mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300 ${loading ? 'cursor-not-allowed opacity-70' : ''}`}
                                 >
-                                    Change Password
+                                    {loading ? (
+                                        <CircularProgress size={20} style={{ color: 'white' }} />
+                                    ) : (
+                                        'Change Password'
+                                    )}
+
                                 </button>
                             </div>
                         </form>

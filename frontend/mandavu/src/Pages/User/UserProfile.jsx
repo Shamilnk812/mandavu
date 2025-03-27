@@ -19,7 +19,10 @@ export default function UserProfile() {
     const userId = useSelector((state) => state.user.user?.id)
     const [isUserDetailsEditModalOpen, setIsUserDetailsEditModalOpen] = useState(false)
     const [changepasswordModal, setChangePasswordModal] = useState(false)
-
+    const [updatingUserDetails, setUpdatingUserDetails]  = useState(false);
+    const [updatingPassword, setUpdatingPassword] = useState(false);
+    
+     
     const fetchUserDetails = async () => {
         try {
             const response = await axiosUserInstance.get(`user-details/${userId}/`)
@@ -40,6 +43,7 @@ export default function UserProfile() {
         }, enableReinitialize: true,
         validationSchema: ChangeUserDetailsSchema,
         onSubmit: async (updatedUser) => {
+            setUpdatingUserDetails(true);
             try {
                 const response = await axiosUserInstance.put(`update/${userId}/`, updatedUser);
                 fetchUserDetails();
@@ -48,6 +52,8 @@ export default function UserProfile() {
 
             } catch (error) {
                 toast.error('Failed to update user details . please try again later')
+            }finally{
+                setUpdatingUserDetails(false);
             }
         }
     })
@@ -73,7 +79,7 @@ export default function UserProfile() {
                 old_password: values.old_password,
                 new_password: values.new_password,
             };
-
+            setUpdatingPassword(true);
             try {
                 const response = await axiosUserInstance.post(`change-password/${userId}/`, payload);
                 // Display success message
@@ -87,6 +93,8 @@ export default function UserProfile() {
                     console.error('dfadsfs', error)
                     toast.error("An error occurred. Please try again.");
                 }
+            }finally{
+                setUpdatingPassword(false);
             }
         }
     })
@@ -167,6 +175,7 @@ export default function UserProfile() {
                     isUserDetailsEditModalOpen={isUserDetailsEditModalOpen}
                     formik={formik}
                     handleCloseUserDetailsEditModal={handleCloseUserDetailsEditModal}
+                    loading={updatingUserDetails}
                 />
             )}
 
@@ -175,6 +184,7 @@ export default function UserProfile() {
                     isUserChangePasswordModalOpen={changepasswordModal}
                     formik2={formik2}
                     handleCloseUserChangePasswordModal={handleCloseChangePasswordModal}
+                    loading={updatingPassword}
                 />
             )}
         </>

@@ -29,9 +29,9 @@ export default function AddBookingPackageModal({ formik, isModalOpen, isAcSelect
             {/* Package Name with Suggestions */}
             <div className="mb-4">
               <label className="block text-gray-700 font-semibold mb-2">
-                Package Name
+                Package Namejkjkjj
               </label>
-              <input
+              <select
                 list="package-names"
                 id="package_name"
                 name="package_name"
@@ -40,11 +40,12 @@ export default function AddBookingPackageModal({ formik, isModalOpen, isAcSelect
                 onBlur={formik.handleBlur}
                 placeholder="Type or select package name"
                 className="w-full border border-gray-300 p-2 rounded-lg"
-              />
-              <datalist id="package-names">
-                <option value="Conference Hall" />
-                <option value="Auditorium" />
-              </datalist>
+
+              >
+                <option value="" disabled>Select a package</option>
+                <option value="Conference Hall">Conference Hall</option>
+                {/* <option value="Auditorium">Auditorium</option> */}
+              </select>
               {formik.touched.package_name && formik.errors.package_name && (
                 <div className="text-red-600 text-sm mt-1">
                   {formik.errors.package_name}
@@ -205,7 +206,7 @@ export default function AddBookingPackageModal({ formik, isModalOpen, isAcSelect
                 ) : (
                   'Submit'
                 )}
-                
+
               </button>
             </div>
           </form>
