@@ -99,12 +99,15 @@ def description_for_regular_bookingpackages(dining_capacity, auditorium_seating)
 
 
 
-def get_bookings_in_date_range(venue_id, start_date=None, end_date=None, is_descending_order=False):
+def get_bookings_in_date_range(venue_id=None, start_date=None, end_date=None, is_descending_order=False):
     
     if is_descending_order:
         all_bookings = Booking.objects.filter(venue_id=venue_id).order_by('-id')
     else:
-        all_bookings = Booking.objects.filter(venue_id=venue_id)
+        if venue_id :
+            all_bookings = Booking.objects.filter(venue_id=venue_id)
+        else:
+            all_bookings = Booking.objects.all()
 
 
     if start_date and end_date:

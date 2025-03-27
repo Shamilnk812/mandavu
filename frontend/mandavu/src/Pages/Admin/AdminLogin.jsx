@@ -68,7 +68,7 @@ export default function AdminLogin() {
 
     return (
         <>
-            <div className="min-h-screen bg-teal-600 flex justify-center items-center px-4 sm:px-6">
+            <div className="min-h-screen bg-gray-600 flex justify-center items-center px-4 sm:px-6">
                 <div className="py-8 px-4 sm:px-12 bg-white rounded-2xl shadow-xl z-20 w-full max-w-lg">
                     <div className="flex justify-center mb-6">
                         <img
@@ -93,7 +93,7 @@ export default function AdminLogin() {
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     placeholder="Email Address"
-                                    className="block text-sm py-3 px-4 rounded-lg w-full border border-gray-400 outline-teal-600"
+                                    className="block text-sm py-3 px-4 rounded-lg w-full border border-gray-400 outline-gray-400"
                                 />
                                 {formik.touched.email && formik.errors.email ? (
                                     <div className="text-red-500 text-sm">{formik.errors.email}</div>
@@ -109,7 +109,7 @@ export default function AdminLogin() {
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     placeholder="Password"
-                                    className="block text-sm py-3 px-4 rounded-lg w-full border border-gray-400 outline-teal-600"
+                                    className="block text-sm py-3 px-4 rounded-lg w-full border border-gray-400 outline-gray-400"
                                 />
                                 <PasswordVisibility showPassword={showPassword} togglePasswordVisibility={togglePasswordVisibility}/>
                                 </div>
@@ -122,7 +122,7 @@ export default function AdminLogin() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className={`w-1/2 py-2 text-lg text-white bg-teal-600 rounded-lg hover:bg-teal-800 transition-all duration-300 ${loading ? 'cursor-not-allowed opacity-70' : ''}`}
+                                    className={`w-1/2 py-2 text-lg text-white bg-gray-600 rounded-lg hover:bg-gray-800 transition-all duration-300 ${loading ? 'cursor-not-allowed opacity-70' : ''}`}
                                 >
                                     {loading ? (
                                         <CircularProgress size={20} style={{ color: 'white' }} />

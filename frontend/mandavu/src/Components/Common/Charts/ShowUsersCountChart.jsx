@@ -27,11 +27,10 @@ function PieCenterLabel({ children }) {
 }
 
 export default function AllUsersCountChart({ allUsersCount }) {
-//  
-console.log('adfdsf',allUsersCount)
+
   const pieData = [
-    { value: allUsersCount.users_count, label: 'Users', color: '#FFA500' }, // Orange for Users
-    { value: allUsersCount.owners_count, label: 'Owners', color: '#FF6347' } // Red for Owners
+    { value: allUsersCount.users_count, label: 'Users', color: '#00CED1' }, 
+    { value: allUsersCount.owners_count, label: 'Owners', color: '#4B0082' } 
   ];
 
   return (
