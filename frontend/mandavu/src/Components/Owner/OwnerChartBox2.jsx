@@ -6,11 +6,15 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle'; // Import the
 import ReviewsIcon from '@mui/icons-material/Reviews';
 import { Grid, Box } from "@mui/material";
 import { axiosUserInstance } from "../../Utils/Axios/axiosInstance";
+import React from "react";
+import Typography from '@mui/material/Typography';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 
 export default function OwnerChartBox2({ title, icon, pchart }) {
     const venueId = useSelector((state) => state.owner?.venueId);
     const [reviews, setReviews] = useState([]);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 900); 
 
     const fetchReviews = async () => {
         try {
@@ -26,26 +30,75 @@ export default function OwnerChartBox2({ title, icon, pchart }) {
         fetchReviews();
     }, [venueId]);
 
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 900);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     return (
-        <Grid container
-            sx={{ width: '100%', display: 'flex', minHeight: '400px', boxShadow: 3 }}
-        >
-            {/* Chart Section */}
-            <Grid item xs={6} sx={{ display: 'flex', flexDirection: 'column', padding: '30px' }}>
-                <Box sx={{ marginBottom: '20px', fontWeight: 'bold', fontSize: '20px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <Grid container sx={{ 
+            width: '100%', 
+            display: 'flex', 
+            minHeight: '400px', 
+            boxShadow: 2,
+            borderRadius: '5px',
+            flexDirection: { xs: 'column', md: 'row' } 
+        }}>
+            <Grid item xs={12} md={6} sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                padding: { xs: '15px', md: '30px' },
+                borderBottom: { xs: '0.5px solid', md: 'none' },
+                borderRight: { xs: 'none', md: '0.5px solid' }
+            }}>
+                <Box sx={{ 
+                    marginBottom: '20px', 
+                    fontWeight: 'bold', 
+                    fontSize: '20px', 
+                    display: 'flex', 
+                    flexDirection: 'row', 
+                    alignItems: 'center' 
+                }}>
                     <Box sx={{ marginRight: '10px' }}>{icon}</Box>
                     <Box>{title}</Box>
                 </Box>
-                <Box sx={{ padding: '15px' }}>{pchart}</Box>
+                <Box sx={{ 
+                    padding: '15px',
+                    height: '300px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    {React.cloneElement(pchart, { isMobile })}
+                </Box>
             </Grid>
 
-            {/* Reviews Section */}
-            <Grid item xs={6} sx={{ display: 'flex', flexDirection: 'column', padding: '30px', overflowY: 'auto', maxHeight: '500px', borderLeft:'0.5px solid'}}>
-                <Box sx={{ marginBottom: '20px', fontWeight: 'bold', fontSize: '20px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          
+            <Grid item xs={12} md={6} sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                padding: { xs: '15px', md: '30px' },
+                overflowY: 'auto',
+                maxHeight: { xs: '400px', md: '500px' }
+            }}>
+                <Box sx={{ 
+                    marginBottom: '20px', 
+                    fontWeight: 'bold', 
+                    fontSize: '20px', 
+                    display: 'flex', 
+                    flexDirection: 'row', 
+                    alignItems: 'center' 
+                }}>
                     <Box sx={{ marginRight: '10px' }}><ReviewsIcon/></Box>
                     <Box>Reviews</Box>
                 </Box>
-                <Box sx={{ padding: '15px' }} className="py-5 px-10">
+                <Box sx={{ 
+                    padding: { xs: '5px', md: '15px' },
+                    className: "py-5 px-10"
+                }}>
                     {reviews.length > 0 ? (
                         reviews.map((review) => (
                             <div key={review.id} className="mb-4 p-4 bg-white rounded shadow-lg">
@@ -61,10 +114,28 @@ export default function OwnerChartBox2({ title, icon, pchart }) {
                             </div>
                         ))
                     ) : (
-                        <p className="text-sm text-gray-500">No reviews available.</p>
+                        <Box sx={{ 
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderRadius: '8px',
+                            textAlign: 'center',
+                            marginTop: '25px'
+                          }}>
+                            <InfoOutlinedIcon sx={{ fontSize: 20, color: '#6c757d', mb: 1}} />
+                            <Typography  sx={{ color: '#6c757d', fontSize:15 }}>
+                              No reviews added yet
+                            </Typography>
+                          </Box>
                     )}
                 </Box>
             </Grid>
         </Grid>
     );
 }
+
+
+
+
+

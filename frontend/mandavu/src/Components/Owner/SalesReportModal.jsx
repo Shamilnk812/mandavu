@@ -15,20 +15,26 @@ const DownloadSalesReoport = ({ isOpen, onClose, venueId }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleGenerateReport = async () => {
-        setIsLoading(true);
+       
         console.log('form submitted with values', startDate, endDate)
         if (!startDate || !endDate) {
-            toast.error("Please select both start and end dates");
+            toast.warning("Please select start date");
+            return;
+        }
+        if (new Date(startDate) > new Date(endDate)) {
+            toast.warning("Please enter a valid start date");
             return;
         }
 
-        try {
 
+        try {
+            setIsLoading(true);
             const response = await axiosOwnerInstance.post("generate-sales-report/",
                 { start_date: startDate, end_date: endDate, venue_id: venueId },
                 { responseType: "blob" }
             )
-
+            
+            console.log(response.data)
             // Create a link to download the PDF
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement("a");
@@ -41,7 +47,7 @@ const DownloadSalesReoport = ({ isOpen, onClose, venueId }) => {
             toast.success("Sales report downloaded successfully!");
             onClose();
         } catch (error) {
-            toast.error("Failed to generate report");
+            toast.error("Failed to generate report or No records found for the selected date range");
         }finally{
             setIsLoading(false);
         }

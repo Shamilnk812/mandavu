@@ -1,9 +1,14 @@
 import { BarChart } from '@mui/x-charts/BarChart';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import moment from 'moment'; // Import moment.js for date manipulation
 import { useSelector } from 'react-redux';
 import { axiosOwnerInstance } from '../../Utils/Axios/axiosInstance';
+import { Grid, Box } from "@mui/material"
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 
 
@@ -12,8 +17,11 @@ export default function OwnerRevenueChart() {
   const [revenueData, setRevenueData] = useState([]);
   const [xLabels, setXLabels] = useState([]);
   const [selectedView, setSelectedView] = useState('monthly');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+  const [loading, setLoading]  = useState(false);
   
   const fetchRevenueData = async (view) => {
+    setLoading(true)
     try {
       const response = await axiosOwnerInstance.get('get-all-revenue', {
         params: { 
@@ -83,6 +91,8 @@ export default function OwnerRevenueChart() {
       setRevenueData(formattedData);
     } catch (error) {
       console.error('Error fetching revenue data:', error);
+    }finally{
+      setLoading(false);
     }
   };
 
@@ -94,23 +104,102 @@ export default function OwnerRevenueChart() {
     setSelectedView(view);
   };
 
-  return (
-    <div>
-      <BarChart
-        width={800}
-        height={400}
-        series={[
-          { data: revenueData, label: 'Revenue', id: 'revenueId' },
-        ]}
-        xAxis={[{ data: xLabels, scaleType: 'band' }]}
-      />
-      <div className='flex justify-center mt-10 gap-2'>
-        <button className='text-white bg-purple-600 py-1 px-4 rounded-sm hover:bg-purple-800 transition duration-300' onClick={() => handleViewChange('daily')}>Daily</button>
-        <button className='text-white bg-purple-600 py-1 px-4 rounded-sm hover:bg-purple-800 transition duration-300' onClick={() => handleViewChange('weekly')}>Weekly</button>
-        <button className='text-white bg-purple-600 py-1 px-4 rounded-sm hover:bg-purple-800 transition duration-300'  onClick={() => handleViewChange('monthly')}>Monthly</button>
-        <button className='text-white bg-purple-600 py-1 px-4 rounded-sm hover:bg-purple-800 transition duration-300' onClick={() => handleViewChange('yearly')}>Yearly</button>
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
+
+  if (loading) {
+    return (
+      <div style={{ 
+        width: '100%', 
+        height: isMobile ? '250px' : '350px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}>
+        <CircularProgress />
       </div>
+    );
+  }
+
+
+  if (revenueData.length === 0) {
+    return (
+      <div style={{ 
+        width: '100%', 
+        height: isMobile ? '250px' : '350px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: '8px',
+        padding: '20px',
+        textAlign: 'center'
+      }}>
+        <Box sx={{ 
+          fontSize: isMobile ? '1rem' : '1.2rem',
+          color: '#6c757d',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px'
+        }}>
+          <InfoOutlinedIcon fontSize={isMobile ? 'medium' : 'large'} />
+          No revenue records found
+        </Box>
+        <Typography variant="body2" sx={{ 
+          color: '#adb5bd',
+          marginBottom: '20px',
+          maxWidth: '300px'
+        }}>
+          Your revenue data will appear here once bookings are made.
+        </Typography>
+      </div>
+    );
+  }
+
+
+  return (
+    <div style={{ width: '100%', height: isMobile ? '250px' : '350px' }}>
+    <BarChart
+      width={isMobile ? window.innerWidth - 60 : undefined} // Adjust for mobile
+      height={isMobile ? 250 : 370}
+      series={[
+        { data: revenueData, label: 'Revenue', id: 'revenueId' },
+      ]}
+      xAxis={[{ data: xLabels, scaleType: 'band' }]}
+      margin={{
+        left: isMobile ? 30 : 50,
+        right: isMobile ? 10 : 30,
+        top: isMobile ? 10 : 20,
+        bottom: isMobile ? 40 : 60,
+      }}
+      sx={{
+        '& .MuiChartsAxis-tickLabel': {
+          fontSize: isMobile ? '0.7rem' : '0.8rem',
+        },
+        '& .MuiChartsAxis-label': {
+          fontSize: isMobile ? '0.8rem' : '1rem',
+        }
+      }}
+    />
+    <div className='flex justify-center mt-4 md:mt-10 gap-2 flex-wrap'>
+      <button className='text-white bg-purple-600 py-1 px-2 md:px-4 rounded-sm hover:bg-purple-800 transition duration-300 text-sm md:text-base' 
+        onClick={() => handleViewChange('daily')}>Daily</button>
+      <button className='text-white bg-purple-600 py-1 px-2 md:px-4 rounded-sm hover:bg-purple-800 transition duration-300 text-sm md:text-base' 
+        onClick={() => handleViewChange('weekly')}>Weekly</button>
+      <button className='text-white bg-purple-600 py-1 px-2 md:px-4 rounded-sm hover:bg-purple-800 transition duration-300 text-sm md:text-base'  
+        onClick={() => handleViewChange('monthly')}>Monthly</button>
+      <button className='text-white bg-purple-600 py-1 px-2 md:px-4 rounded-sm hover:bg-purple-800 transition duration-300 text-sm md:text-base' 
+        onClick={() => handleViewChange('yearly')}>Yearly</button>
     </div>
+  </div>
   );
 }
 

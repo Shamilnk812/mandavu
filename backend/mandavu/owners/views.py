@@ -1019,6 +1019,9 @@ class GenerateSalesReport(APIView):
             all_booking = get_bookings_in_date_range(venue_id=venue_id ,start_date = start_date, end_date=end_date, is_descending_order=False)   
             
             
+            if not all_booking:
+                return Response({"error": "No records found for the selected date range."}, status=400)
+            
             buffer = BytesIO()
             doc = SimpleDocTemplate(buffer, pagesize=A3)
             elements = []
