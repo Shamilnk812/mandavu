@@ -20,97 +20,54 @@ export default function OtpVerification() {
   const [loading, setLoading] = useState(false);
   const [resendOtpLoading, setResendOtpLoading] = useState(false);
   
+  
+  
+  
+  
 
   useEffect(() => {
     if (!email) {
-      navigate("/owner/register-step-1");
-    }
-
-    const now = Math.floor(Date.now() / 1000);
-    const storedTime = localStorage.getItem("otpTimer");
-
-    if (storedTime) {
-      const elapsedTime = now - parseInt(storedTime, 10);
-      const remainingTime = Math.max(120 - elapsedTime, 0);
-
-      setTimeLeft(remainingTime);
-
-      if (remainingTime === 0) {
-        setIsResendVisible(true);
-        localStorage.removeItem("otpTimer");
-      } else {
-        setIsResendVisible(false);
-      }
-    } else {
-      localStorage.setItem("otpTimer", now.toString());
-      setTimeLeft(120);
+      navigate('/owner/register-step-1');
     }
   }, [email, navigate]);
+  
+  console.log('emillll',email)
+  
+  
+  useEffect(()=> {
+    const storedTime= localStorage.getItem('otpTimer')
+    const now = Math.floor(Date.now() / 1000)
+    if (storedTime){
+      const elapsedTime = now - parseInt(storedTime, 10);
+      const remainingTime = Math.max(120 - elapsedTime, 0);
+      setTimeLeft(remainingTime);
+      if (remainingTime === 0){
+        setIsResendVisible(true);
+      }
+    }else{
+      localStorage.setItem('otpTimer', now.toString());
+      setTimeLeft(120);
+    }
+  },[])
+  
 
-  useEffect(() => {
-    if (timeLeft > 0) {
-      const timer = setInterval(() => {
+
+  
+  useEffect(()=> {
+    if (timeLeft> 0){
+      const timer = setInterval(()=> {
         setTimeLeft((prevTime) => {
-          if (prevTime > 1) {
-            return prevTime - 1;
-          } else {
-            clearInterval(timer);
-            setIsResendVisible(true);
-            localStorage.removeItem("otpTimer");
-            return 0;
-          }
+          const newTime = prevTime -1;
+          localStorage.setItem('otpTimer', (Math.floor(Date.now() / 1000) - (120 - newTime).toString()));
+          return newTime
         });
-      }, 1000);
-
-      return () => clearInterval(timer);
+      },1000)
+      return ()=> clearInterval(timer)
+    }else{
+      setIsResendVisible(true);
+      localStorage.removeItem('otpTimer')
     }
   }, [timeLeft]);
-  
-  
-  
-
-  // useEffect(() => {
-  //   if (!email) {
-  //     navigate('/owner/register-step-1');
-  //   }
-  // }, [email, navigate]);
-  
-  // console.log('emillll',email)
-  
-  
-  // useEffect(()=> {
-  //   const storedTime= localStorage.getItem('otpTimer')
-  //   const now = Math.floor(Date.now() / 1000)
-  //   if (storedTime){
-  //     const elapsedTime = now - parseInt(storedTime, 10);
-  //     const remainingTime = Math.max(120 - elapsedTime, 0);
-  //     setTimeLeft(remainingTime);
-  //     if (remainingTime === 0){
-  //       setIsResendVisible(true);
-  //     }
-  //   }else{
-  //     localStorage.setItem('otpTimer', now.toString());
-  //   }
-  // },[])
-  
-
-
-  
-  // useEffect(()=> {
-  //   if (timeLeft> 0){
-  //     const timer = setInterval(()=> {
-  //       setTimeLeft((prevTime) => {
-  //         const newTime = prevTime -1;
-  //         localStorage.setItem('otpTimer', (Math.floor(Date.now() / 1000) - (120 - newTime).toString()));
-  //         return newTime
-  //       });
-  //     },1000)
-  //     return ()=> clearInterval(timer)
-  //   }else{
-  //     setIsResendVisible(true);
-  //     localStorage.removeItem('otpTimer')
-  //   }
-  // }, [timeLeft]);
 
 
 
