@@ -19,6 +19,7 @@ export default function OtpVerification() {
   const [isResendVisible, setIsResendVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [resentOtpLoading, setResentOtpLoading] = useState(false)
+  const [forceRender, setForceRender] = useState(false);
 
 
   useEffect(()=> {
@@ -43,6 +44,16 @@ export default function OtpVerification() {
       localStorage.setItem('otpTimer', now.toString());
     }
   },[]);
+
+  
+
+  useEffect(() => {
+    const tempTimer = setTimeout(() => {
+      setForceRender(prev => !prev);
+    }, 2000);
+    console.log('renderd')
+    return () => clearTimeout(tempTimer);
+  }, []); // Runs only on mount
 
 
 

@@ -19,6 +19,7 @@ export default function OtpVerification() {
   const [isResendVisible, setIsResendVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [resendOtpLoading, setResendOtpLoading] = useState(false);
+  const [forceRender, setForceRender] = useState(false);
   
   
   
@@ -49,6 +50,15 @@ export default function OtpVerification() {
       setTimeLeft(120);
     }
   },[])
+
+
+  useEffect(() => {
+    const tempTimer = setTimeout(() => {
+      setForceRender(prev => !prev);
+    }, 2000);
+
+    return () => clearTimeout(tempTimer);
+  }, []); // Runs only on mount
   
 
 
