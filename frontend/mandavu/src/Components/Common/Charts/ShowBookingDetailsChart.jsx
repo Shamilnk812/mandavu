@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 
 
 export default function ShowBookingStatusChart({bookingStatus}) {
-  const hasData = bookingStatus && bookingStatus.length > 0 ;
+  const hasData = bookingStatus.some(item => item.value > 0);
   const chartData = bookingStatus.map((status,index)=> ({
     id: index,
     value:status.value,

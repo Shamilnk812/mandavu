@@ -11,7 +11,7 @@ class NotificationListView(APIView) :
 
     def get(self, request, *args, **kwargs):
         user = request.user
-        notifications = Notification.objects.filter(user=user).order_by('-timestamp')
+        notifications = Notification.objects.filter(user=user) .exclude(message2__type="chat_notification") .order_by('-timestamp')
         serializer = NotificationSerializer(notifications, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     

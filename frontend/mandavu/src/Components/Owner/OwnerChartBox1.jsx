@@ -145,8 +145,8 @@ export default function OwnerChartBox1({ title, icon, bchart, totalRevenue, main
               <DownloadIcon /> Sales Report
             </button>
           </Box>
-
-          <Box sx={{
+          {/* set maintanance  */}
+          {/* <Box sx={{
             display: "flex",
             justifyContent: 'center',
             marginTop: { xs: '15px', md: '30px' }
@@ -168,7 +168,8 @@ export default function OwnerChartBox1({ title, icon, bchart, totalRevenue, main
                 Remove Maintenance
               </button>
             )}
-          </Box>
+          </Box> */}
+
         </Grid>
       </Grid>
 

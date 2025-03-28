@@ -142,7 +142,7 @@ class PasswordResetRequestSerializer(serializers.ModelSerializer) :
 
     def validate(self, attrs):
         email= attrs.get('email')
-        if User.objects.filter(email=email).explain() :
+        if User.objects.filter(email=email).exists() :
             user= User.objects.get(email=email)
             uidb64=urlsafe_base64_encode(smart_bytes(user.id))
             token=PasswordResetTokenGenerator().make_token(user)

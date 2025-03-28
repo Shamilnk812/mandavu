@@ -33,8 +33,11 @@ const CommonNotification = () => {
       const data = JSON.parse(event.data);
       console.log('Received message:', data);
 
-      setNotifications((prevNotifications) => [data, ...prevNotifications]);
-      updateUnreadCount([data, ...notifications]);
+      if (data.type !== 'chat_notification') {
+        console.log(data.type,'kjkjjlkjlk')
+        setNotifications((prevNotifications) => [data, ...prevNotifications]);
+        updateUnreadCount([data, ...notifications]);
+      }
 
 
       const notification = {
@@ -69,7 +72,7 @@ const CommonNotification = () => {
       });
       const data = await response.json();
       setNotifications(data);
-      // console.log("this is the data", data)
+      console.log("this is the data", data)
       updateUnreadCount(data); // Update the unread count after fetching notifications
       setLoading(false);
     } catch (error) {
@@ -92,7 +95,7 @@ const CommonNotification = () => {
         },
         body: JSON.stringify({ user_id }),
       });
-      fetchNotifications(); // Refetch to get updated notifications
+      fetchNotifications(); 
     } catch (error) {
       console.error('Error marking notifications as read:', error);
     }
@@ -104,7 +107,7 @@ const CommonNotification = () => {
 
   const toggleDropdown = () => {
     if (dropdownOpen) {
-      markAsRead(); // Mark as read when closing the dropdown
+      markAsRead(); 
     }
     setDropdownOpen(!dropdownOpen);
   };

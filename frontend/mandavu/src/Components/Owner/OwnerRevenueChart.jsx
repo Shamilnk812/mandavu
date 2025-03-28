@@ -96,6 +96,8 @@ export default function OwnerRevenueChart() {
     }
   };
 
+  console.log('this is reveneu data',revenueData)
+
   useEffect(() => {
     fetchRevenueData(selectedView);
   }, [selectedView]);
@@ -112,7 +114,8 @@ export default function OwnerRevenueChart() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
+
+  const isEmptyRevenue = revenueData.length === 0 || revenueData.every(value => value === 0);
 
   if (loading) {
     return (
@@ -129,7 +132,7 @@ export default function OwnerRevenueChart() {
   }
 
 
-  if (revenueData.length === 0) {
+  if (isEmptyRevenue) {
     return (
       <div style={{ 
         width: '100%', 

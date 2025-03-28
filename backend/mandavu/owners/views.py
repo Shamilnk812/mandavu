@@ -14,6 +14,7 @@ from .models import *
 from users.models import Booking
 from .utils import *
 import base64
+from django.conf import settings
 from django.core.files.base import ContentFile
 from users.utils import decrypt_otp
 from django.db.models.functions import TruncDay, TruncWeek, TruncMonth, TruncYear
@@ -521,7 +522,8 @@ class OwnerPasswordResetConfirmView(GenericAPIView):
             if not PasswordResetTokenGenerator().check_token(user, token) :
                 return Response({'message':'token is invalid or has expired'}, status=status.HTTP_401_UNAUTHORIZED)
             # return Response({'success':True,'message':'credentials is valid','uidb64':uidb64,'token':token},status=status.HTTP_200_OK)
-            reset_url = f"http://localhost:5173/owner/set-new-passwod?uidb64={uidb64}&token={token}"
+            reset_url = f"{settings.BASE_FRONT_END_URL}/owner/set-new-passwod?uidb64={uidb64}&token={token}"
+            # reset_url = f"http://localhost:5173/owner/set-new-passwod?uidb64={uidb64}&token={token}"
             return redirect(reset_url)
 
         except DjangoUnicodeDecodeError :

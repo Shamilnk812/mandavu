@@ -105,7 +105,7 @@ export default function ContactUs() {
                                     <input
                                         type="text"
                                         id="user_name"
-                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-teal-600 focus:border-teal-600"
+                                        className="w-full border border-gray-300 outline-none rounded-lg px-4 py-2 focus:ring-gray-400 focus:border-gray-400"
                                         placeholder="Enter your name"
                                         value={formik.values.user_name}
                                         onChange={formik.handleChange}
@@ -120,7 +120,7 @@ export default function ContactUs() {
                                     <input
                                         type="email"
                                         id="email"
-                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-teal-600 focus:border-teal-600"
+                                        className="w-full border border-gray-300 outline-none rounded-lg px-4 py-2 focus:ring-gray-400 focus:border-gray-400"
                                         placeholder="Enter your email"
                                         value={formik.values.email}
                                         onChange={formik.handleChange}
@@ -135,7 +135,7 @@ export default function ContactUs() {
                                     <label className="block text-gray-700 mb-1" htmlFor="message">Message</label>
                                     <textarea
                                         id="message"
-                                        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-teal-600 focus:border-teal-600"
+                                        className="w-full border border-gray-300 outline-none rounded-lg px-4 py-2 focus:ring-gray-400 focus:border-gray-400"
                                         rows="5"
                                         placeholder="Enter your message"
                                         value={formik.values.message}

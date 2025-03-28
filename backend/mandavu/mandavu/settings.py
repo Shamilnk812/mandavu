@@ -40,8 +40,10 @@ CIPHER_SUITE = Fernet(ENCRYPTION_KEY)
 
 
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
-# SITE_URL="https://mandavu.online/user/show-booking-details"
-SITE_URL="http://localhost:5173/user/show-booking-details"
+SITE_URL="https://mandavu.online/user/show-booking-details"
+BASE_FRONT_END_URL="https://mandavu.online"
+# SITE_URL="http://localhost:5173/user/show-booking-details"
+# BASE_FRONT_END_URL="http://localhost:5173"
 stripe.api_key = STRIPE_SECRET_KEY
 STRIPE_SECRET_WEBHOOK=env('STRIPE_SECRET_WEBHOOK')
 
@@ -52,7 +54,7 @@ DEBUG = env('DEBUG')
 
 CORS_ORIGIN_ALLOW_ALL=True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mandavu.online', 'www.mandavu.online', 'mandavu.vercel.app', '13.60.224.65', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -186,9 +188,11 @@ SIMPLE_JWT = {
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Adjust this to match your frontend's URL
-    "http://127.0.0.1:5173",  # Additional URLs as needed for your development setup
-    # Add more origins as needed, or '*' to allow all origins
+    "https://mandavu.vercel.app",
+    "https://mandavu.online",
+    "https://www.mandavu.online",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
 
 # CORS_ALLOW_ALL_ORIGINS = True
@@ -272,6 +276,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

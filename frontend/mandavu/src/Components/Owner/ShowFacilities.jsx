@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import AddFacilitySchema from "../../Validations/Owner/AddFacilitySchema";
 import EditFacilitModal from "./EditFacilityModal";
 
-export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blockFacilities, unblockFacilities, facilityAddingModal }) {
+export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blockFacilities, unblockFacilities, facilityAddingModal ,loading}) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedFacility, setSelectedFacility] = useState(null);
 
@@ -116,7 +116,7 @@ export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blo
 
 
 
-            <EditFacilitModal isEditModalOpen={isEditModalOpen} handleCloseEditModal={handleCloseEditModal} formik={formik}/>
+            <EditFacilitModal isEditModalOpen={isEditModalOpen} handleCloseEditModal={handleCloseEditModal} formik={formik} loading={loading}/>
         </>
     );
 }

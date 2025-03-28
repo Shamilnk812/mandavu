@@ -25,18 +25,16 @@ export default function ChatLayout() {
     const access = User_token || Owner_token;
     const userId = access ? jwtDecode(access).user_id : null;
     const [selectedChat, setSelectedChat] = useState(null);
-    const [isUserOnline, setIsUserOnline] = useState(null)
+    
 
 
 
 
-
-    const Chat = async ({ id, username, chatRoomId, cWS, isOnline }) => {
+    const Chat = async ({ id, username, chatRoomId, cWS }) => {
         setUser(id);
         setUsername(username);
         setSelectedChat('selected')
-        setIsUserOnline(isOnline)
-        
+       
         // if (cWS.readyState === WebSocket.OPEN) {
         cWS.send(JSON.stringify({
             action: "mark_as_read",
@@ -189,15 +187,7 @@ export default function ChatLayout() {
                                         )}
 
                                     </h1>
-                                    {username && (
-                                        <div className="text-sm ml-auto">
-                                            {isUserOnline ? (
-                                                <span className="text-green-600">• Online</span>
-                                            ) : (
-                                                <span className="text-gray-500">Offline</span>
-                                            )}
-                                        </div>
-                                    )}
+                                    
 
 
                                 </div>

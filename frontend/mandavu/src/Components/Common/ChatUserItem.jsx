@@ -13,7 +13,7 @@ const ChatUserItem = ({ chatRoomId, user, userId, Chat, index, cWS, onlineUsers 
 
     return (
         <button
-            onClick={() => Chat({ id: displayUser.id, username: displayName, chatRoomId: chatRoomId, cWS: cWS, isOnline: isOnline })}
+            onClick={() => Chat({ id: displayUser.id, username: displayName, chatRoomId: chatRoomId, cWS: cWS})}
             className="w-full bg-gray-100 border-b border-gray-300 shadow-lg"
         >
             <li key={index} className="flex items-center p-3 hover:bg-gray-300 hover:shadow-xl cursor-pointer relative">
@@ -26,7 +26,9 @@ const ChatUserItem = ({ chatRoomId, user, userId, Chat, index, cWS, onlineUsers 
                 )}
 
                 <span className="absolute bottom-2 right-3 text-sm">
+                    {isOnline ? <span className="text-green-600">• Online</span> : 
                     <span className="text-gray-500">{FormatLastSeen(user.last_message_timestamp)}</span>
+                    }
                 </span>
 
 

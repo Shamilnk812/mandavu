@@ -13,6 +13,8 @@ import { axiosOwnerInstance } from "../../Utils/Axios/axiosInstance";
 export default function FacilitesManagement () {
     const [facilityList, setFacility] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [addingFacility, setAddingFacility] = useState(false);
+    const [updatingFacility, setUpdateFacility] = useState(false);
     
 
 
@@ -23,6 +25,7 @@ export default function FacilitesManagement () {
         },
         validationSchema:AddFacilitySchema,
         onSubmit: async (values) => {
+            setAddingFacility(true);
             try{
                 const response = await axiosOwnerInstance.post(`add-facility/${venueId}/`,values);
                 toast.success('Facility added successfully ')
@@ -38,11 +41,14 @@ export default function FacilitesManagement () {
                     console.error('An unexpected error occurred', error);
                     toast.error('An unexpected error occurred');
                 }
+            }finally{
+                setAddingFacility(false)
             }
         }
     })
 
     const updateFacility = async (id, updatedValues) => {
+        setUpdateFacility(true);
         try{
             console.log(updatedValues)
             const response = await axiosOwnerInstance.put(`update-facility/${venueId}/`,{...updatedValues, facility_id : id})
@@ -58,6 +64,8 @@ export default function FacilitesManagement () {
                 console.error('An unexpected error occurred', error);
                 toast.error('An unexpected error occurred');
             }
+        }finally{
+            setUpdateFacility(false);
         }
         
     }
@@ -136,6 +144,7 @@ export default function FacilitesManagement () {
                             blockFacilities={blockFacilities} 
                             unblockFacilities={unblockFacilities}
                             facilityAddingModal={handleOpenModal}
+                            loading={updatingFacility}
 
                         />
                     )}
@@ -151,7 +160,9 @@ export default function FacilitesManagement () {
             <AddFacilityModal2 
                 showModal={isModalOpen}
                 handleCloseModal={handleCloseModal}
-                formik={formik}/>
+                formik={formik}
+                loading={addingFacility}
+                />
         </>
     )
 }

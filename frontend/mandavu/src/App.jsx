@@ -2,14 +2,10 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import UserRoute from './Routes/UserRoute'
 import AdminRoute from './Routes/AdminRoute'
 import OwnerRoute from './Routes/OwnerRoute'
-import Dash from './Pages/Common/Dash'
 import { ToastContainer } from 'react-toastify'
 // import { WebSocketProvider } from './Utils/ChatContext/ChatContext'
-import { VideoCallWebSocketProvider } from './Utils/VideoCallContext/VideoCallContext'
-import GlobalVideoCallInvitation from './Utils/VideoCallContext/VideoCallContext'
 import CheckInternetConnection from './Utils/CheckConnection/CheckConnection'
 import NotificationProvider from './Utils/NotificationContext/NotificationContext'
-
 import LandingPage from './Pages/Common/LandingPage'
 
 
@@ -20,24 +16,18 @@ function App() {
 
   return (
     // <CheckInternetConnection>
-      
+
     <div className="min-h-screen bg-customColor7">
       <NotificationProvider>
-     <VideoCallWebSocketProvider>
-
-     {/* <WebSocketProvider> */}
-      <Routes>
-        {/* <Route path='/' element={<Login />} /> */}
-        <Route path='/' element={<LandingPage/>} />
-        <Route path='/user/*' element={<UserRoute />} />
-        <Route path='/owner/*' element={<OwnerRoute />} />
-        <Route path='/admin/*' element={<AdminRoute />} />
-      </Routes> 
-      <GlobalVideoCallInvitation/>
-      {/* </WebSocketProvider> */}
-      </VideoCallWebSocketProvider> 
+        <Routes>
+          {/* <Route path='/' element={<Login />} /> */}
+          <Route path='/' element={<LandingPage />} />
+          <Route path='/user/*' element={<UserRoute />} />
+          <Route path='/owner/*' element={<OwnerRoute />} />
+          <Route path='/admin/*' element={<AdminRoute />} />
+        </Routes>
       </NotificationProvider>
-      
+
       <ToastContainer
         position="bottom-right"
         autoClose={2000}
@@ -50,8 +40,8 @@ function App() {
         pauseOnHover
         theme="light"
       />
-     
-     </div>
+
+    </div>
 
     //  </CheckInternetConnection>
   )

@@ -1,6 +1,7 @@
+import { CircularProgress } from "@mui/material";
 
 
-export default function AddFacilityModal2({ showModal, handleCloseModal, formik }) {
+export default function AddFacilityModal2({ showModal, handleCloseModal, formik , loading}) {
 
     
     if (!showModal) return null;
@@ -58,8 +59,15 @@ export default function AddFacilityModal2({ showModal, handleCloseModal, formik 
                                 ) : null}
                             </div>
                             <div className="flex justify-center pt-4">
-                                <button type="submit" className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300">
-                                    Add
+                                <button 
+                                type="submit" 
+                                disabled={loading}
+                                className={`mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300 ${loading ? 'cursor-not-allowed opacity-70' : ''}`}>
+                                     {loading ? (
+                                        <CircularProgress size={20} style={{ color: 'white' }} />
+                                    ) : (
+                                        'Add'
+                                    )}
                                 </button>
                             </div>
                         </form>

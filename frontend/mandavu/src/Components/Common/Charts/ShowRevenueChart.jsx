@@ -124,8 +124,8 @@ export default function ShowRevenueChart() {
   }
 
 
-
-  if (revenueData.length === 0) {
+  const isEmptyRevenue = revenueData.length === 0 || revenueData.every(value => value === 0);
+  if (isEmptyRevenue) {
     return (
       <div style={{
         width: '100%',

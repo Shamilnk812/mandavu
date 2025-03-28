@@ -36,6 +36,10 @@ export default function ChatUsersList({ Chat, selectedChat }) {
             const data = JSON.parse(event.data);
             console.log('user staussssss', data)
 
+            if (chatUsers.length === 0) {
+                getChatUsers();
+            }
+
             if (data.type === "unread_update") {
                 const { sender_id, chat_room_id, unread_count, timestamp } = data;
 
@@ -97,21 +101,23 @@ export default function ChatUsersList({ Chat, selectedChat }) {
    
 
     useEffect(() => {
-        const getChatUsers = async () => {
-            if (userId) {
-                try {
-                    const response = await axiosChatInstance.get(
-                        `chat_users/${userId}/`
-                    );
-                    setChatUsers(response.data);
-                    console.log('all user', response.data)
-                } catch (error) {
-                    console.error("Error while fetching users", error);
-                }
-            }
-        };
+        
         getChatUsers();
     }, [userId]);
+
+    const getChatUsers = async () => {
+        if (userId) {
+            try {
+                const response = await axiosChatInstance.get(
+                    `chat_users/${userId}/`
+                );
+                setChatUsers(response.data);
+                console.log('all user', response.data)
+            } catch (error) {
+                console.error("Error while fetching users", error);
+            }
+        }
+    };
 
 
 
