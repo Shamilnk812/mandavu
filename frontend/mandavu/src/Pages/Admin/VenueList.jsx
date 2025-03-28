@@ -177,7 +177,7 @@ export default function VenueList() {
 
                                         </td>
                                         <td className="px-6 py-4">
-                                            {venue.created_at}
+                                            {new Date(venue.created_at).toLocaleDateString('en-GB')}
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={venue.is_active ? 'text-green-500' : 'text-red-500'}>

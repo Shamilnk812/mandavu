@@ -106,7 +106,7 @@ export default function UserList() {
                                                 {user.email}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {user.date_joined}
+                                                {new Date(user.date_joined).toLocaleDateString('en-GB')}
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className={user.is_active ? 'text-green-500' : 'text-red-500'}>
