@@ -26,7 +26,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 import json
 from datetime import datetime
-from django.db.models import Avg,Count,F,FloatField, ExpressionWrapper
+from django.db.models import Avg,Count,F,FloatField, ExpressionWrapper,Q
 from django.db.models.functions import ACos, Cos, Radians, Sin
 from decimal import Decimal
 
@@ -236,20 +236,7 @@ class UserPagination(PageNumberPagination):
             'results': data,
         })
 
-# class AllVenuesListView(GenericAPIView):
-#     serializer_class = VenuesListSerializer
-#     pagination_class = UserPagination
 
-#     def get(self, request):
-#         search_query = request.GET.get('search', '')
-#         queryset = Venue.objects.filter(is_active=False , is_verified=True)
-#         if search_query:
-#             queryset = queryset.filter(convention_center_name__icontains=search_query)
-
-#         paginator = self.pagination_class()
-#         result_page = paginator.paginate_queryset(queryset,request)    
-#         serializer = self.serializer_class(result_page, many=True, context={'request': request})
-#         return paginator.get_paginated_response(serializer.data)
 
 
 class AllVenuesListView(GenericAPIView):
@@ -257,6 +244,7 @@ class AllVenuesListView(GenericAPIView):
     pagination_class = UserPagination
 
     def get(self, request):
+       
         search_query = request.GET.get('search', '')
         dining_seat_count = request.GET.get('dining_seat_count')
         auditorium_seat_count = request.GET.get('auditorium_seat_count')
@@ -265,39 +253,61 @@ class AllVenuesListView(GenericAPIView):
         user_latitude = request.GET.get('latitude')
         user_longitude = request.GET.get('longitude')
 
+
         # Convert user latitude and longitude to Decimal
-        user_latitude = Decimal(user_latitude) if user_latitude else None
-        user_longitude = Decimal(user_longitude) if user_longitude else None
-
-
-        print(dining_seat_count)
-        print(auditorium_seat_count)
+        new_latitude = None
+        new_longitude = None
+        
+        if user_latitude not in [None, '0', '']:
+            new_latitude = Decimal(user_latitude) 
+            
+        
+        if user_longitude not in [None, '0', '']:
+            new_longitude = Decimal(user_longitude) 
+           
         queryset = Venue.objects.filter(is_active=True, is_verified=True,owner__is_active=True )
         if search_query:
-            queryset = queryset.filter(convention_center_name__icontains=search_query)
-        if dining_seat_count:
-            queryset = queryset.filter(dining_seat_count__lte=dining_seat_count)
-        if auditorium_seat_count:
-            queryset = queryset.filter(auditorium_seat_count__lte=auditorium_seat_count)
-        if min_price and max_price:
-            queryset = queryset.filter(price__gte=min_price, price__lte=max_price)    
+            queryset = queryset.filter(
+                Q(convention_center_name__icontains=search_query) |
+                Q(city__icontains=search_query) |
+                Q(state__icontains=search_query) |
+                Q(district__icontains=search_query)
+            )
+                
+    
+        if dining_seat_count  not in [None, '0', ''] :
+            print('iaaadfdaf')
+            new_dining_seat_count = int(dining_seat_count)
+            queryset = queryset.filter(dining_seat_count__lte=new_dining_seat_count)
+            print(queryset)
 
+        if auditorium_seat_count  not in [None, '0', ''] :
+            print('asdkfa')
+            new_auditorium_seat_count = int(auditorium_seat_count)
+            queryset = queryset.filter(auditorium_seat_count__lte=new_auditorium_seat_count)
+              
+        if min_price not in [None, ''] and max_price not in [None, '0', '']:
+            new_min = int(min_price)
+            new_max = int(max_price)
+            queryset = queryset.filter(price__gte=new_min, price__lte=new_max)   
+            
 
-        if user_latitude is not None and user_longitude is not None:
+        if new_latitude is not None  and new_longitude is not None :
             # Distance calculation 
             queryset = queryset.annotate(
                 distance=ExpressionWrapper(
                     6371 * ACos(
-                        Cos(Radians(user_latitude)) *
+                        Cos(Radians(new_latitude)) *
                         Cos(Radians(F('latitude'))) *
-                        Cos(Radians(F('longitude')) - Radians(user_longitude)) +
-                        Sin(Radians(user_latitude)) *
+                        Cos(Radians(F('longitude')) - Radians(new_longitude)) +
+                        Sin(Radians(new_latitude)) *
                         Sin(Radians(F('latitude')))
                     ),
                     output_field=FloatField()
                 )
             ).order_by('distance')    
-
+           
+           
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(queryset, request)
         serializer = self.serializer_class(result_page, many=True, context={'request': request})
@@ -312,6 +322,7 @@ class SingleVenueDetailsView(GenericAPIView) :
         venue = get_object_or_404(Venue, id=vid)
         serializer = self.serializer_class(venue, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
     
 
 class SingleVenueEventsDetails(GenericAPIView) :

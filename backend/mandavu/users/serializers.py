@@ -200,9 +200,9 @@ class VenuesListSerializer(serializers.ModelSerializer) :
 
     class Meta:
         model = Venue
-        fields = ['id','convention_center_name','short_description', 'price', 'images', 'district', 'city', 'address','state','is_under_maintenance','maintenance_start_date','maintenance_end_date']
-
-
+        fields = ['id','convention_center_name','short_description', 'price', 'images', 'district', 'city', 'address','state', 'dining_seat_count', 'auditorium_seat_count', 'price', 'latitude', 'longitude','is_under_maintenance','maintenance_start_date','maintenance_end_date']
+  
+ 
 class SingleVenueDetailsSerializer(serializers.ModelSerializer) :
     images = BannerDetailsSerializer(many=True, read_only=True)
     facilities = GetFacilitiesSerializer(many=True, read_only=True)

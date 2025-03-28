@@ -17,6 +17,8 @@ import FooterCmp from '../../Components/User/Footer';
 import toPascalCase from '../../Utils/Extras/ConvertToPascalCase';
 import LoadingAnimation from '../../Components/Common/LoadingAnimation';
 import PaginationCmp from '../../Components/Admin/PaginationCmp';
+import { useSelector } from 'react-redux';
+
 
 
 export default function ShowAllVenues() {
@@ -30,7 +32,7 @@ export default function ShowAllVenues() {
   // const [priceRange, setPriceRange] = useState([0, 10000]); // Example range
   const [priceRange, setPriceRange] = useState([0, 0]);
   const [loading, setLoading] = useState(false)
-
+  const userLocation = useSelector((state) => state.user.userLocation);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
 
 
@@ -46,12 +48,24 @@ export default function ShowAllVenues() {
 
 
   useEffect(() => {
+    const { latitude, longitude } = userLocation;
     if (debouncedSearchQuery.trim() !== ""  || searchQuery === "") {
-      fetchVenuesList();
+      fetchVenuesList({
+        latitude:latitude,
+        longitude:longitude,
+        search: debouncedSearchQuery,
+        page: currentPage,
+      });
     }
   }, [debouncedSearchQuery, currentPage]);
 
-
+  
+  const handleSearchFunc = ()=> {
+    fetchVenuesList( {
+      search: searchQuery,
+      page: currentPage,
+    })
+  }
 
   const scrollVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -67,20 +81,17 @@ export default function ShowAllVenues() {
     setPriceRange(values);
   };
 
+
+
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const fetchVenuesList = async () => {
+  const fetchVenuesList = async (params) => {
     setLoading(true)
     try {
-      const response = await axiosUserInstance.get(`venues-list/`, {
-        params: {
-          search: debouncedSearchQuery,
-          // search: searchQuery,
-          page: currentPage,
-        },
-      });
+      const response = await axiosUserInstance.get(`venues-list/`, {params})
       setVenuesList(response.data.results);
       console.log(response.data.results)
       setTotalPages(response.data.total_pages);
@@ -93,47 +104,36 @@ export default function ShowAllVenues() {
   };
 
 
-  const fetchFilteredVenues = async () => {
+  const handleFilterFunc = ()=> {
     if (
-      !diningSeatCount && // diningSeatCount is 0 or empty
-      !auditoriumSeatCount && // auditoriumSeatCount is 0 or empty
-      (priceRange[0] === 0) && // min price is default (assuming 0 or 1000 as default)
-      (priceRange[1] === 0) // max price is default (assuming 1000000 as default)
+      !diningSeatCount &&
+      !auditoriumSeatCount && 
+      (priceRange[0] === 0) && 
+      (priceRange[1] === 0) 
     ) {
-      // Show a toast error if all filters are empty
+      
       toast.warn('Please fill in at least one filter before applying!');
-      return; // Prevent the API call
+      return; 
     }
-    try {
-      const response = await axiosUserInstance.get(`venues-list/`, {
-        params: {
-          search: searchQuery,
-          page: currentPage,
-          dining_seat_count: diningSeatCount,
-          auditorium_seat_count: auditoriumSeatCount,
-          min_price: priceRange[0],
-          max_price: priceRange[1],
-        },
-      });
-      setVenuesList(response.data.results);
-      setTotalPages(response.data.total_pages);
-      console.log(response.data);
-    } catch (error) {
-      console.error('fetching error', error);
-    }
-  };
+    const params = {
+      page: currentPage,
+      dining_seat_count: diningSeatCount,
+      auditorium_seat_count: auditoriumSeatCount,
+      min_price: priceRange[0],
+      max_price: priceRange[1],
+    };
+    console.log("Filter Params:", params);
 
 
-  // const handleSearchChange = (e) => {
-  //   setSearchQuery(e.target.value);
-  // };
+    fetchVenuesList(params).then(() => {
+      // Reset filter values after fetching data
+      setDiningSeatCount(0);
+      setAuditoriumSeatCount(0);
+      setPriceRange([0, 0]);
+    });
+  }
 
-  // useEffect(() => {
-
-  //   fetchVenuesList();
-  // }, [searchQuery, currentPage]);
-
-
+  
 
   if (loading) {
     return <LoadingAnimation />
@@ -159,14 +159,17 @@ export default function ShowAllVenues() {
               <TuneRoundedIcon />
             </button>
             <div className="flex-1 flex justify-center">
+             
               <input
                 type="text"
                 placeholder="Search..."
-                className="border w-2/3 sm:w-1/2 rounded-lg outline-teal-500 py-2 px-4"
+                className="border w-2/3 sm:w-1/2 rounded-lg outline-teal-700 py-2 px-4"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 // onChange={handleSearchChange}
               />
+             
+            
             </div>
           </div>
 
@@ -229,7 +232,8 @@ export default function ShowAllVenues() {
 
               {/* Apply Button */}
               <button
-                onClick={fetchFilteredVenues}
+                // onClick={fetchFilteredVenues}
+                onClick={handleFilterFunc}
                 className="py-2 px-4 bg-teal-600 text-white rounded hover:bg-teal-700"
               >
                 Apply
@@ -238,7 +242,7 @@ export default function ShowAllVenues() {
           )}
 
 
-          <motion.div
+          <div
             className={`grid grid-cols-1 px-2 py-10 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full ${isSidebarOpen ? 'ml-4' : ''}`}
             initial="hidden"
             whileInView="visible"
@@ -283,7 +287,7 @@ export default function ShowAllVenues() {
                 </div>
               ))
             )}
-          </motion.div>
+          </div>
         </div>
 
 
