@@ -19,12 +19,8 @@ export default function OtpVerification() {
   const [isResendVisible, setIsResendVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [resendOtpLoading, setResendOtpLoading] = useState(false);
-  const [forceRender, setForceRender] = useState(false);
-  
-  
-  
-  
-  
+
+    
 
   useEffect(() => {
     if (!email) {
@@ -33,51 +29,50 @@ export default function OtpVerification() {
   }, [email, navigate]);
   
   console.log('emillll',email)
-  
-  
+
   useEffect(()=> {
-    const storedTime= localStorage.getItem('otpTimer')
-    const now = Math.floor(Date.now() / 1000)
-    if (storedTime){
-      const elapsedTime = now - parseInt(storedTime, 10);
-      const remainingTime = Math.max(120 - elapsedTime, 0);
-      setTimeLeft(remainingTime);
-      if (remainingTime === 0){
-        setIsResendVisible(true);
-      }
+    if(timeLeft> 0){
+      const timer = setTimeout(()=> setTimeLeft(timeLeft - 1), 1000);
+      return ()=> clearTimeout(timer)
     }else{
-      localStorage.setItem('otpTimer', now.toString());
-      setTimeLeft(120);
+      setIsResendVisible(true)
     }
-  },[])
-
-
-  useEffect(() => {
-    const tempTimer = setTimeout(() => {
-      setForceRender(prev => !prev);
-    }, 2000);
-
-    return () => clearTimeout(tempTimer);
-  }, []); // Runs only on mount
+  },[timeLeft]);
   
+  
+  // useEffect(()=> {
+  //   const storedTime= localStorage.getItem('otpTimer')
+  //   const now = Math.floor(Date.now() / 1000)
+  //   if (storedTime){
+  //     const elapsedTime = now - parseInt(storedTime, 10);
+  //     const remainingTime = Math.max(120 - elapsedTime, 0);
+  //     setTimeLeft(remainingTime);
+  //     if (remainingTime === 0){
+  //       setIsResendVisible(true);
+  //     }
+  //   }else{
+  //     localStorage.setItem('otpTimer', now.toString());
+  //     setTimeLeft(120);
+  //   }
+  // },[])
 
 
   
-  useEffect(()=> {
-    if (timeLeft> 0){
-      const timer = setInterval(()=> {
-        setTimeLeft((prevTime) => {
-          const newTime = prevTime -1;
-          localStorage.setItem('otpTimer', (Math.floor(Date.now() / 1000) - (120 - newTime).toString()));
-          return newTime
-        });
-      },1000)
-      return ()=> clearInterval(timer)
-    }else{
-      setIsResendVisible(true);
-      localStorage.removeItem('otpTimer')
-    }
-  }, [timeLeft]);
+  // useEffect(()=> {
+  //   if (timeLeft> 0){
+  //     const timer = setInterval(()=> {
+  //       setTimeLeft((prevTime) => {
+  //         const newTime = prevTime -1;
+  //         localStorage.setItem('otpTimer', (Math.floor(Date.now() / 1000) - (120 - newTime).toString()));
+  //         return newTime
+  //       });
+  //     },1000)
+  //     return ()=> clearInterval(timer)
+  //   }else{
+  //     setIsResendVisible(true);
+  //     localStorage.removeItem('otpTimer')
+  //   }
+  // }, [timeLeft]);
 
 
 
