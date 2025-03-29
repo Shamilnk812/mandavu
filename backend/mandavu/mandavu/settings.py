@@ -40,8 +40,8 @@ CIPHER_SUITE = Fernet(ENCRYPTION_KEY)
 
 
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
-SITE_URL="https://mandavu.online/user/show-booking-details"
-BASE_FRONT_END_URL="https://mandavu.online"
+SITE_URL="https://mandavu.vercel.app/user/show-booking-details"
+BASE_FRONT_END_URL="https://mandavu.vercel.app"
 # SITE_URL="http://localhost:5173/user/show-booking-details"
 # BASE_FRONT_END_URL="http://localhost:5173"
 stripe.api_key = STRIPE_SECRET_KEY

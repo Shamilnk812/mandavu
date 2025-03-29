@@ -79,7 +79,7 @@ export default function AdminViewAllBookings() {
                         <h2 className="text-xl font-semibold">All Bookings</h2>
                         <form onSubmit={handleSearch} className="flex gap-4">
                             <div className="flex flex-col">
-                                <label htmlFor="startDate" className="mb-1 text-gray-800">Starting Date</label>
+                                <label htmlFor="startDate" className="mb-1 text-gray-800 text-lg">Starting Date</label>
                                 <input
                                     id="startDate"
                                     type="date"
@@ -89,7 +89,7 @@ export default function AdminViewAllBookings() {
                                 />
                             </div>
                             <div className="flex flex-col">
-                                <label htmlFor="endDate" className="mb-1 text-gray-800">Ending Date</label>
+                                <label htmlFor="endDate" className="mb-1 text-gray-800 text-lg">Ending Date</label>
                                 <input
                                     id="endDate"
                                     type="date"
