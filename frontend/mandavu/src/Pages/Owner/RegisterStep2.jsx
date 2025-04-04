@@ -356,7 +356,7 @@ export default function RegisterationStep2() {
             )}
             <div>
               <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-                price
+                Price
               </label>
               <input
                 id="price"
@@ -375,12 +375,13 @@ export default function RegisterationStep2() {
 
             <div className='col-span-2'>
               <label htmlFor="venue_images" className="block text-sm font-medium text-gray-700">
-                Venue Images
+                Venue Images <span className='text-gray-400'>(Supports JPEG & PNG) </span>
               </label>
               <input
                 id="venue_images"
                 type="file"
                 name="venue_images"
+                accept="image/jpeg, image/png"
                 onChange={handleImageChange}
                 multiple
                 className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
@@ -461,12 +462,13 @@ export default function RegisterationStep2() {
 
             <div>
               <label htmlFor="venue_license" className="block text-sm font-medium text-gray-700">
-                Venue License
+                Venue License <span className='text-gray-400'>(Supports JPEG & PNG) </span>
               </label>
               <input
                 id="venue_license"
                 type="file"
                 name="venue_license"
+                accept="image/jpeg, image/png"
                 onChange={(event) => formik.setFieldValue('venue_license', event.currentTarget.files[0])}
                 className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
               />
@@ -476,7 +478,7 @@ export default function RegisterationStep2() {
             </div>
             <div>
               <label htmlFor="terms_conditions" className="block text-sm font-medium text-gray-700">
-                Terms & Conditions
+                Terms & Conditions <span className='text-gray-400'>(Supports PDF) </span>
               </label>
               <input
                 id="terms_conditions"

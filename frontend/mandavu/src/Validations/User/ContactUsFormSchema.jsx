@@ -3,20 +3,32 @@ import * as Yup from "yup";
 
 const ContactUsFormSchema = Yup.object().shape({
     user_name: Yup.string()
+        // .required("Username is required")
+        // .test(
+        //     "min-characters",
+        //     "username must be a valid one",
+        //     function (value) {
+        //         const alphabeticCharacters = value
+        //             ? value.replace(/[^a-zA-Z]/g, "")
+        //             : "";
+        //         return alphabeticCharacters.length >= 3;
+        //     }
+        // ),
+        .transform((value) => value.trim()) 
         .required("Username is required")
+        .matches(/^[A-Za-z]+$/, "Only alphabets are allowed") 
         .test(
-            "min-characters",
-            "username must be a valid one",
-            function (value) {
-                const alphabeticCharacters = value
-                    ? value.replace(/[^a-zA-Z]/g, "")
-                    : "";
-                return alphabeticCharacters.length >= 3;
-            }
-        ),
-    email: Yup.string().email("Invalid email address").required("The Email field is required"),
+          "min-characters",
+          "username must be at least 3 characters long",
+          (value) => value && value.replace(/[^a-zA-Z]/g, "").length >= 3
+        ),    
+    email: Yup.string()
+    .transform((value) => value.trim())
+    .email("Invalid email address")
+    .required("The Email field is required"),
     message: Yup.string()
-        .required("Enter a valid message")
+    .transform((value) => value.trim()) 
+    .required("Enter a valid message")
 })
 
 

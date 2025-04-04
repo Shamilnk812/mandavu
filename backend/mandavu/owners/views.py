@@ -496,6 +496,7 @@ class VerifyOwerOtp(GenericAPIView) :
 class ResendOwnerOtp(APIView):
     def post(self, request):
         email = request.data.get('email')
+        print('hey')
         try:
             owner = Owner.objects.get(email=email)
             sent_otp_to_owner(email)

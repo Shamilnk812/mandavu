@@ -43,6 +43,11 @@ export default function UserProfile() {
         }, enableReinitialize: true,
         validationSchema: ChangeUserDetailsSchema,
         onSubmit: async (updatedUser) => {
+            if (!formik.dirty) {
+                toast.info("No changes detected"); 
+                return; 
+            }
+
             setUpdatingUserDetails(true);
             try {
                 const response = await axiosUserInstance.put(`update/${userId}/`, updatedUser);

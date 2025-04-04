@@ -66,11 +66,12 @@ export default function AddEventModal({ showModal, handleCloseModal, formik, han
                             ) : null}
                         </div>
                         <div>
-                            <label htmlFor="eventImage" className="block mb-2 text-sm font-medium text-gray-600 ">Upload Image</label>
+                            <label htmlFor="eventImage" className="block mb-2 text-sm font-medium text-gray-600 ">Upload Image <span className="text-gray-500"> (Supports JPEG & PNG) </span></label>
                             <input
                                 type="file"
                                 name="eventImage"
                                 id="eventImage"
+                                accept="image/jpeg, image/png"
                                 className="bg-customColor7 border  text-gray-600 text-sm rounded-lg block w-full p-2.5 "
                                 onChange={handleImageChange}
                             />

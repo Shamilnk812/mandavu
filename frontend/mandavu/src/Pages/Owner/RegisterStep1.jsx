@@ -200,10 +200,11 @@ export default function RegisterationStep1() {
               </div>
 
               <div>
-                <label htmlFor="id_proof" className="block text-sm font-medium text-gray-700">ID Proof</label>
+                <label htmlFor="id_proof" className="block text-sm font-medium text-gray-700">ID Proof  <span className='text-gray-400 '>(JPEG, PNG)</span></label>
                 <input
                   type="file"
                   id="id_proof"
+                  accept="image/jpeg, image/png"
                   name='id_proof'
                   onChange={(event) => formik.setFieldValue('id_proof', event.currentTarget.files[0])}
                   className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"

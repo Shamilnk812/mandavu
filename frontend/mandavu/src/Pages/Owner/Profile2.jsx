@@ -46,7 +46,7 @@ export default function OwnerDetails2() {
 
     useEffect(() => {
         fetchingOwnerAllDetails();
-    }, [ownerId]); // Re-run the effect when ownerId changes
+    }, [ownerId]); 
 
     const handleShowImage = (imageUrl) => {
         setImageToShow(imageUrl);
@@ -59,7 +59,7 @@ export default function OwnerDetails2() {
     };
 
     const handleOpenPDF = (pdfUrl) => {
-        window.open(pdfUrl, '_blank'); // Open PDF in a new tab
+        window.open(pdfUrl, '_blank'); 
     };
 
     const formik1 = useFormik({
@@ -69,18 +69,18 @@ export default function OwnerDetails2() {
             phone: owner?.phone || '',
             phone2: owner?.phone2 || '',
         },
-        enableReinitialize: true, // This ensures that formik re-initializes when owner changes
+        enableReinitialize: true, 
         validationSchema: OwnerDetailsEditSchema,
         onSubmit: async (updatedValues) => {
-            if (!formik1.dirty) { // Check if any field has been modified
-                toast.warning('No changes detected. Please update the form before submitting.');
+            if (!formik1.dirty) { 
+                toast.info('No changes detected. Please update the form before submitting.');
                 return;
             }
             setOwnerDetaislUpdating(true);
             try {
                 await axiosOwnerInstance.put(`update/${ownerId}/`, updatedValues);
                 toast.success('Owner details updated successfully!');
-                fetchingOwnerAllDetails(); // Refresh the details after update
+                fetchingOwnerAllDetails(); 
                 handleCloseOwnerDetailsEditModal();
             } catch (error) {
                 toast.error('Failed to update owner details. Please try again later');
@@ -120,7 +120,7 @@ export default function OwnerDetails2() {
         onSubmit: async (updataedValues)=> {
             console.log('updated values ',updataedValues)
             if (!formik2.dirty) { 
-                toast.warning('No changes detected. Please update venue details before submitting.');
+                toast.info('No changes detected. Please update venue details before submitting.');
                 return;
             }
             setVenueDetailsUpdating(true);

@@ -2,6 +2,7 @@ import { useFormik } from "formik";
 import { useState, useEffect } from "react";
 import AddFacilitySchema from "../../Validations/Owner/AddFacilitySchema";
 import EditFacilitModal from "./EditFacilityModal";
+import { toast } from "react-toastify";
 
 export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blockFacilities, unblockFacilities, facilityAddingModal ,loading}) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -15,6 +16,15 @@ export default function ShowFacilityDetails({ facilityList, onUpdateFacility,blo
         validationSchema: AddFacilitySchema,
         enableReinitialize: true,
         onSubmit: (values) => {
+            console.log('heyy  iam working')
+            if (
+                selectedFacility &&
+                values.facility === selectedFacility.facility &&
+                values.price === selectedFacility.price
+            ) {
+                toast.info("No changes detected");
+                return; 
+            }
             if (selectedFacility) {
                 onUpdateFacility(selectedFacility.id, values)
                 console.log(values,selectedFacility.id);
