@@ -106,6 +106,16 @@ const RegisterationStep2Schema= Yup.object({
   pincode: Yup.string()
     .transform((value) => value.trim()) 
     .matches(pincodePattern, 'Enter a valid pincode')
+    .test(
+      'not-repeated-digit',
+      'Enter a valid pincode',
+      (value) => !/^(\d)\1{5}$/.test(value)
+    )
+    .test(
+      'not-start-with-zero',
+      'Enter a valid pincode',
+      (value) => value && !value.startsWith('0')
+    )
     .required('Pincode is required'),
 
   address: Yup.string()

@@ -32,10 +32,10 @@ const VenueRegisterSchema = Yup.object({
   .test('not-only-numbers', 'Short description cannot contain only numbers', value => !/^\d+$/.test(value))
   .test('no-start-number', 'Short description cannot start with a number', value => !/^\d/.test(value))
   .required('Description is required'),
-  price: Yup.number()
-  .positive('Price must be a positive number')
-  .integer('Dining seat count must be an integer')
-  .required('Price is required'),
+  // price: Yup.number()
+  // .positive('Price must be a positive number')
+  // .integer('Dining seat count must be an integer')
+  // .required('Price is required'),
   dining_seat_count: Yup.number()
   .positive('Dining seat count must be a positive digit')
   .integer('Dining seat count must be an integer')

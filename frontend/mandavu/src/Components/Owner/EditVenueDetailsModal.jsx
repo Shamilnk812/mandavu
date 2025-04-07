@@ -1,5 +1,6 @@
 
 import { CircularProgress } from "@mui/material";
+import AutoSuggestingAddress from "./AutoSuggestingAddress";
 
 
 export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, formik2, handleCloseVenueDetailsEditModal, loading }) {
@@ -69,7 +70,7 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                         <div className="text-red-500 text-sm mt-1">{formik2.errors.description}</div>
                                     ) : null}
                                 </div>
-                                <div>
+                                {/* <div>
                                     <label htmlFor="price" className="block mb-2 text-sm font-medium text-gray-700 ">Price</label>
                                     <input
                                         type="number"
@@ -82,7 +83,7 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                     {formik2.touched.price && formik2.errors.price ? (
                                         <div className="text-red-500 text-sm mt-1">{formik2.errors.price}</div>
                                     ) : null}
-                                </div>
+                                </div> */}
                                 <div>
                                     <label htmlFor="dining_seat_count" className="block mb-2 text-sm font-medium text-gray-700 ">Dining Seat Count</label>
                                     <input
@@ -111,6 +112,12 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                         <div className="text-red-500 text-sm mt-1">{formik2.errors.auditorium_seat_count}</div>
                                     ) : null}
                                 </div>
+
+                                <div className="col-span-2">
+                                    <AutoSuggestingAddress formik={formik2}/>
+                                </div>
+
+
                                 {/* <div>
                                     <label htmlFor="condition" className="block mb-2 text-sm font-medium text-gray-700 ">Condition</label>
                                     <input
@@ -126,18 +133,35 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                     ) : null}
                                 </div> */}
                                 <div>
-                                    <label htmlFor="state" className="block mb-2 text-sm font-medium text-gray-700 ">State</label>
+                                    <label htmlFor="pincode" className="block mb-2 text-sm font-medium text-gray-700 ">Pincode</label>
+                                    <input
+                                        type="text"
+                                        name="pincode"
+                                        id="pincode"
+                                        disabled
+                                        className="bg-customColor7 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5 "
+                                        onChange={formik2.handleChange}
+                                        value={formik2.values.pincode}
+                                    />
+                                    {formik2.touched.pincode && formik2.errors.pincode ? (
+                                        <div className="text-red-500 text-sm mt-1">{formik2.errors.pincode}</div>
+                                    ) : null}
+                                </div>
+                                
+                                <div>
+                                    <label htmlFor="state" className="block mb-2 text-sm font-medium text-gray-700 ">City</label>
                                     <input
                                         type="text"
                                         name="state"
                                         id="state"
+                                        disabled
                                         className="bg-customColor7 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5 "
                                         onChange={formik2.handleChange}
-                                        value={formik2.values.state}
+                                        value={formik2.values.city}
                                     />
-                                    {formik2.touched.state && formik2.errors.state ? (
-                                        <div className="text-red-500 text-sm mt-1">{formik2.errors.state}</div>
-                                    ) : null}
+                                    {/* {formik2.touched.city && formik2.errors.city ? (
+                                        <div className="text-red-500 text-sm mt-1">{formik2.errors.city}</div>
+                                    ) : null} */}
                                 </div>
                                 <div>
                                     <label htmlFor="district" className="block mb-2 text-sm font-medium text-gray-700 ">District</label>
@@ -145,6 +169,7 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                         type="text"
                                         name="district"
                                         id="district"
+                                        disabled
                                         className="bg-customColor7 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5 "
                                         onChange={formik2.handleChange}
                                         value={formik2.values.district}
@@ -154,21 +179,25 @@ export default function VenueDetailsEditModal({ isVenueDetailsEditModalOpen, for
                                     ) : null}
                                 </div>
                                 <div>
-                                    <label htmlFor="pincode" className="block mb-2 text-sm font-medium text-gray-700 ">Pincode</label>
+                                    <label htmlFor="state" className="block mb-2 text-sm font-medium text-gray-700 ">State</label>
                                     <input
                                         type="text"
-                                        name="pincode"
-                                        id="pincode"
+                                        name="state"
+                                        id="state"
+                                        disabled
                                         className="bg-customColor7 border border-gray-300 text-gray-700 text-sm rounded-lg block w-full p-2.5 "
                                         onChange={formik2.handleChange}
-                                        value={formik2.values.pincode}
+                                        value={formik2.values.state}
+                                        
                                     />
-                                    {formik2.touched.pincode && formik2.errors.pincode ? (
-                                        <div className="text-red-500 text-sm mt-1">{formik2.errors.pincode}</div>
+                                    {formik2.touched.state && formik2.errors.state ? (
+                                        <div className="text-red-500 text-sm mt-1">{formik2.errors.state}</div>
                                     ) : null}
                                 </div>
+                                
+                               
                                 <div className="col-span-2">
-                                    <label htmlFor="address" className="block mb-2 text-sm font-medium text-gray-700 ">Full Address</label>
+                                    <label htmlFor="address" className="block mb-2 text-sm font-medium text-gray-700 ">Building Address</label>
                                     <input
                                         type="text"
                                         name="address"

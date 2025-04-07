@@ -36,6 +36,8 @@ from io import BytesIO
 from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib.units import inch
+
+import requests
 # Create your views here.
 
 
@@ -90,10 +92,54 @@ class RegistrationStep2(APIView) :
         if Venue.objects.filter(convention_center_name=venue_name).exists():
             return Response({"message": "Venue with this name already exists !"}, status=status.HTTP_400_BAD_REQUEST)
         
+        address = request.data.get('address')
+        city = request.data.get('city')
+        district = request.data.get('district')
+        state = request.data.get('state')
+        pincode = request.data.get('pincode')
+        latitude = request.data.get('latitude')
+        longitude = request.data.get('longitude')
+
+
+        if not all([address, city, district, state, pincode]) :
+            return Response({"message": "Address, state, district, city, and pincode are required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not latitude or not longitude:
+            return Response({"message": "Setting your location has some issue, please check your given location."})
+        else:
+            request.data['latitude'] = round(float(latitude), 6)
+            request.data['longitude'] = round(float(longitude), 6)
+
+
+        try:
+            response = requests.get(f"https://api.postalpincode.in/pincode/{pincode}")
+            
+            data = response.json()
+          
+            if data[0]['Status'] == 'Success':
+                post_offices = data[0]['PostOffice']
+                valid_districts = {po['District'].lower() for po in post_offices if po.get('District')}
+                valid_states = {po['State'].lower() for po in post_offices if po.get('State')}
+               
+               
+                if district.lower() not in valid_districts :
+                    return Response({"message":"Given district is not valid"},status=status.HTTP_400_BAD_REQUEST)
+                if state.lower() not in valid_states :
+                    return Response({"message":"Given state is not valid."},status=status.HTTP_400_BAD_REQUEST)
+               
+            else:
+
+                return Response({"message": "Your pincode is not valid, Please enter a valid pincode."},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e :
+            return Response({"messge":f"something wrong  {str(e)}"},status=status.HTTP_400_BAD_REQUEST)
+        
+        
         temp_registration_obj.venue_details = request.data
         temp_registration_obj.save()
         return Response({"message":"Registration Step 2 is successfully completed.","registrationId":temp_registration_obj.id},status=status.HTTP_200_OK)
-            
+    
+
+    
 
 class RegistrationStep3(APIView) :
     
@@ -540,18 +586,7 @@ class OwnerSetNewPasswordView(GenericAPIView):
 
 # ================== VENUE MANAGEMENT =================
 
-# class  VenueRegisterView(GenericAPIView) :
-#     serializer_class = RegisterVenueSerializer
-#     def post(self, request) :
-#         serializer = self.serializer_class(data=request.data)
-#         if serializer.is_valid(raise_exception=True) :
-#             serializer.save()
-#             print(serializer.data)
-#             return Response({'data':serializer.data,
-#                              'message':'Your Venue is Registerd waiting for admin approval'},
-#                                status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-    
+
 
 
 class VenueDetailsView(GenericAPIView):
@@ -565,6 +600,10 @@ class VenueDetailsView(GenericAPIView):
 class UpdateVenueView(GenericAPIView) :
     serializer_class = UpdateVenueSerializer
     def put(self, request,vid) :
+        latitude = request.data.get('latitude')
+        longitude = request.data.get('longitude')
+        request.data['latitude'] = round(float(latitude), 6)
+        request.data['longitude'] = round(float(longitude), 6)
         venue = get_object_or_404(Venue, id=vid)
         serializer = self.serializer_class(venue, data=request.data, partial=True)    
         if serializer.is_valid(raise_exception=True) :

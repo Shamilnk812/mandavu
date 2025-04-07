@@ -106,7 +106,7 @@ export default function OwnerDetails2() {
             convention_center_name: owner?.venue?.convention_center_name  || '',
             short_description: owner?.venue?.short_description || '',
             description: owner?.venue?.description || '',
-            price: owner?.venue?.price || '',
+            // price: owner?.venue?.price || '',
             dining_seat_count: owner?.venue?.dining_seat_count || '',
             auditorium_seat_count: owner?.venue?.auditorium_seat_count || '',
             // condition: owner?.venue?.condition || '',
@@ -115,6 +115,8 @@ export default function OwnerDetails2() {
             city: owner?.venue?.city || '',
             pincode: owner?.venue?.pincode || '',
             address: owner?.venue?.address || '',
+            latitude: owner?.venue?.latitude || '',
+            longitude: owner?.venue?.longitude || '',
         }, enableReinitialize: true,
         validationSchema:VenueRegisterSchema,
         onSubmit: async (updataedValues)=> {

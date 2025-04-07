@@ -229,26 +229,28 @@ class RegisterVenueSerializer(serializers.ModelSerializer) :
 
     def create(self, validated_data):
         venue = Venue(**validated_data)
-        self.geocode_address(venue)
+        print('serrririririrririririir')
+        # self.geocode_address(venue)
         venue.save()
+        print('iam worked')
         return venue
     
-    def geocode_address(self,venue):
-        geocoder = OpenCageGeocode(settings.OPENCAGE_API_KEY)
-        full_address = f"{venue.address}, {venue.district}, {venue.city}, {venue.state}, {venue.pincode}, {settings.BASE_COUNTRY}"
-        try:
-            results = geocoder.geocode(full_address)
-            if results and len(results):
-                location = results[0]['geometry']
-                venue.latitude = location['lat']
-                venue.longitude = location['lng']
-                print(f"Geocoding successful: {full_address} -> ({location['lat']}, {location['lng']})")
-            else:
-                print(f"Geocoding failed for address: {full_address}")
-                raise ValidationError(f"Geocoding failed for address: {full_address}")
-        except Exception as e:
-            print(f"Geocoding error for address '{full_address}': {str(e)}")
-            raise ValidationError(f"Geocoding error: {str(e)}")
+    # def geocode_address(self,venue):
+    #     geocoder = OpenCageGeocode(settings.OPENCAGE_API_KEY)
+    #     full_address = f"{venue.address}, {venue.district}, {venue.city}, {venue.state}, {venue.pincode}, {settings.BASE_COUNTRY}"
+    #     try:
+    #         results = geocoder.geocode(full_address)
+    #         if results and len(results):
+    #             location = results[0]['geometry']
+    #             venue.latitude = location['lat']
+    #             venue.longitude = location['lng']
+    #             print(f"Geocoding successful: {full_address} -> ({location['lat']}, {location['lng']})")
+    #         else:
+    #             print(f"Geocoding failed for address: {full_address}")
+    #             raise ValidationError(f"Geocoding failed for address: {full_address}")
+    #     except Exception as e:
+    #         print(f"Geocoding error for address '{full_address}': {str(e)}")
+    #         raise ValidationError(f"Geocoding error: {str(e)}")
         
 
 class VenueDetailsSerializer(serializers.ModelSerializer):
@@ -263,31 +265,15 @@ class UpdateVenueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Venue
         fields = ['owner', 'convention_center_name' , 'short_description', 'description', 'dining_seat_count', 'auditorium_seat_count', 'condition', 'price', 'state', 'district','city', 'pincode', 'address', 'latitude', 'longitude']
-
+    
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         
-        self.geocode_address(instance)
         instance.save()
         return instance
 
-    def geocode_address(self, venue):
-        geocoder = OpenCageGeocode(settings.OPENCAGE_API_KEY)
-        full_address = f"{venue.address}, {venue.district}, {venue.state}, {venue.pincode}, {settings.BASE_COUNTRY}"
-        try:
-            results = geocoder.geocode(full_address)
-            if results and len(results):
-                location = results[0]['geometry']
-                venue.latitude = location['lat']
-                venue.longitude = location['lng']
-                print(f"Geocoding successful: {full_address} -> ({location['lat']}, {location['lng']})")
-            else:
-                print(f"Geocoding failed for address: {full_address}")
-                raise ValidationError(f"Geocoding failed for address: {full_address}")
-        except Exception as e:
-            print(f"Geocoding error for address '{full_address}': {str(e)}")
-            raise ValidationError(f"Geocoding error: {str(e)}")
+   
 
 
 #========================================================

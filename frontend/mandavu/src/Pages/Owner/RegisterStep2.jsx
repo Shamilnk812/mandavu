@@ -9,6 +9,7 @@ import { getCroppedImg } from '../../Utils/ImageCropping/CroppingImage';
 import RegisterationStep2Schema from '../../Validations/Owner/RegisterStep2Schema';
 import { axiosOwnerInstance } from '../../Utils/Axios/axiosInstance';
 import { CircularProgress } from "@mui/material";
+import AutoSuggestingAddress from '../../Components/Owner/AutoSuggestingAddress';
 
 
 
@@ -24,6 +25,7 @@ export default function RegisterationStep2() {
   const [showExtraPrice, setShowExtraPrice] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
+
 
 
   const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
@@ -117,6 +119,8 @@ export default function RegisterationStep2() {
       city: '',
       pincode: '',
       address: '',
+      latitude: '',
+      longitude:'',
     },
     validationSchema: RegisterationStep2Schema,
     onSubmit: async (values) => {
@@ -495,57 +499,10 @@ export default function RegisterationStep2() {
           </div>
 
           <div className="grid grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="state" className="block text-sm font-medium text-gray-700">
-                State
-              </label>
-              <input
-                id="state"
-                type="text"
-                name="state"
-                value={formik.values.state}
-                onChange={formik.handleChange}
-                placeholder="State"
-                className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
-              />
-              {formik.errors.state && formik.touched.state ? (
-                <div className="text-red-500 text-sm mt-1">{formik.errors.state}</div>
-              ) : null}
-            </div>
-            <div>
-              <label htmlFor="district" className="block text-sm font-medium text-gray-700">
-                District
-              </label>
-              <input
-                id="district"
-                type="text"
-                name="district"
-                value={formik.values.district}
-                onChange={formik.handleChange}
-                placeholder="District"
-                className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
-              />
-              {formik.errors.district && formik.touched.district ? (
-                <div className="text-red-500 text-sm mt-1">{formik.errors.district}</div>
-              ) : null}
-            </div>
-            <div>
-              <label htmlFor="city" className="block text-sm font-medium text-gray-700">
-                City
-              </label>
-              <input
-                id="city"
-                type="text"
-                name="city"
-                value={formik.values.city}
-                onChange={formik.handleChange}
-                placeholder="City"
-                className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
-              />
-              {formik.errors.city && formik.touched.city ? (
-                <div className="text-red-500 text-sm mt-1">{formik.errors.city}</div>
-              ) : null}
-            </div>
+            <AutoSuggestingAddress formik={formik}/>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
             <div>
               <label htmlFor="pincode" className="block text-sm font-medium text-gray-700">
                 Pincode
@@ -557,22 +514,80 @@ export default function RegisterationStep2() {
                 value={formik.values.pincode}
                 onChange={formik.handleChange}
                 placeholder="Pincode"
+                disabled
                 className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
               />
               {formik.errors.pincode && formik.touched.pincode ? (
                 <div className="text-red-500 text-sm mt-1">{formik.errors.pincode}</div>
               ) : null}
             </div>
+            <div>
+              <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+                City / Taluk
+              </label>
+              <input
+                id="city"
+                type="text"
+                name="city"
+                value={formik.values.city}
+                onChange={formik.handleChange}
+                placeholder="City"
+                disabled
+                className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
+              />
+              {formik.errors.city && formik.touched.city ? (
+                <div className="text-red-500 text-sm mt-1">{formik.errors.city}</div>
+              ) : null}
+            </div>
+            
+
+           
+            <div>
+              <label htmlFor="district" className="block text-sm font-medium text-gray-700">
+                District
+              </label>
+              <input
+                id="district"
+                type="text"
+                name="district"
+                value={formik.values.district}
+                onChange={formik.handleChange}
+                placeholder="District"
+                disabled
+                className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
+              />
+              {formik.errors.district && formik.touched.district ? (
+                <div className="text-red-500 text-sm mt-1">{formik.errors.district}</div>
+              ) : null}
+            </div>
+            <div>
+              <label htmlFor="state" className="block text-sm font-medium text-gray-700">
+                State
+              </label>
+              <input
+                id="state"
+                type="text"
+                name="state"
+                value={formik.values.state}
+                onChange={formik.handleChange}
+                placeholder="State"
+                disabled
+                className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
+              />
+              {formik.errors.state && formik.touched.state ? (
+                <div className="text-red-500 text-sm mt-1">{formik.errors.state}</div>
+              ) : null}
+            </div>
             <div className="col-span-2">
               <label htmlFor="address" className="block text-sm font-medium text-gray-700">
-                Full Address
+                Building Address
               </label>
               <textarea
                 id="address"
                 name="address"
                 value={formik.values.address}
                 onChange={formik.handleChange}
-                placeholder="Full Address"
+                placeholder="Building Address"
                 className="block text-sm py-3 px-4 rounded-lg w-full bg-white border border-gray-300 outline-teal-500"
               />
               {formik.errors.address && formik.touched.address ? (
@@ -580,6 +595,8 @@ export default function RegisterationStep2() {
               ) : null}
             </div>
           </div>
+            
+
           <div className='flex justify-center gap-4'>
             <button 
               type="button" 
