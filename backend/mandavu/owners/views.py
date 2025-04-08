@@ -46,7 +46,6 @@ import requests
 class RegistrationStep1(APIView) :
     
     def post(self, request):
-        print(request.data)
         email = request.data.get('email')
         phone = request.data.get('phone')
         phone2 = request.data.get('phone2')
@@ -71,7 +70,6 @@ class RegistrationStep1(APIView) :
 class RegistrationStep2(APIView) :
     
     def post(self, request, token):
-        print(request.data)
         temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, secure_token=token)
         venue_name = request.data.get('convention_center_name')
        
@@ -130,7 +128,6 @@ class RegistrationStep2(APIView) :
 class RegistrationStep3(APIView) :
     
     def post(self, request, token):
-        print(request.data)
         temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, secure_token=token)
         temp_registration_obj.event_details = request.data
         temp_registration_obj.save()
@@ -144,7 +141,6 @@ class RegistrationStep3(APIView) :
 class CancelRegistrationView(APIView):
 
     def delete(self, request, token):
-        
         temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, secure_token=token)
         temp_registration_obj.delete()
 
@@ -155,7 +151,6 @@ class CancelRegistrationView(APIView):
 class RegisterCombinedView(APIView):
 
     def post(self, request, token):
-        print(request.data)
         temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, secure_token=token)
 
         # owner_data = temp_registration_obj.owner_details

@@ -4,13 +4,15 @@ import BookingForm1Schema from "../../../Validations/User/BookingForm1Schema";
 import { useDispatch } from "react-redux";
 import { setBookingDetails } from "../../../Redux/Slices/User";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios'
+import { toast } from "react-toastify";
 
 const BookingFormForAddress = forwardRef((props, ref) => {
 
     const { venueId } = props;
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
+    
     const formik = useFormik({
         initialValues: {
             fullName: '',
@@ -23,11 +25,34 @@ const BookingFormForAddress = forwardRef((props, ref) => {
             eventDetails: '',
         },
         validationSchema: BookingForm1Schema,
-        onSubmit: (values) => {
+        onSubmit: async (values) => {
             console.log("Submitted with ", values);
-            dispatch(setBookingDetails({addressAndEventDetails: values,}))
-            // navigate(`/user/venue-booking-step1/${venueId}`)
-            navigate(`/user/venue-booking-step2/${venueId}`)
+            const {pincode, state} = values
+
+            try{
+                const response = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`)
+                const data = response.data[0];
+
+                if (data.Status !== 'Success' || !data.PostOffice || data.PostOffice.length === 0) {
+                    toast.error('Invalid Pincode. Please enter a valid one.');
+                    return;
+                }
+
+                const pincodeState = data.PostOffice[0].State.toLowerCase().trim();
+                const enteredState = state.toLowerCase().trim();
+
+                if (pincodeState !== enteredState) {
+                    toast.error(`Entered state doesn't match any  pincode.`);
+                    return;
+                }
+
+                dispatch(setBookingDetails({addressAndEventDetails: values,}))
+                // navigate(`/user/venue-booking-step1/${venueId}`)
+                navigate(`/user/venue-booking-step2/${venueId}`)
+            }catch(error){
+                toast.error('Failed to validate pincode. Please try again.');
+                console.error(error);
+            }
 
         },
     });

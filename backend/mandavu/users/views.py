@@ -349,9 +349,27 @@ class CreateCheckOutSession(APIView):
         venue_name = request.data.get('venueName')
         venue_id = request.data.get('venueId')
         user_id  = request.data.get('userId')
+        requested_dates = request.data.get('dates', [])
+        booked_dates = []
 
         user = get_object_or_404(User, id=user_id)
         venue = get_object_or_404(Venue, id=venue_id)
+
+        existing_bookings = Booking.objects.filter(
+            venue=venue,
+            status__in=['Booking Confirmed', 'Booking Completed']  
+        )
+
+        for booking in existing_bookings:
+            booked_dates += booking.dates      
+
+        for date in requested_dates:
+            if date in booked_dates:
+                return Response({
+                    'message': f'Booking already exists on date {date}. Please choose a different date.'
+                }, status=400)
+
+        
 
         temp_booking = TempBooking.objects.create(
             user=user,
@@ -359,7 +377,7 @@ class CreateCheckOutSession(APIView):
             data=request.data
         )
 
-        # booking_details = request.data
+       
 
         try:
             checkout_session = stripe.checkout.Session.create(
@@ -368,7 +386,7 @@ class CreateCheckOutSession(APIView):
                     {
                         'price_data': {
                             'currency': 'inr',
-                            'unit_amount': int(amount) * 100,  # Convert to cents
+                            'unit_amount': int(amount) * 100,  
                             'product_data': {
                                 'name': venue_name,
                             },
@@ -422,34 +440,20 @@ def strip_webhook_view(request) :
         booking_package_id = booking_details['bookingPackage']
         booking_package = get_object_or_404(BookingPackages, id=booking_package_id)
         
-        # user_id  = booking_details['userId']
-        # venue_id = booking_details['venueId']
-        # date_str = booking_details['date']
-        # user = get_object_or_404(User, id=user_id)
-        # venue = get_object_or_404(Venue, id=venue_id)
-
-        # try:
-        #     date = datetime.strptime(booking_details['date'], '%Y-%m-%d').date()  # Adjust the format if necessary
-        # except ValueError:
-        #     return Response(status=400)  # Invalid date format
-
 
         booking = Booking.objects.create(
-            user=temp_booking.user,  # Set to None if user info is not available
+            user=temp_booking.user,  
             venue=temp_booking.venue,
-            name=booking_details['fullName'],  # Data from frontend
-            # email=booking_details['email'],  ############
+            name=booking_details['fullName'],  
             phone=booking_details['phoneNumber'],
             additional_phone=booking_details['additionalPhoneNumber'],
             city=booking_details['city'],
             state=booking_details['state'],
             address=booking_details['fullAddress'],
-            # time=booking_details['timeOfDay'],  ########
-            # date=date, ########
             condition=booking_details['airConditioning'],
             extra_ac_price=booking_details['extraAcAmount'],
             total_price=booking_details['totalAmount'],
-            booking_amount=booking_details['bookingAmount'],  # Assuming 15% booking amount
+            booking_amount=booking_details['bookingAmount'], 
             remaining_amount=booking_details['remainingAmount'],
             payment_intent_id=session['payment_intent'] ,
             times = booking_details['times'],
@@ -475,9 +479,6 @@ def strip_webhook_view(request) :
         temp_booking.delete()
         
         
-
-
-
         print('Booking created successfully with facilities', session)
 
     return HttpResponse(status=200)    

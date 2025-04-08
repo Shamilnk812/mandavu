@@ -88,7 +88,11 @@ export default function BookingSummary2({ venue, venueId, selectedDates, selecte
             }
         } catch (error) {
             console.error('Error booking venue:', error);
-            toast.error("Something went wrong. Please try again later.")
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("Something went wrong. Please try again later.");
+            }
         }
     }
 
