@@ -26,15 +26,9 @@ export default function RegisterationStep2() {
   const [isLoading, setIsLoading] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
 
-
-
   const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
-  //  const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
   const progress = registrationData.progress;
-  const tempVenueId = registrationData.registrationId;
-
-
-
+  const regToken = registrationData.registrationToken;
 
 
   useEffect(() => {
@@ -42,14 +36,14 @@ export default function RegisterationStep2() {
 
     if (!registrationData || registrationData.step_1 !== 'completed') {
       toast.error('Please complete Step 1 first.');
-      navigate('/owner/register-step-1'); // Redirect to Step 1
+      navigate('/owner/register-step-1'); 
     }
   }, [navigate]);
 
   useEffect(() => {
     const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
     if (registrationData.step_2 === 'completed') {
-      navigate('/owner/register-step-3'); // Redirect to Step 1
+      navigate('/owner/register-step-3'); 
     }
   }, [navigate])
 
@@ -85,10 +79,10 @@ export default function RegisterationStep2() {
     setCancelLoading(true);
     try {
 
-      const response = await axiosOwnerInstance.delete(`cancel-registration/${tempVenueId}`)
-      sessionStorage.removeItem('registrationData'); // Remove registration data from sessionStorage
+      const response = await axiosOwnerInstance.delete(`cancel-registration/${regToken}`)
+      sessionStorage.removeItem('registrationData'); 
       toast.success("Registration Cancelled.")
-      navigate('/owner/register-step-1'); // Navigate to the owner signup page
+      navigate('/owner/register-step-1'); 
 
     } catch (error) {
       console.error(error)
@@ -137,21 +131,15 @@ export default function RegisterationStep2() {
         );
 
         const combinedData = {
-          // ...existingData,
           ...values,
           venue_license,
           terms_conditions,
           venue_images: base64Images,
-          // progress: '50%',       
-          // step_2: 'completed'   
-
+      
         };
 
         handleRegistrationStep2(combinedData)
 
-        // sessionStorage.setItem('registrationData', JSON.stringify(combinedData));
-        // toast.success('Step 2 is Completed');
-        // navigate('/owner/register-step-3');
       } catch (error) {
         console.error(error)
         toast.error('An error occurred while processing files');
@@ -163,7 +151,7 @@ export default function RegisterationStep2() {
   const handleConditionChange = (e) => {
     const value = e.target.value;
     formik.setFieldValue('condition', value);
-    setShowExtraPrice(value === 'AC' || value === 'Both'); // Show input for "AC" or "Both"
+    setShowExtraPrice(value === 'AC' || value === 'Both'); 
     if (!showExtraPrice) {
       formik.setFieldValue('extra_ac_price', '');
     }
@@ -176,13 +164,10 @@ export default function RegisterationStep2() {
     setIsLoading(true);
     try {
       const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
-      const tempVenueId = registrationData.registrationId;
-      const response = await axiosOwnerInstance.post(`registration-step2/${tempVenueId}/`, formData)
-      const { registrationId } = response.data;
-      console.log('reggg id is step 2 ', registrationId)
-
+      const response = await axiosOwnerInstance.post(`registration-step2/${regToken}/`, formData)
+      const {registrationToken}  = response.data
       sessionStorage.setItem('registrationData', JSON.stringify({
-        ...registrationData, registrationId: registrationId, progress: '50%',
+        ...registrationData, registrationToken:registrationToken, progress: '50%',
         step_2: 'completed'
       }));
       toast.success('Step 2 is Completed');
@@ -190,9 +175,9 @@ export default function RegisterationStep2() {
 
     } catch (error) {
 
-      console.error("Error response:", error.response); // Log the error for debugging
+      console.error("Error response:", error.response); 
       const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
-      toast.error(errorMessage); // Display error message in toast
+      toast.error(errorMessage); 
     } finally {
       setIsLoading(false);
     }

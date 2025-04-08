@@ -17,10 +17,11 @@ export default function RegistrationStep4() {
     const [showModal, setShowModal] = useState(false);
     const [facilities, setFacilities] = useState([]);
     const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
-    const tempVenueId = registrationData.registrationId;
     const progress = registrationData.progress;
     const [loading, setLoading] = useState(false)
     const [iscancelLoading, setIsCancelLoading] = useState(false)
+    const regToken = registrationData.registrationToken;
+    
 
     const navigate = useNavigate();
 
@@ -61,12 +62,6 @@ export default function RegistrationStep4() {
             // Update the facilities state
             setFacilities((prevFacilities) => {
                 const updatedFacilities = [...prevFacilities, newFacility];
-
-                // Update the registrationData in session storage
-                // const registrationData = JSON.parse(sessionStorage.getItem('registrationData'));
-                // registrationData.facilities = updatedFacilities;
-                // sessionStorage.setItem('registrationData', JSON.stringify(registrationData));
-
                 return updatedFacilities;
             });
 
@@ -88,12 +83,6 @@ export default function RegistrationStep4() {
     const handleDeleteEvent = (indexToDelete) => {
         setFacilities((prevFacilities) => {
             const updatedFacilities = prevFacilities.filter((_, index) => index !== indexToDelete);
-
-            // Update the registrationData in session storage
-            // const registrationData = JSON.parse(sessionStorage.getItem('registrationData'));
-            // registrationData.facilities = updatedFacilities;
-            // sessionStorage.setItem('registrationData', JSON.stringify(registrationData));
-
             return updatedFacilities;
         });
         toast.success('Facility successfully cancelled');
@@ -102,10 +91,10 @@ export default function RegistrationStep4() {
     const handleCancel = async () => {
         setIsCancelLoading(true);
         try {
-            const response = await axiosOwnerInstance.delete(`cancel-registration/${tempVenueId}`)
-            sessionStorage.removeItem('registrationData'); // Remove registration data from sessionStorage
+            const response = await axiosOwnerInstance.delete(`cancel-registration/${regToken}`)
+            sessionStorage.removeItem('registrationData'); 
             toast.success("Registration Cancelled")
-            navigate('/owner/register-step-1'); // Navigate to the owner signup page
+            navigate('/owner/register-step-1'); 
 
         } catch (error) {
             toast.error("Failed to cancel registration.")
@@ -118,12 +107,11 @@ export default function RegistrationStep4() {
 
 
 
-
     const handleRegister = async () => {
         setLoading(true)
         try {
 
-            const response = await axiosOwnerInstance.post(`register/${tempVenueId}/`, facilities, {
+            const response = await axiosOwnerInstance.post(`register/${regToken}/`, facilities, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -145,13 +133,12 @@ export default function RegistrationStep4() {
         } finally {
             setLoading(false)
         }
-        // splitAndSendData();
+       
     };
 
     return (
         <>
             <div className="min-h-screen bg-teal-600 flex justify-center items-center">
-                {/* <div className="absolute w-60 h-60 rounded-xl bg-teal-500 -top-5 -left-16 z-0 transform rotate-45 hidden md:block"></div> */}
                 <div className="py-8 px-12 w-1/2 bg-white rounded-2xl shadow-xl z-20  w-full max-w-2xl">
 
                     <div className="flex justify-center mb-4">
@@ -261,8 +248,6 @@ export default function RegistrationStep4() {
                         </>
                     )}
                 </div>
-                {/* <div className="w-40 h-40 absolute bg-teal-500 rounded-full top-0 right-12 hidden md:block"></div>
-                <div className="w-20 h-40 absolute bg-teal-500 rounded-full bottom-20 left-10 transform rotate-45 hidden md:block"></div> */}
             </div>
 
             <AddFacilityModal2

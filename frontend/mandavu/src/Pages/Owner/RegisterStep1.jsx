@@ -24,7 +24,7 @@ export default function RegisterationStep1() {
   useEffect(() => {
     const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
     if (registrationData.step_1 === 'completed') {
-      navigate('/owner/register-step-2'); // Redirect to Step 1
+      navigate('/owner/register-step-2'); 
     }
   }, [navigate])
 
@@ -68,11 +68,11 @@ export default function RegisterationStep1() {
     setIsLoading(true);
     try {
       const response = await axiosOwnerInstance.post('registration-step1/', formData)
-      const { registrationId } = response.data;
-      console.log('reggg id is ', registrationId)
+      const {registrationToken} = response.data;
+     
       sessionStorage.setItem(
         'registrationData',
-        JSON.stringify({ ...registrationData, registrationId: registrationId, progress: '25%', step_1: 'completed' })
+        JSON.stringify({ ...registrationData, registrationToken:registrationToken, progress: '25%', step_1: 'completed' })
       );
 
       localStorage.setItem('email', formData.email);
@@ -81,9 +81,9 @@ export default function RegisterationStep1() {
       toast.success('Step 1 is Completed');
       navigate('/owner/register-step-2');
     } catch (error) {
-      console.error("Error response:", error.response); // Log the error for debugging
+      console.error("Error response:", error.response); 
       const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
-      toast.error(errorMessage); // Display error message in toast
+      toast.error(errorMessage); 
     } finally {
       setIsLoading(false);
     }
@@ -106,7 +106,6 @@ export default function RegisterationStep1() {
   return (
     <>
       <div className="min-h-screen bg-teal-600 flex justify-center items-center">
-        {/* <div className="absolute w-60 h-60 rounded-xl bg-teal-500 -top-5 -left-16 z-0 transform rotate-45 hidden md:block"></div> */}
         <div className="py-8 px-4 sm:px-12 bg-white rounded-2xl shadow-xl z-20 w-full max-w-3xl">
 
           <div className="flex justify-center mb-6">
@@ -272,8 +271,6 @@ export default function RegisterationStep1() {
             </div>
           </form>
         </div>
-        {/* <div className="w-40 h-40 absolute bg-teal-500 rounded-full top-0 right-12 hidden md:block"></div>
-        <div className="w-20 h-40 absolute bg-teal-500 rounded-full bottom-20 left-10 transform rotate-45 hidden md:block"></div> */}
       </div>
     </>
   );

@@ -229,12 +229,11 @@ class RegisterVenueSerializer(serializers.ModelSerializer) :
 
     def create(self, validated_data):
         venue = Venue(**validated_data)
-        print('serrririririrririririir')
         # self.geocode_address(venue)
         venue.save()
-        print('iam worked')
         return venue
     
+
     # def geocode_address(self,venue):
     #     geocoder = OpenCageGeocode(settings.OPENCAGE_API_KEY)
     #     full_address = f"{venue.address}, {venue.district}, {venue.city}, {venue.state}, {venue.pincode}, {settings.BASE_COUNTRY}"

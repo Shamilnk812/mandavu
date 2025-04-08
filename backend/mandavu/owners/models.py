@@ -3,11 +3,11 @@ from users.models import CustomUser
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import JSONField
-
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
 from django.utils import timezone
 from datetime import timedelta
+import uuid
 
 
 # Create your models here.
@@ -131,3 +131,5 @@ class TempOwnerAndVenueDetails(models.Model):
     venue_details = models.JSONField(null=True, blank=True)
     event_details = models.JSONField(null=True, blank=True)  
     facility_details = models.JSONField(null=True, blank=True)
+    secure_token = models.UUIDField(default=uuid.uuid4, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)

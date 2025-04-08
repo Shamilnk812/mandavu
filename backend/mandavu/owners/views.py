@@ -42,22 +42,6 @@ import requests
 
 
 
-# class RegisterOwnerView(GenericAPIView) :
-#     serializer_class = OwnerRegisterSerializer
-
-#     def post(self, request) :
-#         serializer = self.serializer_class(data=request.data)
-#         if serializer.is_valid(raise_exception=True) :
-#             serializer.save()
-#             owner = serializer.data
-#             sent_otp_to_owner(owner['email'])
-#             return Response({
-#                 'data':owner,
-#                 'message':f"hi thanks for singing up a OTP has be sent to your email"
-#             },status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-
 
 class RegistrationStep1(APIView) :
     
@@ -77,16 +61,18 @@ class RegistrationStep1(APIView) :
             return Response({"message": "Owner with this Phone number already exisit!"},status=status.HTTP_400_BAD_REQUEST)
         
         temp_registration = TempOwnerAndVenueDetails.objects.create(owner_details=request.data)
-        return Response({"message":"Registration Step 1 successly completed .","registrationId":temp_registration.id},status=status.HTTP_200_OK)
+        return Response({"message":"Registration Step 1 successly completed .", "registrationToken": str(temp_registration.secure_token)},status=status.HTTP_200_OK)
+    
+
         
 
 
 
 class RegistrationStep2(APIView) :
     
-    def post(self, request, tid):
+    def post(self, request, token):
         print(request.data)
-        temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, id=tid)
+        temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, secure_token=token)
         venue_name = request.data.get('convention_center_name')
        
         if Venue.objects.filter(convention_center_name=venue_name).exists():
@@ -136,19 +122,19 @@ class RegistrationStep2(APIView) :
         
         temp_registration_obj.venue_details = request.data
         temp_registration_obj.save()
-        return Response({"message":"Registration Step 2 is successfully completed.","registrationId":temp_registration_obj.id},status=status.HTTP_200_OK)
+        return Response({"message":"Registration Step 2 is successfully completed.", "registrationToken": str(temp_registration_obj.secure_token)},status=status.HTTP_200_OK)
     
 
     
 
 class RegistrationStep3(APIView) :
     
-    def post(self, request, tid):
+    def post(self, request, token):
         print(request.data)
-        temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, id=tid)
+        temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, secure_token=token)
         temp_registration_obj.event_details = request.data
         temp_registration_obj.save()
-        return Response({"message":"Registration Step 3 successfully completed.","registrationId":temp_registration_obj.id}, status=status.HTTP_200_OK)
+        return Response({"message":"Registration Step 3 successfully completed.", "registrationToken": str(temp_registration_obj.secure_token)}, status=status.HTTP_200_OK)
 
         
 
@@ -157,9 +143,9 @@ class RegistrationStep3(APIView) :
 
 class CancelRegistrationView(APIView):
 
-    def delete(self, request, tid):
+    def delete(self, request, token):
         
-        temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, id=tid)
+        temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, secure_token=token)
         temp_registration_obj.delete()
 
         return Response({"message": "Registration cancelled "}, status=status.HTTP_200_OK)
@@ -168,9 +154,9 @@ class CancelRegistrationView(APIView):
 
 class RegisterCombinedView(APIView):
 
-    def post(self, request, tid):
+    def post(self, request, token):
         print(request.data)
-        temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, id=tid)
+        temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, secure_token=token)
 
         # owner_data = temp_registration_obj.owner_details
         # venue_data = temp_registration_obj.venue_details

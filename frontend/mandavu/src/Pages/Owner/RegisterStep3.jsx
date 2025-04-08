@@ -18,18 +18,17 @@ export default function RegisterationStep3() {
     const navigate = useNavigate();
     const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
     const progress = registrationData.progress;
-    const tempVenueId = registrationData.registrationId;
+    const regToken = registrationData.registrationToken;
+
 
 
     useEffect(() => {
         const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
         if (!registrationData || registrationData.step_1 !== 'completed' || registrationData.step_2 !== 'completed') {
-            // If not, navigate to registration-step-1
             toast.error('Please complete Previous steps.');
             navigate('/owner/register-step-1');
 
         } else if (registrationData.events) {
-            // If registrationData has facilities, load them into the state
             setEvents(registrationData.events);
         }
 
@@ -70,11 +69,6 @@ export default function RegisterationStep3() {
                 setEvents((prevEvents) => {
                     const updatedEvents = [...prevEvents, newEvent];
 
-                    // Update the registrationData in session storage
-                    // const registrationData = JSON.parse(sessionStorage.getItem('registrationData'));
-                    // registrationData.events = updatedEvents;
-                    // sessionStorage.setItem('registrationData', JSON.stringify(registrationData));
-
                     return updatedEvents;
                 });
 
@@ -101,12 +95,6 @@ export default function RegisterationStep3() {
     const handleDeleteEvent = (indexToDelete) => {
         setEvents((prevEvents) => {
             const updatedEvents = prevEvents.filter((_, index) => index !== indexToDelete);
-
-            // Update the registrationData in session storage
-            // const registrationData = JSON.parse(sessionStorage.getItem('registrationData'));
-            // registrationData.events = updatedEvents;
-            // sessionStorage.setItem('registrationData', JSON.stringify(registrationData));
-
             return updatedEvents;
         });
         toast.success('Event successfully deleted');
@@ -116,8 +104,8 @@ export default function RegisterationStep3() {
     const handleCancel = async () => {
         setCancelLoading(true);
         try {
-            const response = await axiosOwnerInstance.delete(`cancel-registration/${tempVenueId}/`)
-            sessionStorage.removeItem('registrationData'); // Remove registration data from sessionStorage
+            const response = await axiosOwnerInstance.delete(`cancel-registration/${regToken}/`)
+            sessionStorage.removeItem('registrationData'); 
             toast.success("Registration Cancelled")
             navigate('/owner/register-step-1');
         } catch (error) {
@@ -133,29 +121,21 @@ export default function RegisterationStep3() {
         setIsLoading(true);
         try {
 
-            const response = await axiosOwnerInstance.post(`registration-step3/${tempVenueId}/`, events)
-
-            // const registrationData = JSON.parse(sessionStorage.getItem('registrationData')) || {};
-            // const updatedData = {
-            //     ...registrationData,
-            //     progress: '75%',
-            //     step_3: 'completed',
-            // };
-            const { registrationId } = response.data;
-            console.log('reggg id is step 3 ', registrationId)
-
+            const response = await axiosOwnerInstance.post(`registration-step3/${regToken}/`, events)
+            const { registrationToken} = response.data
+            
             sessionStorage.setItem('registrationData', JSON.stringify({
-                ...registrationData, registrationId: registrationId, progress: '75%',
+                ...registrationData, registrationToken:registrationToken, progress: '75%',
                 step_3: 'completed'
             }));
-            // sessionStorage.setItem('registrationData', JSON.stringify(updatedData));
+
             toast.success('Registration Step 3 is Completed')
             navigate('/owner/register-step-4');
         } catch (error) {
             console.error(error)
-            console.error("Error response:", error.response); // Log the error for debugging
+            console.error("Error response:", error.response); 
             const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
-            toast.error(errorMessage); // Display error message in toast
+            toast.error(errorMessage); 
         } finally {
             setIsLoading(false);
         }
