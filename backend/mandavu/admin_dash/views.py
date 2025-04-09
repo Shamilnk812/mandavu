@@ -251,7 +251,7 @@ class UserListView(GenericAPIView):
         return paginator.get_paginated_response(serializer.data)
     
 
-
+0
 class BlockUserView(GenericAPIView) :
     def post(self, request,uid) :
         blocking_reason = request.data.get('blockingReason')
@@ -312,8 +312,12 @@ class OwnerListView(GenericAPIView) :
 
 class BlockOwnerView(GenericAPIView) :
     def post(self, request,uid) :
+        blocking_reason = request.data.get('blockingReason')
         owner = get_object_or_404(Owner, id=uid)
         owner.is_active = False
+        owner.blocking_reason = blocking_reason
+        full_name = f"{owner.first_name} {owner.last_name}"
+        send_account_blocking_reason_email(owner.email, full_name, blocking_reason )
         owner.save()
         serializer=OwnerListSerializer(owner)
 
@@ -325,6 +329,9 @@ class UnblockOwnerView(GenericAPIView) :
     def post(self, request,uid) :
         owner = get_object_or_404(Owner, id=uid)
         owner.is_active = True
+        owner.blocking_reason = ""
+        full_name = f"{owner.first_name} {owner.last_name}"
+        send_account_unblocking_email(owner.email, full_name)
         owner.save()
         serializer = OwnerListSerializer(owner)
         return Response(serializer.data,status=status.HTTP_200_OK)    
@@ -384,8 +391,14 @@ class RejectVenueView(APIView) :
 
 class BlockVenueView(APIView) :
     def post(self,request, vid) :
+        blocking_reason = request.data.get('blockingReason')
+        print(request.data)
+        print(blocking_reason)
         venue = get_object_or_404(Venue, id=vid)
         venue.is_active = False
+        venue.blocking_reason = blocking_reason
+        full_name = f"{venue.owner.first_name} {venue.owner.last_name}"
+        send_account_blocking_reason_email(venue.owner.email, full_name, blocking_reason, venue_name=venue.convention_center_name)
         venue.save()
         return Response(status=status.HTTP_200_OK)
 
@@ -394,6 +407,9 @@ class UnblockVenueView(APIView) :
     def post(self, request, vid) :
         venue = get_object_or_404(Venue, id=vid)
         venue.is_active = True
+        venue.blocking_reason = ""
+        full_name = f"{venue.owner.first_name} {venue.owner.last_name}"
+        send_account_unblocking_email(venue.owner.email, full_name, venue_name=venue.convention_center_name)
         venue.save()
         return Response(status=status.HTTP_200_OK)
 

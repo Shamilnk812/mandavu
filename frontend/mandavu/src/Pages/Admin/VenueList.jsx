@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { axiosAdminInstance } from "../../Utils/Axios/axiosInstance";
 import PaginationCmp from "../../Components/Admin/PaginationCmp";
+import BlockingReasonModal from "../../Components/Admin/BlockingReasonModal";
 
 
 export default function VenueList() {
@@ -20,8 +21,13 @@ export default function VenueList() {
     const [loadingVenue, setLoadingVenue] = useState(null);
     const [loadingVenue2, setLoadingVenue2] = useState(null);
 
+    const [isBlockingModalOpen, setIsBlockingModalOpen] = useState(false);
+    const [blockingReason, setBlockingReason] = useState("");
+    const [blockingProcessing, setBlockingProcessing] = useState(false);
+    const [unblockProcessing, setUnblockProcessing] = useState(null);
 
-    
+
+
 
 
     const fetchVenueList = async () => {
@@ -29,7 +35,7 @@ export default function VenueList() {
             const response = await axiosAdminInstance.get(`venue-list/?search=${searchTerm}&page=${currentPage}`);
             setVenues(response.data.results);
             setTotalPages(response.data.total_pages)
-         
+
         } catch (error) {
             console.error('Something went wrong', error);
         }
@@ -37,7 +43,7 @@ export default function VenueList() {
 
     useEffect(() => {
         fetchVenueList();
-    }, [searchTerm,currentPage]);
+    }, [searchTerm, currentPage]);
 
 
     const handleSearchChange = (event) => {
@@ -45,24 +51,32 @@ export default function VenueList() {
         setCurrentPage(1);
     }
 
-    const handleBlockVenue = async (venueId) => {
+    const handleBlockVenue = async () => {
+
         try {
-            const response = await axiosAdminInstance.post(`block-venue/${venueId}/`)
+            setBlockingProcessing(true)
+            const response = await axiosAdminInstance.post(`block-venue/${selectedVenueId}/`, { blockingReason: blockingReason })
             toast.success('Venue is blocked')
+            handleCloseVenueBlockingModal()
             fetchVenueList();
 
         } catch (error) {
             toast.error('something wrong')
+        } finally {
+            setBlockingProcessing(false);
         }
     }
 
     const handleUnblockVenue = async (venueId) => {
         try {
+            setUnblockProcessing(venueId)
             const response = await axiosAdminInstance.post(`unblock-venue/${venueId}/`)
             toast.success('venue is unbloked')
             fetchVenueList();
         } catch (error) {
             toast.error('something wrong')
+        } finally {
+            setUnblockProcessing(null);
         }
     }
 
@@ -75,7 +89,7 @@ export default function VenueList() {
             fetchVenueList()
         } catch (error) {
             toast.error('something wrong')
-        }finally{
+        } finally {
             setLoadingVenue(null)
         }
     }
@@ -106,7 +120,7 @@ export default function VenueList() {
             handleCloseModal()
         } catch (error) {
             toast.error('Failed to reject the venue!')
-        }finally{
+        } finally {
             setLoadingVenue2(false)
         }
 
@@ -115,6 +129,19 @@ export default function VenueList() {
     const handleViewDetails = (venueId) => {
         // navigate(`/admin/show-venue-details/${venueId}`)
         navigate(`/admin/show-venue-details2/${venueId}`)
+    }
+
+
+    const handleVenueBlockingModalOpen = (vid) => {
+        console.log('butten cliked')
+        setIsBlockingModalOpen(true)
+        setSelectedVenueId(vid)
+    }
+
+    const handleCloseVenueBlockingModal = () => {
+        setBlockingReason("")
+        setSelectedVenueId(null)
+        setIsBlockingModalOpen(false);
     }
 
 
@@ -162,102 +189,120 @@ export default function VenueList() {
                                 </tr>
                             </thead>
                             <tbody>
-                            {venues.length > 0 ? (
-                                venues.map((venue) => (
-                                    <tr key={venue.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                        <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            {venue.convention_center_name}
-                                        </th>
-                                        <td className="px-6 py-4">
-                                            <button type="button"
-                                                className="px-4 py-2 text-white bg-purple-700 rounded hover:bg-purple-800"
-                                                onClick={() => handleViewDetails(venue.id)}
-                                            >
-                                                View Details</button>
-
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {new Date(venue.created_at).toLocaleDateString('en-GB')}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={venue.is_active ? 'text-green-500' : 'text-red-500'}>
-                                                {venue.is_active ? 'Active' : 'Not Active'}
-                                            </span>
-
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {venue.is_verified ? (
-                                                <span className="text-green-500">Verified</span>
-                                            ) : venue.is_rejected ? (
-                                                <span className="text-orange-500">Rejected</span>
-                                            ) : (
-                                                <span className="text-purple-500">Pending</span>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {venue.is_active ? (
-                                                <button
-                                                    onClick={() => handleBlockVenue(venue.id)}
-                                                    className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700"
+                                {venues.length > 0 ? (
+                                    venues.map((venue) => (
+                                        <tr key={venue.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                            <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                {venue.convention_center_name}
+                                            </th>
+                                            <td className="px-6 py-4">
+                                                <button type="button"
+                                                    className="px-4 py-2 text-white bg-purple-700 rounded hover:bg-purple-800"
+                                                    onClick={() => handleViewDetails(venue.id)}
                                                 >
-                                                    Block
-                                                </button>
-                                            ) : (
-                                                <button
-                                                    onClick={() => handleUnblockVenue(venue.id)}
-                                                    className="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700"
-                                                >
-                                                    Unblock
-                                                </button>)}
-                                        </td>
-                                        <td className="px-6 py-4">
+                                                    View Details</button>
 
-                                            {venue.is_verified ? (
-                                                <span className="text-green-500">Approved</span>
-                                            ) : venue.is_rejected ? (
-                                                <span className="text-orange-500">Rejected</span>
-                                            ) : (
-                                                <>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {new Date(venue.created_at).toLocaleDateString('en-GB')}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={venue.is_active ? 'text-green-500' : 'text-red-500'}>
+                                                    {venue.is_active ? 'Active' : 'Not Active'}
+                                                </span>
+
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {venue.is_verified ? (
+                                                    <span className="text-green-500">Verified</span>
+                                                ) : venue.is_rejected ? (
+                                                    <span className="text-orange-500">Rejected</span>
+                                                ) : (
+                                                    <span className="text-purple-500">Pending</span>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {venue.is_active ? (
                                                     <button
-                                                        onClick={() => handleVerifyVenue(venue.id)}
-                                                        disabled={loadingVenue === venue.id}
-                                                        className="px-4 py-2 ml-2 text-white bg-green-600 rounded hover:bg-green-700"
+                                                        onClick={() => handleVenueBlockingModalOpen(venue.id)}
+                                                        // onClick={() => handleBlockVenue(venue.id)}
+                                                        className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700"
                                                     >
-                                                        {loadingVenue === venue.id ? (
+                                                        Block
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => handleUnblockVenue(venue.id)}
+                                                        disabled={unblockProcessing === venue.id}
+                                                        className={`px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700 ${unblockProcessing ? 'cursor-not-allowed opacity-70' : ''}`}
+                                                    >
+                                                        {unblockProcessing === venue.id ? (
                                                             <div className="w-5 h-5 border-4 border-t-white border-gray-300 rounded-full animate-spin"></div>
                                                         ) : (
-                                                            " Verify"
+                                                            "Unblock"
                                                         )}
-                                                       
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleOpenModal(venue.id)}
-                                                        className="px-4 py-2 ml-2 text-white bg-orange-600 rounded hover:bg-orange-700"
-                                                    >
-                                                        Reject
-                                                    </button>
-                                                </>
-                                            )}
+                                                    </button>)}
+                                            </td>
+                                            <td className="px-6 py-4">
+
+                                                {venue.is_verified ? (
+                                                    <span className="text-green-500">Approved</span>
+                                                ) : venue.is_rejected ? (
+                                                    <span className="text-orange-500">Rejected</span>
+                                                ) : (
+                                                    <>
+                                                        <button
+                                                            onClick={() => handleVerifyVenue(venue.id)}
+                                                            disabled={loadingVenue === venue.id}
+                                                            className="px-4 py-2 ml-2 text-white bg-green-600 rounded hover:bg-green-700"
+                                                        >
+                                                            {loadingVenue === venue.id ? (
+                                                                <div className="w-5 h-5 border-4 border-t-white border-gray-300 rounded-full animate-spin"></div>
+                                                            ) : (
+                                                                " Verify"
+                                                            )}
+
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleOpenModal(venue.id)}
+                                                            className="px-4 py-2 ml-2 text-white bg-orange-600 rounded hover:bg-orange-700"
+                                                        >
+                                                            Reject
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))
+
+                                ) : (
+                                    <tr>
+                                        <td
+                                            colSpan="7"
+                                            className="px-6 py-8 text-center text-lg text-gray-700 dark:text-gray-700"
+                                        >
+                                            No records found
                                         </td>
                                     </tr>
-                                ))
-                            
-                            ) : (
-                                <tr>
-                                    <td
-                                        colSpan="7"
-                                        className="px-6 py-8 text-center text-lg text-gray-700 dark:text-gray-700"
-                                    >
-                                        No records found
-                                    </td>
-                                </tr>
-                            )}
+                                )}
 
                             </tbody>
                         </table>
 
+                        {isBlockingModalOpen && (
+                            <BlockingReasonModal
+                                isModalOpen={isBlockingModalOpen}
+                                loading={blockingProcessing}
+                                handleCloseModal={handleCloseVenueBlockingModal}
+                                handleSubmit={handleBlockVenue}
+                                blockingReason={blockingReason}
+                                setBlockingReason={setBlockingReason}
+                            />
+                        )}
+
+
                         {venues.length > 0 && (
-                            <PaginationCmp  setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages}/>
+                            <PaginationCmp setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} />
                         )}
                     </div>
                 </div>
@@ -297,16 +342,16 @@ export default function VenueList() {
                                         ></textarea>
                                     </div>
                                     <div className="flex justify-center pt-4">
-                                        <button 
-                                            type="submit" 
+                                        <button
+                                            type="submit"
                                             disabled={loadingVenue2}
                                             className="mt-2 bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700 transition-all duration-300">
                                             {loadingVenue2 ? (
                                                 <div className="w-5 h-5 border-4 border-t-white border-gray-300 rounded-full animate-spin"></div>
-                                                ) : (
-                                                 " Submit"
-                                                        )}
-                                            </button>
+                                            ) : (
+                                                " Submit"
+                                            )}
+                                        </button>
                                     </div>
                                 </form>
                             </div>

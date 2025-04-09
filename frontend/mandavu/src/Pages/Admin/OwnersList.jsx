@@ -5,6 +5,7 @@ import Sidebar from "../../Components/Admin/Sidebar"
 import { toast } from "react-toastify"
 import { axiosAdminInstance } from "../../Utils/Axios/axiosInstance"
 import PaginationCmp from "../../Components/Admin/PaginationCmp"
+import BlockingReasonModal from "../../Components/Admin/BlockingReasonModal"
 
 
 
@@ -15,7 +16,11 @@ export default function OwnersList() {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [blockingReason, setBlockingReason] = useState("");
+    const [selectedOwner, setSelectedOwner] = useState(null)
+    const [loading, setLoading] = useState(false);
+    const [unblockProcessing , setUnblockProcessing ] = useState(null);
 
 
     const fetchOwnerslist = async () => {
@@ -35,24 +40,32 @@ export default function OwnersList() {
     }, [searchTerm, currentPage]);
 
 
-    const handleBlockOwner = async (uid) => {
+    const handleBlockOwner = async () => {
+        console.log('owner :',selectedOwner, 'reson ',blockingReason)
         try {
-            const response = await axiosAdminInstance.post(`block-owner/${uid}/`)
+            setLoading(true);
+            const response = await axiosAdminInstance.post(`block-owner/${selectedOwner}/`,{blockingReason:blockingReason})
             toast.success('Owner Account is bloked ')
+            handleCloseModal()
             fetchOwnerslist()
         } catch (error) {
             toast.error('Something wrong')
+        }finally{
+            setLoading(false);
         }
     }
 
     const handleUnblockOwner = async (uid) => {
         try {
+            setUnblockProcessing(uid)
             const response = await axiosAdminInstance.post(`unblock-owner/${uid}/`)
             console.log('unbloked', response.data)
             toast.success('Owner Account is unblocked')
             fetchOwnerslist()
         } catch (error) {
             toast.error('Something wrong')
+        }finally{
+            setUnblockProcessing(null)
         }
     }
 
@@ -60,6 +73,18 @@ export default function OwnersList() {
         setSearchTerm(event.target.value);
         setCurrentPage(1);
     };
+    
+    const handleOpenModal = (ownerId)=> {
+        setSelectedOwner(ownerId)
+        setIsModalOpen(true)
+    }
+
+    const handleCloseModal = ()=> {
+        setSelectedOwner(null)
+        setBlockingReason("")
+        setIsModalOpen(false)
+    }
+
 
     return (
         <>
@@ -120,7 +145,8 @@ export default function OwnersList() {
                                             <td className="px-6 py-4">
                                                 {owner.is_active ? (
                                                     <button
-                                                        onClick={() => handleBlockOwner(owner.id)}
+                                                        onClick={() => handleOpenModal(owner.id)}
+                                                        // onClick={() => handleBlockOwner(owner.id)}
                                                         className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700"
                                                     >
                                                         Block
@@ -128,9 +154,15 @@ export default function OwnersList() {
                                                 ) : (
                                                     <button
                                                         onClick={() => handleUnblockOwner(owner.id)}
-                                                        className="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700"
+                                                        disabled={unblockProcessing === owner.id}
+                                                        className={`px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700 ${unblockProcessing ? 'cursor-not-allowed opacity-70' : ''}`}
+
                                                     >
-                                                        Unblock
+                                                        {unblockProcessing === owner.id ? (
+                                                            <div className="w-5 h-5 border-4 border-t-white border-gray-300 rounded-full animate-spin"></div>
+                                                        ) : (
+                                                            "Unblock"
+                                                        )}
                                                     </button>)}
                                             </td>
                                         </tr>
@@ -148,7 +180,14 @@ export default function OwnersList() {
                             </tbody>
                         </table>
 
-
+                        <BlockingReasonModal 
+                            isModalOpen={isModalOpen} 
+                            loading={loading} 
+                            handleCloseModal={handleCloseModal}  
+                            handleSubmit={handleBlockOwner}
+                            blockingReason={blockingReason}
+                            setBlockingReason={setBlockingReason}
+                        />
                         {owners.length > 0 && (
                             <PaginationCmp setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} />
                         )}
