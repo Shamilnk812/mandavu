@@ -252,11 +252,15 @@ class UserListView(GenericAPIView):
     
 
 
-
 class BlockUserView(GenericAPIView) :
     def post(self, request,uid) :
+        blocking_reason = request.data.get('blockingReason')
+        print('clojakdslfks',blocking_reason)
         user = get_object_or_404(User, id=uid)
         user.is_active = False
+        user.blocking_reason = blocking_reason
+        full_name = f"{user.first_name} {user.last_name}"
+        send_account_blocking_reason_email(user.email, full_name, blocking_reason)
         user.save()
         serializer = UserListSerializer(user)
         return Response(serializer.data,status=status.HTTP_200_OK)
@@ -266,6 +270,9 @@ class UnblockUserView(GenericAPIView) :
     def post(self, request,uid) :
         user = get_object_or_404(User, id=uid)
         user.is_active = True 
+        user.blocking_reason = ""
+        full_name = f"{user.first_name} {user.last_name}"
+        send_account_unblocking_email(user.email, full_name)
         user.save()
         serializer = UserListSerializer(user)
         return Response(serializer.data,status=status.HTTP_200_OK)

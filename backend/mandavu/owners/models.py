@@ -64,6 +64,7 @@ class Venue(models.Model) :
     maintenance_start_date = models.DateField(null=True,blank=True)
     maintenance_end_date = models.DateField(null=True,blank=True)
     maintenance_reason = models.TextField(null=True, blank=True)
+    blocking_reason = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 

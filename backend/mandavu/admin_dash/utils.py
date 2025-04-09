@@ -57,4 +57,37 @@ def send_venue_booking_package_rejection_email(venue, booking_package_name, reje
       send_mail(subject, '',settings.DEFAULT_FROM_EMAIL, recipient_list, html_message=message)
 
 
+
+
+#------------- Accounts blockng and unblocking  -------------
+
+def send_account_blocking_reason_email(recipient, username ,reason , venue_name=None):
+      if venue_name :
+            subject = f"Your venue {venue_name} is blocked!"
+      else:
+            subject = f"Your account is blocked!"      
+      recipient_list = [recipient]
+      context = {
+            'subject': subject,
+            'reason': reason,
+            'user_name':username,
+      }
+      message = render_to_string('emails/account_blocking_email.html', context)
+      send_mail(subject, '',settings.DEFAULT_FROM_EMAIL, recipient_list, html_message=message)
+
+
+
+def send_account_unblocking_email(recipient, username, venue_name=None):
+      if venue_name :
+            subject = f"Your venue {venue_name} is Unblocked!"
+      else:
+            subject = f"Your account is unblocked!"      
+      recipient_list = [recipient]
+      context = {
+            'subject': subject,
+            'user_name':username,
+      }
+      message = render_to_string('emails/account_unblocking_email.html', context)
+      send_mail(subject, '',settings.DEFAULT_FROM_EMAIL, recipient_list, html_message=message)
+
  

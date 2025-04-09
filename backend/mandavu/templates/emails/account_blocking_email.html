@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #e74c3c;
+        }
+        p {
+            line-height: 1.6;
+        }
+        .reason {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-left: 4px solid #e74c3c;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>{{ subject }}</h2>
+        <p>Dear {{ user_name }},</p>
+        <p>We regret to inform you that your account listing has been blocked for the following reason:</p>
+        <div class="reason">
+            <p>{{ reason }}</p>
+        </div>
+        <p>Please review the reason and make the necessary adjustments.</p>
+        <p>Thank you for understanding.</p>
+        <p>Best regards,</p>
+        <p>The Mandavu Team</p>
+    </div>
+</body>
+</html>

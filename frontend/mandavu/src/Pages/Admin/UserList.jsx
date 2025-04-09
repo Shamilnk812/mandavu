@@ -5,6 +5,7 @@ import Sidebar from "../../Components/Admin/Sidebar"
 import { toast } from "react-toastify"
 import { axiosAdminInstance } from "../../Utils/Axios/axiosInstance"
 import PaginationCmp from "../../Components/Admin/PaginationCmp"
+import BlockingReasonModal from "../../Components/Admin/BlockingReasonModal"
 
 export default function UserList() {
 
@@ -14,13 +15,16 @@ export default function UserList() {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [blockingReason, setBlockingReason] = useState('');
+    const [selectedUserId, setSelectedUserId] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [unblockProcessing , setUnblockProcessing ] = useState(null);
 
     const fetchUserList = async () => {
         try {
             const response = await axiosAdminInstance.get(`user-list/?search=${searchTerm}&page=${currentPage}`);
             // const response = await axiosAdminInstance.get(`user-list/?search=${searchTerm}`);
-            console.log(response.data.results);
-            // setUserList(response.data);
             setUserList(response.data.results);
             setTotalPages(response.data.total_pages);
         } catch (error) {
@@ -37,27 +41,62 @@ export default function UserList() {
         setCurrentPage(1);
     };
 
-    const handleBlockClick = async (uid) => {
+    const handleBlockClick = async () => {
+        console.log('user ', selectedUserId, 'reason ', blockingReason)
+        const trimmedReason = blockingReason.trim();
+        if (!trimmedReason) {
+            toast.warning("Enter a valid reason");
+            return;
+        }
+
+        if (/^\d+$/.test(trimmedReason)) {
+            toast.warning("Reason should not contain only numbers. Enter valid one");
+            return;
+        }
+
         try {
-            const response = await axiosAdminInstance.post(`block-user/${uid}/`)
+            setLoading(true)
+            const response = await axiosAdminInstance.post(`block-user/${selectedUserId}/`, { blockingReason: blockingReason })
             toast.success('User account is blocked ')
+            handleCloseModal()
             fetchUserList()
         } catch (error) {
             console.error('Error Blocking user', error)
             toast.error('Something wrong')
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleUnblockClick = async (uid) => {
         try {
+            setUnblockProcessing(uid);
             const response = await axiosAdminInstance.post(`unblock-user/${uid}/`)
             toast.success('User account is Unblock.')
             fetchUserList()
         } catch (error) {
             toast.error('Something Wrong')
+        }finally{
+            setUnblockProcessing(null);
         }
 
     };
+
+
+    const handleOpenModal = (uid) => {
+        setSelectedUserId(uid)
+        setIsModalOpen(true);
+    }
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false)
+        setSelectedUserId(null)
+        setBlockingReason("")
+    }
+
+
+
+
     return (
         <>
             <Sidebar />
@@ -116,7 +155,7 @@ export default function UserList() {
                                             <td className="px-6 py-4">
                                                 {user.is_active ? (
                                                     <button
-                                                        onClick={() => handleBlockClick(user.id)}
+                                                        onClick={() => handleOpenModal(user.id)}
                                                         className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700"
                                                     >
                                                         Block
@@ -124,9 +163,14 @@ export default function UserList() {
                                                 ) : (
                                                     <button
                                                         onClick={() => handleUnblockClick(user.id)}
-                                                        className="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700"
+                                                        disabled={unblockProcessing === user.id}
+                                                        className={`px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700 ${unblockProcessing ? 'cursor-not-allowed opacity-70' : ''}`}
                                                     >
-                                                        Unblock
+                                                        {unblockProcessing === user.id ? (
+                                                            <div className="w-5 h-5 border-4 border-t-white border-gray-300 rounded-full animate-spin"></div>
+                                                        ) : (
+                                                            "Unblock"
+                                                        )}
                                                     </button>)}
                                             </td>
                                         </tr>
@@ -150,6 +194,17 @@ export default function UserList() {
 
                         {userList.length > 0 && (
                             <PaginationCmp setCurrentPage={setCurrentPage} totalPages={totalPages} currentPage={currentPage} />
+                        )}
+
+                        {isModalOpen && (
+                            <BlockingReasonModal
+                                isModalOpen={isModalOpen}
+                                loading={loading}
+                                handleCloseModal={handleCloseModal}
+                                handleSubmit={handleBlockClick}
+                                blockingReason={blockingReason}
+                                setBlockingReason={setBlockingReason}
+                            />
                         )}
 
 

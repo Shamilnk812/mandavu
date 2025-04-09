@@ -17,6 +17,7 @@ class CustomUser(AbstractBaseUser) :
     is_user      = models.BooleanField(default=False)
     is_owner     = models.BooleanField(default=False)
     date_joined  = models.DateTimeField(auto_now_add=True)
+    blocking_reason = models.TextField(null=True, blank=True)
     last_seen = models.DateTimeField(null=True, blank=True)
     is_online = models.BooleanField(default=False)
     
