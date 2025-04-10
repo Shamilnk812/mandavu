@@ -105,7 +105,9 @@ export default function EventsManagement() {
     return (
         <>
             <Sidebar />
-            <div className="flex flex-col flex-1 ml-64 mt-14 bg-customColor7 min-h-screen">
+            {/* <div className="flex flex-col flex-1 ml-64 mt-14 bg-customColor7 min-h-screen"> */}
+            <div className="flex flex-col flex-1 mt-14 bg-customColor7 min-h-screen transition-all duration-300 md:ml-64">
+
                 <div className="p-10">
                     <div className="bg-white rounded-lg shadow-lg border pb-10">
                         <div>
