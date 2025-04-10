@@ -120,24 +120,15 @@ export default function FacilitesManagement () {
     return(
         <>
             <Sidebar/>
-            <div className="flex flex-col flex-1 ml-64 mt-14 bg-customColor7 min-h-screen">
+            <div className="flex flex-col flex-1 mt-14 bg-customColor7 min-h-screen transition-all duration-300 md:ml-64">
                 <div className="p-10">
                 <div className="bg-white pb-10 border rounded-lg shadow-lg">
                      <div>
                         <h1 className="text-2xl border-b border-gray-300 font-semibold py-3  text-center text-gray-700" >Facilties</h1>
                      </div>
 
-                     <div className="px-16">
-                     {facilityList.length === 0 ? (
-                        <div className="border-dashed border-2 border-gray-800 w-full h-40 mt-10 mb-10 rounded-lg flex items-center justify-center">
-                            <button
-                                onClick={handleOpenModal}
-                                className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300"
-                            >
-                                + Add Facilities
-                            </button>
-                        </div>
-                    ) : (
+                     <div className="p-4">
+                    
                         <ShowFacilityDetails 
                             facilityList={facilityList} 
                             onUpdateFacility={updateFacility} 
@@ -147,7 +138,7 @@ export default function FacilitesManagement () {
                             loading={updatingFacility}
 
                         />
-                    )}
+                
                        
                         </div>
 
@@ -166,3 +157,58 @@ export default function FacilitesManagement () {
         </>
     )
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// <div className="flex flex-col flex-1 mt-14 bg-customColor7 min-h-screen transition-all duration-300 md:ml-64">
+//                 <div className="p-10">
+//                 <div className="bg-white pb-10 border rounded-lg shadow-lg">
+//                      <div>
+//                         <h1 className="text-2xl border-b border-gray-300 font-semibold py-3  text-center text-gray-700" >Facilties</h1>
+//                      </div>
+
+//                      <div className="px-16">
+//                      {facilityList.length === 0 ? (
+//                         <div className="border-dashed border-2 border-gray-800 w-full h-40 mt-10 mb-10 rounded-lg flex items-center justify-center">
+//                             <button
+//                                 onClick={handleOpenModal}
+//                                 className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300"
+//                             >
+//                                 + Add Facilities
+//                             </button>
+//                         </div>
+//                     ) : (
+//                         <ShowFacilityDetails 
+//                             facilityList={facilityList} 
+//                             onUpdateFacility={updateFacility} 
+//                             blockFacilities={blockFacilities} 
+//                             unblockFacilities={unblockFacilities}
+//                             facilityAddingModal={handleOpenModal}
+//                             loading={updatingFacility}
+
+//                         />
+//                     )}
+                       
+//                         </div>
+
+//                     </div>
+
+//                </div>
+//             </div>
+            

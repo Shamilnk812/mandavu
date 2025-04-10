@@ -75,8 +75,6 @@ export default function VenuePhotosManagement() {
         }
     };
 
-    ``
-
     const unblockVenuePhoto = async (venuePhotoId) => {
         try {
             const response = await axiosOwnerInstance.post(`unblock-venue-photo/${venuePhotoId}/`);
@@ -93,7 +91,7 @@ export default function VenuePhotosManagement() {
     return (
         <>
             <Sidebar />
-            <div className="flex flex-col flex-1 ml-64 mt-14 bg-customColor7 min-h-screen">
+            <div className="flex flex-col flex-1  mt-14 bg-customColor7 min-h-screen transition-all duration-300 md:ml-64">
                 <div className="p-10">
                     <div className="bg-white border rounded-lg shadow-lg pb-10">
                         <div>
@@ -101,7 +99,7 @@ export default function VenuePhotosManagement() {
                                 Venue Photos
                             </h3>
                         </div>
-                        <div className="px-24 py-6">
+                        <div className="px-8 py-6">
 
 
                             <div className="relative overflow-x-auto h-[600px] overflow-y-auto">
@@ -136,8 +134,6 @@ export default function VenuePhotosManagement() {
                                                     </div>
 
                                                     <div className="p-5">
-                                                        {/* <h3 className="text-lg font-semibold text-center text-gray-500 border-b border-gray-200 pb-1 mb-2">{event.event_name}</h3> */}
-
                                                         <div className="flex justify-end items-center mt-4">
                                                             {venuePhoto.is_active ? (
                                                                 <button
