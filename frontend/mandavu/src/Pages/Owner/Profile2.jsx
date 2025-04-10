@@ -202,7 +202,7 @@ export default function OwnerDetails2() {
 
         <Sidebar/>
 
-        <div className="flex flex-col flex-1 ml-64 mt-14 bg-customColor7 min-h-screen">
+        <div className="flex flex-col flex-1  mt-14 bg-customColor7 min-h-screen transition-all duration-300 md:ml-64">
         <div className="p-10">
           <div className="bg-white pb-10 rounded-lg shadow-lg border">
           <h3 className="text-2xl font-semibold  text-center text-gray-700 py-4 border-b border-gray-300">Owner Details</h3>

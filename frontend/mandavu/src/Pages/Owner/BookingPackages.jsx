@@ -23,7 +23,7 @@ export default function BookingPackages() {
 
   const handleToggleDetails = (bookingPackage) => {
     if (selectedPackage?.id === bookingPackage.id) {
-      setSelectedPackage(null); // Close if the same button is clicked again
+      setSelectedPackage(null); 
     } else {
       setSelectedPackage(bookingPackage);
     }
@@ -54,9 +54,8 @@ export default function BookingPackages() {
         fetchBookingPackages();
       }catch(error) {
         if (error.response && error.response.data) {
-          // Handle backend validation errors here
           Object.keys(error.response.data).forEach((key) => {
-            toast.error(error.response.data[key][0]);  // Show the backend error messages using toast
+            toast.error(error.response.data[key][0]);  
           });
         } else {
           toast.error('Failed to create new booking package. Please try again');
@@ -77,9 +76,9 @@ export default function BookingPackages() {
       fetchBookingPackages();
     }catch(error) {
       if (error.response && error.response.data) {
-        // Handle backend validation errors here
+       
         Object.keys(error.response.data).forEach((key) => {
-          toast.error(error.response.data[key][0]);  // Show the backend error messages using toast
+          toast.error(error.response.data[key][0]);  
         });
       } else {
         toast.error('Failed to update booking package. Please try again later');
@@ -143,7 +142,7 @@ export default function BookingPackages() {
   return (
     <>
       <Sidebar />
-      <div className="flex flex-col flex-1 ml-64 mt-14 bg-customColor7 min-h-screen">
+      <div className="flex flex-col flex-1 mt-14 bg-customColor7 min-h-screen transition-all duration-300 md:ml-64">
         <div className="p-10">
           <div className="bg-white pb-10 border rounded-lg shadow-lg">
             <div>
@@ -151,7 +150,7 @@ export default function BookingPackages() {
                 Booking Packages
               </h1>
             </div>
-            <div className="px-10"> 
+            <div className="px-8"> 
             <div className="flex justify-end items-center py-4 pr-2">
               <button
                 className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300"
