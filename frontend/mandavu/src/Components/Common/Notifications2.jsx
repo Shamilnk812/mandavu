@@ -122,7 +122,7 @@ const CommonNotification = () => {
       type="button"
     >
       <span className="flex-1 whitespace-nowrap">
-        <NotificationsIcon />
+        <NotificationsIcon className="text-teal-600" />
       </span>
       {unreadCount > 0 && (
         <span className="ml-2 px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-full">

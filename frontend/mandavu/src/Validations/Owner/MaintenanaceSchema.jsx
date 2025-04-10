@@ -13,7 +13,15 @@ const MaintenanceValidationSchema = Yup.object().shape({
       const { start_date } = this.parent;
       return !start_date || new Date(value) >= new Date(start_date);
     }),
-  reason: Yup.string().required('Maintenance reason is required'),
+  reason: Yup.string()
+  .required('Maintenance reason is required')
+  .trim()
+  .min(10, 'Reason must be at least 10 characters')
+  .max(300, 'Reason cannot exceed 300 characters')
+  .matches(
+    /^[a-zA-Z0-9\s.,'"()-]*$/,
+    'Reason can only contain letters, numbers, spaces, and common punctuation'
+  ),
 });
 
 export default MaintenanceValidationSchema;

@@ -1,9 +1,9 @@
 
 
-export default function MaintenanceModal({isOpen,formik,handleCloseModal}){
-    if(!isOpen) return null;
-    
-    return(
+export default function MaintenanceModal({ isOpen, formik, handleCloseModal, isMaintenanceProcessing }) {
+    if (!isOpen) return null;
+
+    return (
         <>
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                 <div className="relative p-4 w-full max-w-md max-h-full">
@@ -52,6 +52,7 @@ export default function MaintenanceModal({isOpen,formik,handleCloseModal}){
                                         value={formik.values.start_date}
                                         onChange={formik.handleChange}
                                         onBlur={formik.handleBlur}
+                                        disabled
                                     />
                                     {formik.touched.start_date && formik.errors.start_date ? (
                                         <div className="text-red-500 text-sm mt-1">{formik.errors.start_date}</div>
@@ -97,12 +98,22 @@ export default function MaintenanceModal({isOpen,formik,handleCloseModal}){
                                         <div className="text-red-500 text-sm mt-1">{formik.errors.reason}</div>
                                     ) : null}
                                 </div>
+                                <div className="text-yellow-700 bg-yellow-100 border border-yellow-400 rounded p-3 text-sm mt-4">
+                                    ⚠️ <strong>Warning:</strong> If any valid bookings exist during the maintenance period, they will be <strong>canceled</strong> and <strong>refunded</strong>.
+                                    <br />
+                                    Are you sure you want to proceed?
+                                </div>
                                 <div className="flex justify-center pt-4">
                                     <button
                                         type="submit"
-                                        className="mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300"
+                                        disabled={isMaintenanceProcessing}
+                                        className={`mt-2 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-800 transition-all duration-300 ${isMaintenanceProcessing ? 'cursor-not-allowed opacity-70' : ''}`}
                                     >
-                                        Set Maintenance
+                                        {isMaintenanceProcessing ? (
+                                            <div className="w-5 h-5 border-4 border-t-white border-gray-300 rounded-full animate-spin"></div>
+                                        ) : (
+                                            "Set Maitenance"
+                                        )}
                                     </button>
                                 </div>
                             </form>

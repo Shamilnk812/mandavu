@@ -2,7 +2,7 @@ import {format, isToday, isYesterday} from 'date-fns'
 
 
 const FormatLastSeen = (timestamp)=> {
-    if (!timestamp) return "Unknown"; // Handle undefined/null timestamps
+    if (!timestamp) return ""; 
     const lastSeenTime = new Date(timestamp)
     if (isNaN(lastSeenTime)) return "Invalid Date"; // Handle invalid dates
 

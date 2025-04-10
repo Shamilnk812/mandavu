@@ -28,7 +28,7 @@ export default function  Sidebar () {
     const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
     };
-    const isActive = (path) => location.pathname === path ? 'bg-teal-500' : '';
+    const isActive = (path) => location.pathname === path ? 'bg-white text-teal-600 hover:bg-white' : 'text-white';
 
 
     const handleOwnerLogout = async () =>{
@@ -76,7 +76,7 @@ export default function  Sidebar () {
          <>
       
 
-<nav className="fixed top-0 z-50 w-full bg-teal-700 border-b border-teal-700 dark:bg-teal-700 dark:border-teal-700">
+<nav className="fixed top-0 z-50 w-full bg-white border-b shadow-sm ">
         <div className="px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-start rtl:justify-end">
@@ -189,18 +189,18 @@ export default function  Sidebar () {
         className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} bg-teal-700 border-r border-teal-700 sm:translate-x-0 dark:teal-700 dark:border-teal-700`}
         aria-label="Sidebar"
       >
-        <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-teal-700">
+        <div className="h-full px-3 pb-4 overflow-y-auto bg-teal-700">
           <ul className="space-y-2 font-medium">
             <li>
               <Link to='/owner/dashboard'
-                className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/dashboard')}`}
+                className={`flex items-center p-2 rounded-lg  hover:bg-teal-500  group ${isActive('/owner/dashboard')}`}
               >
                 <span className="ms-3"> <DashboardIcon/> Dashboard</span>
               </Link>
             </li>
              <li>
               <Link to='/owner/booking-management'
-                className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/booking-management')}`}
+                className={`flex items-center p-2 rounded-lg hover:bg-teal-500 group ${isActive('/owner/booking-management')}`}
               >
                 <span className="flex-1 ms-3 whitespace-nowrap"><WysiwygIcon/> View Bookings</span>
               </Link>
@@ -208,21 +208,21 @@ export default function  Sidebar () {
            
             <li>
               <Link to='/owner/events-management'
-                className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/events-management')} `}
+                className={`flex items-center p-2 rounded-lg hover:bg-teal-500 group ${isActive('/owner/events-management')} `}
               >
                 <span className="flex-1 ms-3 whitespace-nowrap"><CelebrationIcon/> Events</span>
               </Link>
             </li>
             <li>
               <Link to='/owner/facilities-management'
-                className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/facilities-management')}`}
+                className={`flex items-center p-2 rounded-lg hover:bg-teal-500  group ${isActive('/owner/facilities-management')}`}
               >
                 <span className="flex-1 ms-3 whitespace-nowrap"><TableViewIcon/> Facilities </span>
               </Link>
             </li>
             <li>
               <Link to='/owner/booking-packages'
-                className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/booking-packages')}`}
+                className={`flex items-center p-2 rounded-lg  hover:bg-teal-500 group ${isActive('/owner/booking-packages')}`}
               >
                 <span className="flex-1 ms-3 whitespace-nowrap"><TableViewIcon/> Packages </span>
               </Link>
@@ -238,7 +238,7 @@ export default function  Sidebar () {
             <li>
               <Link to='/owner/details2'
                 
-                className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/details2')}`}
+                className={`flex items-center p-2 rounded-lg  hover:bg-teal-500  group ${isActive('/owner/details2')}`}
 
               >
                 <span className="flex-1 ms-3 whitespace-nowrap"><AccountBoxIcon/> Profile</span>
@@ -246,7 +246,7 @@ export default function  Sidebar () {
             </li>
             <li>
               <Link to='/owner/banner-management'
-                className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/banner-management')}`}
+                className={`flex items-center p-2 rounded-lg  hover:bg-teal-500  group ${isActive('/owner/banner-management')}`}
 
               >
                 <span className="flex-1 ms-3 whitespace-nowrap"><CollectionsIcon/> Photos</span>
@@ -254,7 +254,7 @@ export default function  Sidebar () {
             </li>
             <li>
               <Link to='/owner/chat'
-                  className={`flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group ${isActive('/owner/chat')}`}
+                  className={`flex items-center p-2 rounded-lg  hover:bg-teal-500 group ${isActive('/owner/chat')}`}
 
               >
                 <span className="flex-1 ms-3 whitespace-nowrap"><ChatIcon/> Inbox</span>
@@ -263,7 +263,7 @@ export default function  Sidebar () {
             <li>
               <Link
                 onClick={handleOwnerLogout}
-                className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-teal-500 dark:hover:bg-teal-500 group"
+                className="flex items-center p-2 text-white rounded-lg  hover:bg-teal-500  group"
               >
                 <span className="flex-1 ms-3 whitespace-nowrap"><LogoutIcon/> Log Out</span>
               </Link>

@@ -18,7 +18,7 @@ export default function Sidebar() {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-  const isActive = (path) => location.pathname === path ? 'bg-teal-500' : '';
+  const isActive = (path) => location.pathname === path ? 'bg-white text-teal-700 hover:bg-white' : '';
 
   return (
     <>
@@ -36,28 +36,28 @@ export default function Sidebar() {
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-teal-700 text-white transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        className={`fixed top-0 left-0 h-full w-64 bg-teal-800 text-white transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           } lg:translate-x-0 transition-transform duration-300 ease-in-out z-40`}
       >
         <div className="p-4 space-y-6">
           <nav className="mt-24">
             <Link
               to="/user/show-booking-details"
-              className={`block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-500 ${isActive('/user/show-booking-details')}`}
+              className={`block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-700 ${isActive('/user/show-booking-details')}`}
 
             >
               <GridViewRoundedIcon />  Bookings
             </Link>
             <Link
               to="/user/profile2"
-              className={`block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-500 ${isActive('/user/profile2')}`}
+              className={`block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-700 ${isActive('/user/profile2')}`}
             >
               <AccountCircleRoundedIcon /> Profile
             </Link>
 
             <Link
               to="/user/chat"
-              className={`block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-500 ${isActive('/user/chat')}`}
+              className={`block py-2.5 px-4 rounded transition duration-200 hover:bg-teal-700 ${isActive('/user/chat')}`}
 
             >
               <ChatRoundedIcon /> Messages

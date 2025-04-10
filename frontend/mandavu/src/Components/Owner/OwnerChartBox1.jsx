@@ -18,12 +18,14 @@ export default function OwnerChartBox1({ title, icon, bchart, totalRevenue, main
 
   const [isOpenModal, setIsOpenModal] = useState(false)
   const [isSalesReportModalOpen, setIsSalesReportModalOpen] = useState(false);
+  const [isMaintenanceProcessing, setIsMaintenanceProcessing] = useState(false);
+  const defautStartDate = new Date().toISOString().split("T")[0];
   const venueId = useSelector((state) => state.owner.venueId);
 
 
   const formik = useFormik({
     initialValues: {
-      start_date: '',
+      start_date: defautStartDate,
       end_date: '',
       reason: ''
     },
@@ -33,12 +35,15 @@ export default function OwnerChartBox1({ title, icon, bchart, totalRevenue, main
 
 
       try {
+        setIsMaintenanceProcessing(true);
         const response = await axiosOwnerInstance.patch(`set-maintenance/${venueId}/`, values)
         toast.success("Venue maintenance details have been successfully updated.")
         fetchBookingStatus();
       } catch (error) {
         console.error("error", error)
         toast.error("Failed to set maintenance. Please try again later.")
+      }finally{
+        setIsMaintenanceProcessing(false);
       }
       handleCloseModal()
 
@@ -146,7 +151,7 @@ export default function OwnerChartBox1({ title, icon, bchart, totalRevenue, main
             </button>
           </Box>
           {/* set maintanance  */}
-          {/* <Box sx={{
+          <Box sx={{
             display: "flex",
             justifyContent: 'center',
             marginTop: { xs: '15px', md: '30px' }
@@ -168,7 +173,7 @@ export default function OwnerChartBox1({ title, icon, bchart, totalRevenue, main
                 Remove Maintenance
               </button>
             )}
-          </Box> */}
+          </Box>
 
         </Grid>
       </Grid>
@@ -176,7 +181,7 @@ export default function OwnerChartBox1({ title, icon, bchart, totalRevenue, main
 
 
       {isOpenModal && (
-        <MaintenanceModal isOpen={isOpenModal} formik={formik} handleCloseModal={handleCloseModal} />
+        <MaintenanceModal isOpen={isOpenModal} formik={formik} handleCloseModal={handleCloseModal} isMaintenanceProcessing={isMaintenanceProcessing}/>
       )}
 
       {isSalesReportModalOpen && (

@@ -22,7 +22,7 @@ from django.db.models import Sum,Q
 from datetime import datetime, timedelta
 from notifications.signals import notify_admin_on_maintenance_change
 
-
+import stripe
 from reportlab.lib.pagesizes import A4,A3
 from reportlab.pdfgen import canvas
 import io
@@ -722,6 +722,10 @@ class AddEventView(GenericAPIView) :
         print(request.data)
         event_photo = request.FILES.get('event_photo')
         event_name  = request.data.get('event_name')
+        
+        if Event.objects.filter(venue=venue,event_name=event_name).exists():
+            return Response({"message": "This event already exist in this veneu"},status=status.HTTP_400_BAD_REQUEST)
+        
         data = {
             'event_photo': event_photo,
             'event_name': event_name,
@@ -980,14 +984,39 @@ class UpdateBookingStatusview(APIView):
 
 # ---------------- Set Veneu Miantenance --------------------
 
+
 class SetVenueMaintenanceView(APIView):
     def patch(self, request, vid):
+        maintenance_reason = request.data.get('reason')
+        start_date = request.data.get('start_date')
+        end_date = request.data.get('end_date')
+
         venue = get_object_or_404(Venue, id=vid)
         previous_status = venue.is_under_maintenance 
+        all_bookings = get_bookings_in_date_range(venue_id=venue.id, start_date=start_date, end_date=end_date )
+
+        for booking in all_bookings:
+
+            if booking.status == "Booking Confirmed" :
+                
+                if booking.payment_intent_id :
+                    refund = stripe.Refund.create(
+                        payment_intent=booking.payment_intent_id,
+                        amount=int(booking.booking_amount * 100)
+                    )
+
+                    booking.cancel_reason = maintenance_reason
+                    booking.status = 'Booking Canceled'
+                    booking.save()
+
+
+        print(all_bookings)
         venue.is_under_maintenance = True
-        venue.maintenance_reason = request.data.get('reason')
-        venue.maintenance_start_date = request.data.get('start_date')
-        venue.maintenance_end_date = request.data.get('end_date')
+        venue.maintenance_reason = maintenance_reason
+        venue.maintenance_start_date = start_date
+        venue.maintenance_end_date = end_date
+
+        
         venue.save()
 
         if previous_status != venue.is_under_maintenance:
