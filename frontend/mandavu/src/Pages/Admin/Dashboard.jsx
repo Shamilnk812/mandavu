@@ -57,8 +57,8 @@ export default function Dashboard() {
         <>
 
             <Sidebar />
-            <div className="p-4 sm:ml-64  ">
-                <div className="p-4 border-2 border-gray-200 border-solid  rounded-lg dark:border-gray-700 mt-14">
+            <div className="p-4 md:ml-64  ">
+                <div className="p-4 border-2 border-gray-200 border-solid  rounded-lg  mt-14">
                     <ChartBox2 
                         icon3={<LeaderboardIcon />} 
                         titel={'Revenue Report'} 

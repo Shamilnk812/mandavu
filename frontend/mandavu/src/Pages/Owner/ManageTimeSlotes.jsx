@@ -40,15 +40,16 @@ export default function ManageTimeSlotesForPackages() {
         <>
             <Sidebar />
 
-            <div className="bg-customColor7 flex">
-                <div className="flex-1 p-10 text-2xl ml-64">
-                    <div className="bg-customColor8 rounded-lg shadow-lg pb-10 mt-16">
-                        <h3 className="text-2xl bg-gradient-to-r from-teal-500 to-gray-800 font-semibold mb-4 py-3 text-center text-white rounded-tl-lg rounded-tr-lg">
+            <div className="flex flex-col flex-1 mt-14 bg-customColor7 min-h-screen transition-all duration-300 md:ml-64">
+
+            <div className="p-10">
+                    <div className="bg-white rounded-lg shadow-lg pb-10 ">
+                        <h3 className="text-2xl border-b border-gray-300 font-semibold mb-4 py-3 text-center text-gray-600 rounded-tl-lg rounded-tr-lg">
                             Manage Time Slots
                         </h3>
 
                         <div className="flex justify-center py-10">
-                            <div className="bg-white p-12 w-1/2 rounded-lg shadow-md">
+                            <div className="bg-white p-12 w-1/2 rounded-lg shadow-sm border border-gray-200">
                                 {timeSlotes.length > 0 ? (
                                     timeSlotes.map((slot, index) => (
 

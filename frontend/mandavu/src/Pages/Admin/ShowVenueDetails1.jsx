@@ -106,8 +106,8 @@ export default function ShowVenueDetails2() {
     return (
         <>
             <Sidebar />
-            <div className="p-4 sm:ml-64">
-                <div className="p-4 border-2 border-gray-200 border-solid rounded-lg dark:border-gray-700 mt-14">
+            <div className="p-4 md:ml-64">
+                <div className="p-4 border-2 border-gray-200 border-solid rounded-lg  mt-14">
                     <div className="flex justify-center items-center mb-4">
                         <h2 className="text-xl font-semibold">Venue Details</h2>
                     </div>
@@ -175,7 +175,7 @@ export default function ShowVenueDetails2() {
                     </div>
 
                     {/* Section for render components */}
-                    <div className="flex justify-center bg-gray-800 p-12 rounded-lg ">
+                    <div className="p-5">
                         {renderComponent()}
                     </div>
 

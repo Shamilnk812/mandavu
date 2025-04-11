@@ -95,7 +95,7 @@ class OwnerListSerializer(serializers.ModelSerializer) :
     venue = VenueDetailsSeriallizer(read_only=True)
     class Meta:
         model = Owner
-        fields = ['id', 'first_name', 'last_name', 'email', 'phone', 'phone2', 'is_active', 'date_joined','venue']
+        fields = ['id', 'first_name', 'last_name', 'email', 'phone', 'phone2', 'is_active', 'date_joined','venue','id_proof']
 
 
 

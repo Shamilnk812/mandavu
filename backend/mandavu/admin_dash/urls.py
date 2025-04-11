@@ -31,5 +31,6 @@ urlpatterns  =[
     path('booking-package-rejection/<int:vid>/',VeneuBookingPackageRejection.as_view(),name='booking-package-rejection'),
 
     path('get-user-inquiries/',GetUserInquiriesView.as_view(),name='get-user-inquiries'),
+    path('sending-inquiry-reply/<int:inquiry_id>/',ReplyUserInquiriesView.as_view(),name='sending-inquiry-reply'),
     path('generate-sales-reports/',GenerateSalesReports.as_view(),name='generate-sales-reports'),
 ]

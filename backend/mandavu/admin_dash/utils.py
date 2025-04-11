@@ -90,4 +90,21 @@ def send_account_unblocking_email(recipient, username, venue_name=None):
       message = render_to_string('emails/account_unblocking_email.html', context)
       send_mail(subject, '',settings.DEFAULT_FROM_EMAIL, recipient_list, html_message=message)
 
+
+
+#------------------------- User Inquiry reply mail ------------------
+
+def send_user_inquiry_reply_email(recipient,username, reply_message):
+      
+      subject = f"Mandavu Support Team Reply"
+      recipient_list = [recipient]
+      context = {
+            'subject':subject,
+            'user_name': username,
+            'reply_message': reply_message,
+      }
+
+      message = render_to_string('emails/user_inquiry_reply_email.html', context)
+      send_mail(subject, '',settings.DEFAULT_FROM_EMAIL, recipient_list, html_message=message)
+
  

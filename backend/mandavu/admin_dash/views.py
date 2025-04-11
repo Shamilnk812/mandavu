@@ -481,6 +481,18 @@ class GetUserInquiriesView(GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
+class ReplyUserInquiriesView(GenericAPIView):
+
+    def post(self, request, inquiry_id):
+        inquiry_reply = request.data.get('inquiryReply')
+        inquiry_obj = get_object_or_404(UserInquiry, id=inquiry_id)
+        inquiry_obj.reply_message = inquiry_reply
+        send_user_inquiry_reply_email(inquiry_obj.email, inquiry_obj.user_name, inquiry_reply)
+        inquiry_obj.save()
+        return Response({"message":"Your reply has been sent successfully."},status=status.HTTP_200_OK)
+        
+    
+
 
 
 # ------------------ Generate Sales Report -----------------

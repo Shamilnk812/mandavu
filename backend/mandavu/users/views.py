@@ -28,7 +28,7 @@ import json
 from datetime import datetime
 from django.db.models import Avg,Count,F,FloatField, ExpressionWrapper,Q
 from django.db.models.functions import ACos, Cos, Radians, Sin
-from decimal import Decimal
+from decimal import Decimal, ROUND_DOWN
 
 
 
@@ -350,7 +350,12 @@ class CreateCheckOutSession(APIView):
         venue_id = request.data.get('venueId')
         user_id  = request.data.get('userId')
         requested_dates = request.data.get('dates', [])
+        package_name = request.data.get('packageName').lower()
+      
+
         booked_dates = []
+
+        print(request.data)
 
         user = get_object_or_404(User, id=user_id)
         venue = get_object_or_404(Venue, id=venue_id)
@@ -364,10 +369,11 @@ class CreateCheckOutSession(APIView):
             booked_dates += booking.dates      
 
         for date in requested_dates:
-            if date in booked_dates:
-                return Response({
-                    'message': f'Booking already exists on date {date}. Please choose a different date.'
-                }, status=400)
+            if package_name == 'regular' :
+                if date in booked_dates:
+                    return Response({
+                        'message': f'Booking already exists on date {date}. Please choose a different date.'
+                    }, status=400)
 
         
 
@@ -624,7 +630,9 @@ class CancelBookingView(GenericAPIView) :
 
         try :
             
-            refund_amount = booking_obj.booking_amount 
+            refund_amount = booking_obj.booking_amount
+            print('refund amou',refund_amount) 
+
             if is_user :
                 if booking_obj.dates:
                     first_date = datetime.strptime(booking_obj.dates[0], '%Y-%m-%d').date()
@@ -642,9 +650,11 @@ class CancelBookingView(GenericAPIView) :
                         refund_amount = booking_obj.booking_amount * Decimal('0.15')  # 15% refund
  
             if booking_obj.payment_intent_id :
+                rounded_refund = refund_amount.quantize(Decimal('1'), rounding=ROUND_DOWN)
+                print('rondddddddd',rounded_refund)
                 refund = stripe.Refund.create(
                     payment_intent=booking_obj.payment_intent_id,
-                    amount=int(refund_amount * 100)
+                    amount=int(rounded_refund * 100)
                 )
 
                 booking_obj.cancel_reason = cancel_reason

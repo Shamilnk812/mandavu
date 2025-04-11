@@ -98,7 +98,7 @@ export default function ShowVenueApprovalsCmp({ venueId }) {
                 {bookingPackages.map((pkg) => (
                     <div
                         key={pkg.id}
-                        className="bg-white rounded-lg shadow-lg border border-gray-400 p-4 transform hover:scale-105 hover:shadow-2xl transition-transform duration-300 ease-out"
+                        className="bg-white rounded-lg shadow-lg border border-gray-400 p-4 transform hover:scale-[1.02] hover:shadow-2xl transition-transform duration-300 ease-out"
                     >
                         <h3 className="text-lg font-bold text-gray-800 text-center text-white rounded-lg mb-4 bg-teal-900 py-2">{pkg.package_name}</h3>
                         <div className="flex justify-between mb-2">

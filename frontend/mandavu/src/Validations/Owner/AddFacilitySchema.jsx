@@ -18,7 +18,7 @@ const AddFacilitySchema = Yup.object({
     })
     .test('max-special-chars', 'Facility cannot contain more than 3 special characters', (value) => {
         if (!value) return false;
-        const specialCharCount = (value.match(/[&\s\-_'".,]/g) || []).length;
+        const specialCharCount = (value.match(/[&\-_'".,]/g) || []).length;
         return specialCharCount <= 3;
     })
     .required('Facility is required'),
@@ -29,7 +29,7 @@ const AddFacilitySchema = Yup.object({
     //     })
     //     .required('Facility is required'),
     price: Yup.string()
-        .matches(/^(FREE|\d+)$/, 'Price must be a positive number or "FREE"')
+        .matches(/^(FREE|[1-9]\d*)$/, 'Price must be a positive number or "FREE"')
         .required('Price is required'),
 })
 

@@ -137,6 +137,7 @@ class UserInquiry(models.Model):
     user_name = models.CharField(max_length=150)
     email = models.EmailField(max_length=225)
     message = models.TextField()
+    reply_message = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
    
 

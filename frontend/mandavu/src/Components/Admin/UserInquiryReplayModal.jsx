@@ -1,8 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-const BlockingReasonModal = ({ isModalOpen, loading, handleCloseModal, handleSubmit, blockingReason, setBlockingReason }) => {
-
-
+const UserInquiryReplayModal = ({isModalOpen, inquiryReply, setInquiryReply, handleCloseModal, loading, handleSubmit}) => {
     if (!isModalOpen) return null
     return (
         <div>
@@ -12,7 +10,7 @@ const BlockingReasonModal = ({ isModalOpen, loading, handleCloseModal, handleSub
                     <div className="relative bg-white rounded-lg shadow ">
                         <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                             <h3 className="text-xl font-semibold text-gray-700 ">
-                              Are you sure?
+                              Send Reply Message ..
                             </h3>
                             <button
                                 type="button"
@@ -31,14 +29,14 @@ const BlockingReasonModal = ({ isModalOpen, loading, handleCloseModal, handleSub
                                 handleSubmit();
                             }}>
                                 <div>
-                                    <label htmlFor="cancelReason" className="block mb-2 text-sm font-medium text-gray-900 ">Reason for blocking</label>
+                                    <label htmlFor="inquiryReply" className="block mb-2 text-sm font-medium text-gray-900 ">Reply message</label>
                                     <textarea
-                                        id="cancelReason"
-                                        name="cancelReason"
+                                        id="inquiryReply"
+                                        name="inquiryReply"
                                         rows="4"
                                         className="bg-customColor7 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 outline-none"
-                                        value={blockingReason}
-                                        onChange={(e) => setBlockingReason(e.target.value)}
+                                        value={inquiryReply}
+                                        onChange={(e) => setInquiryReply(e.target.value)}
                                         required
                                     ></textarea>
                                 </div>
@@ -61,7 +59,8 @@ const BlockingReasonModal = ({ isModalOpen, loading, handleCloseModal, handleSub
             </div>
 
         </div>
+
     )
 }
 
-export default BlockingReasonModal
+export default UserInquiryReplayModal

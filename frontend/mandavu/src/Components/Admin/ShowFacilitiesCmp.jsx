@@ -1,4 +1,5 @@
 import { useState,useEffect } from "react";
+import ArrowRightOutlinedIcon from '@mui/icons-material/ArrowRightOutlined';
 
 export default function ShowFacilitiesCmp({ facilities }) {
  
@@ -14,42 +15,60 @@ export default function ShowFacilitiesCmp({ facilities }) {
         <>
             
             <div
-                className={`w-1/2 transform transition-opacity duration-500 ease-out ${
-                fadeIn ? 'opacity-100' : 'opacity-0'
-                }`}
+      className={`transform transition-opacity duration-500 ease-out ${
+        fadeIn ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
+      <div className="bg-white rounded-lg shadow-xl overflow-hidden border border-gray-100">
+        <div className="bg-gray-600 px-6 py-4">
+          <h3 className="text-xl font-semibold text-white">Available Facilities</h3>
+        </div>
+
+        {/* Facilities List */}
+        <div className="divide-y divide-gray-100">
+          {facilities.map((facility, index) => (
+            <div
+              key={index}
+              className="px-6 py-4 hover:bg-gray-50 transition-colors duration-150"
             >
-                <div className="bg-customColor7 overflow-hidden shadow-lg rounded-lg border">
-                    <div className="px-4 py-5 sm:px-6 bg-gray-700">
-                        <h3 className="text-lg leading-6 font-medium text-center text-white">
-                            Facilities
-                        </h3>
-                    </div>
-                    <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-                        <dl className="sm:divide-y sm:divide-gray-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0 p-1 rounded-full">
+                   <ArrowRightOutlinedIcon fontSize="small" className="text-gray-500"/>
+                  </div>
 
-                            {facilities.map((facility, index) => (
-                                <div key={index} className="py-4 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-6">
-                                    <dt className="text-sm font-medium text-gray-900 sm:col-span-3  break-all  max-w-[400px]">
-                                        {facility.facility}
-                                    </dt>
-                                    <dd
-                                        className={`mt-1 text-sm sm:mt-0 sm:col-span-1 text-right ${facility.price === "FREE" ? "text-teal-600 font-semibold" : "text-gray-900"
-                                            }`}
-                                    >
-                                        {facility.price === "FREE" ? (
-                                            "FREE"
-                                        ) : (
-                                            <span>&#8377; {facility.price}</span>
-                                        )}
-                                    </dd>
-                                </div>
-                            ))}
-
-                        </dl>
-
-                    </div>
+                  <div>
+                    <h4 className="text-md font-medium text-gray-700">
+                      {facility.facility}
+                    </h4>
+                  </div>
                 </div>
+                <div
+                  className={`text-lg font-semibold ${
+                    facility.price === "FREE"
+                      ? "text-emerald-600"
+                      : "text-gray-600"
+                  }`}
+                >
+                  {facility.price === "FREE" ? (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800">
+                      Included
+                    </span>
+                  ) : (
+                    <span className="bg-gray-100 px-3 py-1 rounded-lg">
+                      ₹{facility.price}
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
+          ))}
+        </div>
+
+     
+       
+      </div>
+    </div>
         </>
     )
 }
