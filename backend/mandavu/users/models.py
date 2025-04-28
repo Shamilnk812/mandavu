@@ -92,8 +92,10 @@ class Booking(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     booking_amount = models.DecimalField(max_digits=10, decimal_places=2)
     remaining_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    refund_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True) 
     status = models.CharField(max_length=150, choices=booking_status, default='Booking Confirmed')
     cancel_reason = models.TextField(blank=True, null=True)
+    is_canceled_by_user = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     payment_intent_id = models.CharField(max_length=255, blank=True, null=True)
 

@@ -648,7 +648,9 @@ class CancelBookingView(GenericAPIView) :
                         refund_amount = booking_obj.booking_amount * Decimal('0.25')  # 25% refund
                     else:
                         refund_amount = booking_obj.booking_amount * Decimal('0.15')  # 15% refund
- 
+                    
+                    booking_obj.is_canceled_by_user = True
+                    
             if booking_obj.payment_intent_id :
                 rounded_refund = refund_amount.quantize(Decimal('1'), rounding=ROUND_DOWN)
                 print('rondddddddd',rounded_refund)
@@ -656,9 +658,10 @@ class CancelBookingView(GenericAPIView) :
                     payment_intent=booking_obj.payment_intent_id,
                     amount=int(rounded_refund * 100)
                 )
-
+                
                 booking_obj.cancel_reason = cancel_reason
                 booking_obj.status = 'Booking Canceled'
+                booking_obj.refund_amount = rounded_refund 
                 booking_obj.save()
 
 

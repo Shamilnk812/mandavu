@@ -32,7 +32,7 @@ export default function ShowSingleBookingDetails() {
         fetchSingleBookingDetails();
     }, [bookingId]);
 
-    if (loading) return <LoadingAnimation/>
+    if (loading) return <LoadingAnimation />
     if (error) return <p>{error}</p>;
 
 
@@ -68,7 +68,7 @@ export default function ShowSingleBookingDetails() {
                                         Booking Package
                                     </dt>
                                     <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
-                                       {booking.package_name}
+                                        {booking.package_name}
                                     </dd>
                                 </div>
 
@@ -78,7 +78,7 @@ export default function ShowSingleBookingDetails() {
                                     </dt>
                                     <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
                                         {booking.dates && booking.dates.length > 0 ? (
-                                            <ul  className="list-none ml-0">
+                                            <ul className="list-none ml-0">
                                                 {booking.dates.map((date, index) => (
                                                     <li key={index}>{date}</li>
                                                 ))}
@@ -97,7 +97,7 @@ export default function ShowSingleBookingDetails() {
                                     </dt>
                                     <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
                                         {booking.times && booking.times.length > 0 ? (
-                                            <ul  className="list-none ml-0">
+                                            <ul className="list-none ml-0">
                                                 {booking.times.map((time, index) => (
                                                     <li key={index}>
                                                         {Array.isArray(time) ? `${time[0]} - ${time[1]}` : time}
@@ -132,7 +132,7 @@ export default function ShowSingleBookingDetails() {
                                         Total Amount
                                     </dt>
                                     <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
-                                        {booking.total_price}
+                                    ₹{Math.floor(booking.total_price)}
                                     </dd>
                                 </div>
                                 <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
@@ -140,7 +140,7 @@ export default function ShowSingleBookingDetails() {
                                         Remaining Amount
                                     </dt>
                                     <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
-                                        {booking.remaining_amount}
+                                    ₹{Math.floor(booking.remaining_amount)}
                                     </dd>
                                 </div>
                                 <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
@@ -148,9 +148,42 @@ export default function ShowSingleBookingDetails() {
                                         Booking Amount
                                     </dt>
                                     <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
-                                        {booking.booking_amount}
+                                    ₹{Math.floor(booking.booking_amount)}
                                     </dd>
                                 </div>
+                                {booking.refund_amount > 0 && (
+                                    <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
+                                        <dt className="text-sm font-medium text-gray-600">
+                                            Refund Amount
+                                        </dt>
+                                        <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                                        ₹{Math.floor(booking.refund_amount)}
+                                        </dd>
+                                    </div>
+                                )}
+
+                                {booking.is_canceled_by_user === true && (
+                                    <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
+                                        <dt className="text-sm font-medium text-gray-600">
+                                            Cancelled By
+                                        </dt>
+                                        <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                                            Your are cancelld this booking
+                                        </dd>
+                                    </div>
+                                )}
+
+                                {booking.status === 'Booking Canceled' && (
+                                    <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
+                                        <dt className="text-sm font-medium text-gray-600">
+                                            Cancelled Reason
+                                        </dt>
+                                        <dd className="mt-1 text-sm text-gray-600 sm:mt-0 sm:col-span-2">
+                                            {booking.cancel_reason}
+                                        </dd>
+                                    </div>
+                                )}
+
                                 <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 flex justify-between border-b border-gray-200">
                                     <dt className="text-sm font-medium text-gray-600">
                                         Status
@@ -179,7 +212,7 @@ export default function ShowSingleBookingDetails() {
 
                         </div>
 
-                      
+
                     </div>
                 </main>
             </div>
