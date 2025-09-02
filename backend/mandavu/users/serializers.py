@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+import re
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -23,16 +24,48 @@ class UserRegisterSerializer(serializers.ModelSerializer) :
         model = User
         fields = ['first_name', 'last_name', 'email', 'password' ,'password2']
 
+    def validate_first_name(self, value):
+        value = value.strip()
+        if not re.match(r'^[A-Za-z]+$', value):
+            raise serializers.ValidationError("Only alphabets are allowed for First Name")
+        if len(value) < 3:
+            raise serializers.ValidationError("First Name must be at least 3 characters long")
+        return value
+
+    def validate_last_name(self, value):
+        value = value.strip()
+        if not re.match(r'^[A-Za-z]+$', value):
+            raise serializers.ValidationError("Only alphabets are allowed for Last Name")
+        if len(value) < 2:
+            raise serializers.ValidationError("Last Name must be at least 2 characters long")
+        return value
+    
+    def validate_email(self, value):
+        value = value.strip().lower()
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This user already exists")
+        return value
+    
+    def validate_password(self, value):
+        value = value.strip()
+        if len(value) < 8:
+            raise serializers.ValidationError("Password must be at least 8 characters long")
+        if not re.search(r'[0-9]', value):
+            raise serializers.ValidationError("Password requires a number")
+        if not re.search(r'[a-z]', value):
+            raise serializers.ValidationError("Password requires a lowercase letter")
+        if not re.search(r'[A-Z]', value):
+            raise serializers.ValidationError("Password requires an uppercase letter")
+        if not re.search(r'[^\w]', value):
+            raise serializers.ValidationError("Password requires a symbol")
+        return value
+
 
     def validate(self, attrs):
-        password = attrs.get('password', '')
-        password2 = attrs.get('password2', '')
-        email = attrs.get('email', '')
-        
-        if password != password2 :
-            raise serializers.ValidationError("Passwords do not match")
-        if User.objects.filter(email=email).exists() :
-            raise serializers.ValidationError("This uesr already Exist")
+        password = attrs.get('password')
+        password2 = attrs.get('password2')
+        if password != password2:
+            raise serializers.ValidationError({"password2": "Passwords do not match"})
         return attrs
 
     
@@ -193,7 +226,7 @@ class SetNewPasswordSerializer(serializers.ModelSerializer) :
 
 
 
-#-------------------Venue Details ---------------         
+#---------------- Venue Details ---------------         
 
 class VenuesListSerializer(serializers.ModelSerializer) :
     images = BannerDetailsSerializer(many=True, read_only=True)

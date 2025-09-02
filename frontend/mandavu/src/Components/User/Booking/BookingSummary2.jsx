@@ -28,7 +28,7 @@ export default function BookingSummary2({ venue, venueId, selectedDates, selecte
 
     const userId = useSelector((state) => state.user.user?.id);
 
-    console.log("venue deails ",venue)
+    // console.log("venue deails ",venue)
 
     const handleSubmit = async () => {
 

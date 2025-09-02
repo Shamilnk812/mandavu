@@ -10,23 +10,12 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import SearchIcon from '@mui/icons-material/Search';
 import { axiosOwnerInstance, axiosUserInstance } from "../../Utils/Axios/axiosInstance";
 import { CircularProgress } from "@mui/material";
-
-
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 // import SearchIcon from '@mui/icons-material/Search';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import EventIcon from '@mui/icons-material/Event';
 
-// import { 
-//     SearchIcon,
-//     CalendarIcon,
-//     DocumentSearchIcon,
-//     UserCircleIcon,
-//     EyeIcon,
-//     CheckCircleIcon,
-//     XIcon
-//   } from '@heroicons/react/outline';
 
 
 export default function BookingManagement() {
@@ -59,7 +48,7 @@ export default function BookingManagement() {
             });
 
             setBookingDetails(response.data.results);
-            console.log(response.data.results)
+            // console.log(response.data.results)
             setTotalPages(response.data.total_pages);
         } catch (error) {
             console.error('Error fetching booking details:', error);

@@ -22,7 +22,7 @@ export default function VenueManagement() {
     if (ownerId) {
       try {
         const response = await axiosOwnerInstance.get(`venue-details/${ownerId}/`);
-        console.log(response.data)
+        // console.log(response.data)
         setVenueDetails(response.data)
         if (response.data.is_verified) {
           dispatch(SetVenueId(response.data.id)); 

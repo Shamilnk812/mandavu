@@ -30,7 +30,7 @@ export default function Dashboard_Owner() {
       }})
       const data = response.data
       setBookingStatus(data.slice(0, 3))
-      console.log(response.data)
+      // console.log(response.data)
       const totalRevenue = data[3]?.total_revenue;
       setTotalRevenue(totalRevenue)
       const maintenanceStatus = data[4]?.maintenance_status;
@@ -46,7 +46,7 @@ export default function Dashboard_Owner() {
     fetchBookingStatus();
   },[])
 
-  console.log('venjesdjfk',venueId)
+
     return (
         <>
      

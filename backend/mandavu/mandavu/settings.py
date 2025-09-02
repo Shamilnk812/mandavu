@@ -16,12 +16,11 @@ import environ
 import os
 from cryptography.fernet import Fernet
 import stripe
-from .DEFAULT import DEFAULT_HEADERS
+
 # import logging
 
 
 env = environ.Env(DEBUG=(bool, False))
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -29,32 +28,21 @@ environ.Env.read_env(BASE_DIR/ '.env')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
-
-
 ENCRYPTION_KEY = env('ENCRYPTION_KEY').encode()
-
 # Initialize the Fernet cipher suite with the encryption key
 CIPHER_SUITE = Fernet(ENCRYPTION_KEY)
 
 
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
-SITE_URL="https://mandavu.vercel.app/user/show-booking-details"
-BASE_FRONT_END_URL="https://mandavu.vercel.app"
-# SITE_URL="http://localhost:5173/user/show-booking-details"
-# BASE_FRONT_END_URL="http://localhost:5173"
+
+BASE_FRONT_END_URL=env("BASE_FRONT_END_URL", default="http://localhost:5173")
 stripe.api_key = STRIPE_SECRET_KEY
 STRIPE_SECRET_WEBHOOK=env('STRIPE_SECRET_WEBHOOK')
 
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
-
-
-CORS_ORIGIN_ALLOW_ALL=True
-
-ALLOWED_HOSTS = ['mandavu.online', 'www.mandavu.online', 'mandavu.vercel.app', '13.60.224.65', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
 
 # Application definition
@@ -75,7 +63,6 @@ INSTALLED_APPS = [
     'admin_dash',
     'chat',
     'notifications',
-    'audio_call',
 ]
 
 MIDDLEWARE = [
@@ -118,43 +105,25 @@ EMAIL_PORT = env('EMAIL_PORT', cast=int)
 EMAIL_USE_TLS = env('EMAIL_USE_TLS', cast=bool)
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
-# GOOGLE_API_KEY = env('GOOGLE_API_KEY')
-BASE_COUNTRY = 'india'
 
+BASE_COUNTRY = 'india'
 OPENCAGE_API_KEY = env('OPENCAGE_API_KEY')
 
 
 # Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 DATABASES = {
    'default': {
-       'ENGINE': 'django.db.backends.postgresql',
-       'NAME': 'mandavu',
-       'USER': 'postgres',
-       'PASSWORD': '2445057',
-       'HOST': 'localhost',
-       'PORT': '5432',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env("DB_NAME"),
+        'USER': env("DB_USER"),
+        'PASSWORD': env("DB_PASSWORD"),
+        'HOST': env("DB_HOST", default="localhost"),
+        'PORT': env("DB_PORT", default="5432"),
    }
 }
 
-# DATABASES = {
-# 'default': {
-# 'ENGINE': 'django.db.backends.postgresql',
-# 'NAME': 'mandavu',
-# 'USER': 'shamil',
-# 'PASSWORD': '2445057',
-# 'HOST': 'localhost',
-# 'PORT': '5432',
-# }
-# }
+
 
 AUTH_USER_MODEL="users.CustomUser"
 
@@ -186,16 +155,8 @@ SIMPLE_JWT = {
 
 }
 
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 
-CORS_ALLOWED_ORIGINS = [
-    "https://mandavu.vercel.app",
-    "https://mandavu.online",
-    "https://www.mandavu.online",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
-
-# CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_METHODS = [
     "DELETE",

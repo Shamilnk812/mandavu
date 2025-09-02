@@ -31,13 +31,12 @@ export default function Login() {
     },
     validationSchema: LoginSchema,
     onSubmit: async (values) => {
-      console.log(values)
+      // console.log(values)
       setLoading(true);
 
 
       try {
         const response = await axiosUserInstance.post('login/', values);
-        console.log('loging dataaaaaaaaa',response.data);
         const { access_token, refresh_token, email, user_id,role } = response.data;
 
 
@@ -65,15 +64,11 @@ export default function Login() {
           if (errors.detail) {
             toast.error(errors.detail);
           }
-          //  else {
-          //   // Display general or unexpected errors
-          //   Object.values(errors).flat().forEach(message => toast.error(message));
-          // }
         } else {
           toast.error('Login failed');
         }
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false); 
       }
     },
   });

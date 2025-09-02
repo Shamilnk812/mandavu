@@ -175,7 +175,7 @@ export default function RegisterationStep2() {
 
     } catch (error) {
 
-      console.error("Error response:", error.response); 
+      // console.error("Error response:", error.response); 
       const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
       toast.error(errorMessage); 
     } finally {

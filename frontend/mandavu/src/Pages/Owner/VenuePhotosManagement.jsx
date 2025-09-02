@@ -52,7 +52,7 @@ export default function VenuePhotosManagement() {
             setIsLoading(true);
             const response = await axiosOwnerInstance.get(`show-all-venue-photos/${venueId}/`)
             setVenuePhotos(response.data)
-            console.log(response.data)
+            // console.log(response.data)
         } catch (error) {
             console.error('error: ', error)
         } finally {

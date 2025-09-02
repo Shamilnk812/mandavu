@@ -21,7 +21,7 @@ export default function ShowSingleBookingDetails() {
                 setLoading(true);
                 const response = await axiosUserInstance.get(`show-single-booking-details/${bookingId}/`);
                 setBookedDetails(response.data);
-                console.log('Fetched data:', response.data);
+                // console.log('Fetched data:', response.data);
             } catch (error) {
                 console.error('Something went wrong:', error);
                 setError('Failed to fetch booking details');

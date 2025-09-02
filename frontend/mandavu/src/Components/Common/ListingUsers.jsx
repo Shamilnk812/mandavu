@@ -7,6 +7,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import FormatLastSeen from "../../Utils/Extras/FormatLastSeen";
 import { SOCKET } from "../../Utils/Axios/EndPoints";
 import ChatUserItem from "./ChatUserItem";
+import PeopleIcon from '@mui/icons-material/People';
 
 
 
@@ -34,7 +35,7 @@ export default function ChatUsersList({ Chat, selectedChat }) {
         chatWS.onmessage = (event) => {
 
             const data = JSON.parse(event.data);
-            console.log('user staussssss', data)
+            
 
             if (chatUsers.length === 0) {
                 getChatUsers();
@@ -70,7 +71,6 @@ export default function ChatUsersList({ Chat, selectedChat }) {
 
                 })
             } else if (data.type === "online_users") {
-                console.log('user online statusssss', data)
                 setOnlineUsers(data.online_users)
             }
 
@@ -112,7 +112,6 @@ export default function ChatUsersList({ Chat, selectedChat }) {
                     `chat_users/${userId}/`
                 );
                 setChatUsers(response.data);
-                console.log('all user', response.data)
             } catch (error) {
                 console.error("Error while fetching users", error);
             }
@@ -138,7 +137,11 @@ export default function ChatUsersList({ Chat, selectedChat }) {
                         <ChatUserItem chatRoomId={user.id} user={user} userId={userId} key={user.id} Chat={Chat} index={index} cWS={cWS} onlineUsers={onlineUsers} />
                     ))
                 ) : (
-                    <li>No chat users available.</li>
+                     <li className="text-center text-gray-500 py-8">
+        <div className="mb-2"><PeopleIcon fontSize="large"/></div>
+        <p className="text-sm font-semibold">You don't have any chats yet.</p>
+        <p className="text-xs text-gray-400 mt-1">Start a conversation to see it here.</p>
+      </li>
                 )}
             </ul>
         </div>

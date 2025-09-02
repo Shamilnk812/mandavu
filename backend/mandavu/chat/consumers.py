@@ -50,13 +50,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         return chat_room, created
 
 
-
-
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
             message = data.get("message")
-            video_call_link = data.get("link")
 
             if message:
                 
@@ -111,10 +108,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return f"{self.request_user.first_name} {self.request_user.last_name}"
         
         return "Unknown User"
-
-
-
-
 
 
     async def disconnect(self, code):
@@ -186,19 +179,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def mark_message_as_marked(self ,message_id):
         Messages.objects.filter(id=message_id).update(seen=True)
-        
-    
-
-    # async def unread_count_update(self, event):
-    #     await self.send(text_data=json.dumps({
-    #         "type": "unread_count_update",
-    #         "user1_id": event['user1_id'],
-    #         "user2_id": event['user2_id'],
-    #         "unread_count_user1": event['unread_count_user1'],
-    #         "unread_count_user2": event['unread_count_user2'],
-    #     }))
-    
-
+            
 
     # adding users to active chat
     @database_sync_to_async
@@ -225,16 +206,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     
 
 
-    async def video_call(self, event):
-        await self.send(text_data=json.dumps({
-            "type": "video_call",
-            "link": event['link']
-        }))
-    
-    
-
-
-# ------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 
 
@@ -246,7 +218,7 @@ class ChatNotificationCosumer2(AsyncWebsocketConsumer):
             self.user = self.scope['user']
             if self.user.is_authenticated:
                 await self.accept()
-
+                
                 # Add user to their personal status group
                 self.status_group_name = f"user_status_{self.user.id}"
                 await self.channel_layer.group_add(
@@ -267,8 +239,6 @@ class ChatNotificationCosumer2(AsyncWebsocketConsumer):
         except Exception as e:
             print(f"Error in status connect: {str(e)}")
             await self.close()
-
-    
 
 
 
@@ -419,10 +389,7 @@ class ChatNotificationCosumer2(AsyncWebsocketConsumer):
 
 
 
-
-
-
-# ---------------------------------------------------------- end -----------------------------------------------------------------
+# -------------------- end -------------------
 
 
 

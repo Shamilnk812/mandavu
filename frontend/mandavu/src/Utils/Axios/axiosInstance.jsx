@@ -9,7 +9,6 @@ import { ChatUrl } from "./EndPoints";
 
 const token = localStorage.getItem('access_token');
 const refresh_token = localStorage.getItem('refresh_token');
-console.log(refresh_token)
 
 
 
@@ -21,7 +20,7 @@ const baseUrl="https://mandavu.online/"
 
 const refreshToken = async ()=> {
     const refreshToken = localStorage.getItem('refresh_token');
-    console.log('previous refresh token ',refreshToken)
+    // console.log('previous refresh token ',refreshToken)
        try{
         const response = await axios.post(`${baseUrl}/auth/token/refresh/`,{
             refresh:refreshToken
@@ -30,7 +29,7 @@ const refreshToken = async ()=> {
         if (response.status === 200 || response.status === 201){
             localStorage.setItem("access_token", response.data.access);
             localStorage.setItem("refresh_token", response.data.refresh);
-            console.log('new tokens',response.data)
+            // console.log('new tokens',response.data)
             return response.data.access
 
         }

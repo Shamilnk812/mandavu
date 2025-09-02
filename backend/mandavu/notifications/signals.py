@@ -52,17 +52,9 @@ def send_booking_notification(sender,instance,created, **kwargs) :
             formatted_dates = "No dates provided"
 
         if instance.package_type and instance.package_type.price_for_per_hour != "Not Allowed":
-            # Flatten the nested list and join times
             formatted_times = ", ".join([", ".join(time_slot) for time_slot in instance.times])
         else:
-            # Directly join times
             formatted_times = ", ".join(instance.times)
-
-            
-        # if instance.times:
-        #     formatted_times = ", ".join(instance.times)  
-        # else:
-        #     formatted_times = "No times provided"
       
         message_for_owners = {
             "type": "admin_notification",
@@ -117,17 +109,9 @@ def send_booking_cancellation_notification(sender, instance, **kwargs):
         
 
         if instance.package_type and instance.package_type.price_for_per_hour != "Not Allowed":
-            # Flatten the nested list and join times
             formatted_times = ", ".join([", ".join(time_slot) for time_slot in instance.times])
         else:
-            # Directly join times
             formatted_times = ", ".join(instance.times)
-
-
-        # if instance.times:
-        #     formatted_times = ", ".join(instance.times)  
-        # else:
-        #     formatted_times = "No times provided"
       
         message_for_owner = {
             "type": "admin_notification",
@@ -190,12 +174,6 @@ def send_notification_for_booking_package(sender, instance, created, **kwargs):
     booking_package_name = instance.package_name
 
     if created :
-
-        # message = (
-        #     f"A new booking package '{booking_package_name}' has been created for the venue '{venue_name}'. "
-        #     "Please check and verify!"
-        # )
-
         message_content = {
             "type": "admin_notification",
             "content": f"A new booking package '{booking_package_name}' has been created for the venue '{venue_name}'. Please check and verify!" 

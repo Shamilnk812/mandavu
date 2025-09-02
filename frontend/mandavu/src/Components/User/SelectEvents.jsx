@@ -24,7 +24,7 @@ export default function SelectEventsModal({ venueId, isEventModalOpen, handleClo
       try {
         const response = await axiosUserInstance.get(`venue-events-details/${venueId}/`);
         setEvents(response.data);
-        console.log(response.data)
+        // console.log(response.data)
       } catch (error) {
         console.error('Error fetching events details:', error);
         toast.error('Failed to fetch events details! Please try again later.');
@@ -64,7 +64,7 @@ export default function SelectEventsModal({ venueId, isEventModalOpen, handleClo
       return; 
     }
     dispatch(setBookingDetails({ selectedEvent, selectedPackage }))
-    console.log("Booking event:", selectedEvent, "with package:", selectedPackage);
+    // console.log("Booking event:", selectedEvent, "with package:", selectedPackage);
     handleCloseEventModal();
     navigate(`/user/venue-booking-step1/${venueId}`)
   };

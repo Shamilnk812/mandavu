@@ -28,7 +28,7 @@ export default function ShowRating({ venueId, scrollVariants }) {
     try {
       const response = await axiosUserInstance.get(`get-reviews/${venueId}/`)
       setReviews(response.data)
-      console.log(response.data)
+     
     } catch (error) {
       console.log(error)
       toast.error('Failed to fetch reviews. Please try again later')

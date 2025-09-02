@@ -58,7 +58,7 @@ export default function ShowBookingDetails() {
                     params: { page: currentPage },}
             );
             setBookedDetails(response.data.results)
-            console.log(response.data.results)
+            // console.log(response.data.results)
             setTotalPages(response.data.total_pages);
         } catch (error) {
             console.error('Something went wrong')

@@ -114,7 +114,6 @@ export default function Home() {
         });
 
         setVenues(response.data.results)
-        console.log(response.data.results)
       } else {
         console.warn("User location is not available");
       }

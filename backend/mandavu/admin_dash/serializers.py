@@ -30,13 +30,6 @@ class AdminLoginSerializer(serializers.ModelSerializer) :
         
         admin_token = admin.token()
 
-
-
-        # attrs.pop(password, None)
-        # attrs['email'] = admin.email
-        # attrs['access_token'] = str(admin_token.get('access'))
-        # attrs['refresh_token'] = str(admin_token.get('refresh'))
-
         return {
             'email':admin.email,
             'access_token':str(admin_token.get('access')),
@@ -59,11 +52,7 @@ class AdminLogoutSerializer(serializers.Serializer) :
             token = RefreshToken(self.token)
             token.blacklist()
         except TokenError : 
-            # return self.fail('bad_token')
             raise serializers.ValidationError({'refresh_token': 'Token is invalid or has expired'})
-
-
-#--------------- User Details Serializer -----------
 
 
 

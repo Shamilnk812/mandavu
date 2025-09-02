@@ -46,7 +46,7 @@ export default function BookingPackages() {
      
       try{
         const response = await axiosOwnerInstance.post(`/add-booking-package/${venueId}/`,values)
-        console.log(response.data)
+        // console.log(response.data)
         // console.log("form submitted with", values);
         formik.resetForm()
         handleCloseModal() 
@@ -121,11 +121,11 @@ export default function BookingPackages() {
   const fetchBookingPackages = async ()=> {
     try{
       const response = await axiosOwnerInstance.get(`/get-all-booking-packages/${venueId}/`)
-      console.log(response.data)
+      // console.log(response.data)
       setBookingPackages(response.data)
 
     }catch(error){
-      console.error('sommt',error)
+      console.error('something went wrong',error)
       toast.error('Failed to fetch booking packages. Please try again later')
     }
   }

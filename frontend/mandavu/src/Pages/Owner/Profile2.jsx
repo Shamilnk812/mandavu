@@ -36,7 +36,7 @@ export default function OwnerDetails2() {
         try {
             const response = await axiosOwnerInstance.get(`get-owner-venue-details/${ownerId}/`);
             setOwner(response.data);
-            console.log(response.data);
+            // console.log(response.data);
         } catch (error) {
             toast.error('Failed to fetch owner details. Please try again later');
         } finally {

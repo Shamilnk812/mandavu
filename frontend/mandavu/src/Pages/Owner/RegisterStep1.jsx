@@ -76,7 +76,7 @@ export default function RegisterationStep1() {
       );
 
       localStorage.setItem('email', formData.email);
-      console.log('registre one form data', formData)
+      // console.log('registre one form data', formData)
 
       toast.success('Step 1 is Completed');
       navigate('/owner/register-step-2');

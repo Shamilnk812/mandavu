@@ -117,7 +117,6 @@ class TimeSlots(models.Model):
     booking_package = models.ForeignKey(BookingPackages, on_delete=models.CASCADE)
     time_slots = models.JSONField(blank=True, null=True, default=list)
 
-    # time_slots = ArrayField(models.CharField(max_length=150), blank=True,null=True, default=list)
 
 class VenueImage(models.Model):
     venue_photo = models.ImageField(upload_to='venue_images/', verbose_name="Venue Photo")

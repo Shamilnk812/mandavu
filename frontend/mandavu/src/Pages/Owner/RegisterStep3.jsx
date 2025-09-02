@@ -132,7 +132,7 @@ export default function RegisterationStep3() {
             toast.success('Registration Step 3 is Completed')
             navigate('/owner/register-step-4');
         } catch (error) {
-            console.error(error)
+            // console.error(error)
             console.error("Error response:", error.response); 
             const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
             toast.error(errorMessage); 

@@ -3,7 +3,7 @@
 
 
 export default function ViewSingleBookingDetailsCmp({booking,id}){
-    console.log('prorro',booking)
+    // console.log('prorro',booking)
    
         const formattedDates = booking.dates && booking.dates.length
         ? (booking.dates.length === 1 ? booking.dates[0] : `${booking.dates[0]} to ${booking.dates[booking.dates.length - 1]}`)

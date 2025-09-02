@@ -55,7 +55,7 @@ export default function ChatLayout() {
                     'Authorization': `Bearer ${access}`
                 }
             });
-            console.log('all_messages', response.data)
+            // console.log('all_messages', response.data)
             const data = response.data;
 
 
@@ -85,7 +85,7 @@ export default function ChatLayout() {
             ws.close();
         }
 
-        console.log("chat with user id is :", chatWithUserId)
+        // console.log("chat with user id is :", chatWithUserId)
         const socketUrl = `${SOCKET}chat/${chatWithUserId}/?token=${access}`;
         const newWs = new WebSocket(socketUrl);
 
@@ -97,7 +97,7 @@ export default function ChatLayout() {
 
         newWs.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log('Received message:', data);
+            // console.log('Received message:', data);
             setMessages((prevMessages) => [...prevMessages, data]);
         };
 

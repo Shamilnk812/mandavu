@@ -31,10 +31,8 @@ const CommonNotification = () => {
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log('Received message:', data);
 
       if (data.type !== 'chat_notification') {
-        console.log(data.type,'kjkjjlkjlk')
         setNotifications((prevNotifications) => [data, ...prevNotifications]);
         updateUnreadCount([data, ...notifications]);
       }
@@ -72,7 +70,6 @@ const CommonNotification = () => {
       });
       const data = await response.json();
       setNotifications(data);
-      console.log("this is the data", data)
       updateUnreadCount(data); // Update the unread count after fetching notifications
       setLoading(false);
     } catch (error) {

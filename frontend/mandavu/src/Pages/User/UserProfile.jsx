@@ -27,7 +27,7 @@ export default function UserProfile() {
         try {
             const response = await axiosUserInstance.get(`user-details/${userId}/`)
             setUser(response.data)
-            console.log(response.data)
+            // console.log(response.data)
         } catch (error) {
             toast.error('Failed to fetch userdetails. Please try again later')
         }

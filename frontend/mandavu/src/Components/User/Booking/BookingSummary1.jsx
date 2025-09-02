@@ -23,7 +23,7 @@ export default function BookingSummary1({ venueId,onNext }) {
             try {
                 const response = await axiosUserInstance.get(`single-venue-details/${venueId}/`);
                 setVenue(response.data);
-                console.log(response.data)
+                // console.log(response.data)
             } catch (error) {
                 console.error('Error fetching venue details:', error);
             }

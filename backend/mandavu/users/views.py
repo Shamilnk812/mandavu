@@ -29,21 +29,20 @@ from datetime import datetime
 from django.db.models import Avg,Count,F,FloatField, ExpressionWrapper,Q
 from django.db.models.functions import ACos, Cos, Radians, Sin
 from decimal import Decimal, ROUND_DOWN
+from django.db import transaction
 
 
 
 
 
-# Create your views here.
 
-
+# ----------- User Registration ---------
 
 class RegisterUserView(GenericAPIView) :
     serializer_class = UserRegisterSerializer
 
     def post(self, request) :
         user_data = request.data
-        print(user_data['email'])
         serializer = self.serializer_class(data=user_data)
         if serializer.is_valid() :
             serializer.save()
@@ -83,6 +82,7 @@ class LogoutUserView(GenericAPIView) :
 
 class UpdateUserView(GenericAPIView) :
     serializer_class = UpdateUserSerializer
+    permission_classes = [IsAuthenticated]
 
     def put(self, request,uid) :
         user = get_object_or_404(User, pk=uid)
@@ -96,6 +96,8 @@ class UpdateUserView(GenericAPIView) :
 
 class UserDetailsView(GenericAPIView) :
     serializer_class = UserDetailsSerializer
+    permission_classes = [IsAuthenticated]
+
     def get(self, request,uid) :
         user = get_object_or_404(User, pk=uid)
         serializer = self.serializer_class(user) 
@@ -104,50 +106,43 @@ class UserDetailsView(GenericAPIView) :
 
 
 class ChangeUserPassword(GenericAPIView) :
+    permission_classes = [IsAuthenticated]
+
     def post(self, request,uid) :
         user = get_object_or_404(User, pk=uid)
         old_password = request.data.get('old_password')
         new_password = request.data.get('new_password')
-        print(old_password)
+       
         if not old_password or not new_password :
             return Response({'message':'old password and New password are required'},status=status.HTTP_400_BAD_REQUEST)
         if not user.check_password(old_password) :
             return Response({'message':'Incorrect old password'},status=status.HTTP_400_BAD_REQUEST)
  
-        print(new_password)
         user.password = make_password(new_password)
         user.save()
         return Response({'message':'Password changed successfully'},status=status.HTTP_200_OK)
 
 
-
 class VerifyToken(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self , request):
-        print('tooooooooken chekking ---------------------------------------------------')
         return Response({"message":"token is valid"},status=status.HTTP_200_OK)
-
-#=====================================================================
 
     
 class VerifyUserOtp(GenericAPIView) :
     def post(self, request) :
         otp_code = request.data.get('otp')
         email = request.data.get('email')
-        print(email,otp_code)
+
         try :
             user = User.objects.get(email=email)
             otp_entry = OneTimePassword.objects.get(user=user)
 
             decrypted_otp_code = decrypt_otp(otp_entry.code)
-            print(decrypted_otp_code)
             if decrypted_otp_code == otp_code :
-                print(otp_code)
-
+                
                 if otp_entry.is_expired() :
                     return Response({'message': 'OTP has expired'}, status=status.HTTP_400_BAD_REQUEST)
-
           
                 if not user.is_verified :
                     user.is_verified = True
@@ -162,7 +157,6 @@ class VerifyUserOtp(GenericAPIView) :
             else:
                 return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
             
-
         except User.DoesNotExist:
                 return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)    
         
@@ -183,7 +177,8 @@ class ResendUserOtp(APIView):
         except Exception as e:
             return Response({'message': f'Failed to resend OTP: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# ============= Password Reset ==================
+
+# ------------  Password Reset ------------
 
 class PasswordResetRequestView(GenericAPIView) :
     serializer_class = PasswordResetRequestSerializer
@@ -193,7 +188,6 @@ class PasswordResetRequestView(GenericAPIView) :
         return Response({'message':"a link has been sent to your email to reset password"},status=status.HTTP_200_OK)  
 
 
-
 class PasswordResetConfirm(GenericAPIView) :
     def get(self, request, uidb64, token) :
         try :
@@ -201,13 +195,10 @@ class PasswordResetConfirm(GenericAPIView) :
             user = User.objects.get(id=user_id)
             if not PasswordResetTokenGenerator().check_token(user, token) :
                 return Response({'message':'token is invalid or has expired'}, status=status.HTTP_401_UNAUTHORIZED)
-            # return Response({'success':True,'message':'credentials is valid','uidb64':uidb64,'token':token},status=status.HTTP_200_OK)
             reset_url = f"{settings.BASE_FRONT_END_URL}/user/set-new-passwod?uidb64={uidb64}&token={token}"
-            # reset_url = f"http://localhost:5173/user/set-new-passwod?uidb64={uidb64}&token={token}"
             return redirect(reset_url)
         except DjangoUnicodeDecodeError :
                 return Response({'message':'token is invalid or has expired'}, status=status.HTTP_401_UNAUTHORIZED)
-
 
 
 class SetNewPassword(GenericAPIView) :
@@ -219,9 +210,6 @@ class SetNewPassword(GenericAPIView) :
         return Response({'message':'password reset successfully '},status=status.HTTP_200_OK)
     
 
-
-
-# =================  ================
 
 class UserPagination(PageNumberPagination):
     page_size = 12
@@ -243,6 +231,7 @@ class UserPagination(PageNumberPagination):
 class AllVenuesListView(GenericAPIView):
     serializer_class = VenuesListSerializer
     pagination_class = UserPagination
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
        
@@ -262,7 +251,6 @@ class AllVenuesListView(GenericAPIView):
         if user_latitude not in [None, '0', '']:
             new_latitude = Decimal(user_latitude) 
             
-        
         if user_longitude not in [None, '0', '']:
             new_longitude = Decimal(user_longitude) 
            
@@ -277,13 +265,10 @@ class AllVenuesListView(GenericAPIView):
                 
     
         if dining_seat_count  not in [None, '0', ''] :
-            print('iaaadfdaf')
             new_dining_seat_count = int(dining_seat_count)
             queryset = queryset.filter(dining_seat_count__lte=new_dining_seat_count)
-            print(queryset)
 
         if auditorium_seat_count  not in [None, '0', ''] :
-            print('asdkfa')
             new_auditorium_seat_count = int(auditorium_seat_count)
             queryset = queryset.filter(auditorium_seat_count__lte=new_auditorium_seat_count)
               
@@ -335,13 +320,7 @@ class SingleVenueEventsDetails(GenericAPIView) :
         return Response(serializer.data, status=status.HTTP_200_OK)
         
 
-
-
-
-# ============= Stripe Payment  =========
-
-
-
+# ---------- Booking  -------
 
 class CreateCheckOutSession(APIView):
     def post(self, request):
@@ -351,8 +330,6 @@ class CreateCheckOutSession(APIView):
         user_id  = request.data.get('userId')
         requested_dates = request.data.get('dates', [])
         package_name = request.data.get('packageName').lower()
-      
-
         booked_dates = []
 
         print(request.data)
@@ -375,15 +352,11 @@ class CreateCheckOutSession(APIView):
                         'message': f'Booking already exists on date {date}. Please choose a different date.'
                     }, status=400)
 
-        
-
         temp_booking = TempBooking.objects.create(
             user=user,
             venue=venue,
             data=request.data
         )
-
-       
 
         try:
             checkout_session = stripe.checkout.Session.create(
@@ -401,10 +374,10 @@ class CreateCheckOutSession(APIView):
                     },
                 ],
                 mode='payment',
-                success_url=settings.SITE_URL + '?success=true',
-                cancel_url=settings.SITE_URL + '?canceled=true',
+                success_url=f"{settings.BASE_FRONT_END_URL}/user/show-booking-details?success=true",
+                cancel_url=f"{settings.BASE_FRONT_END_URL}/user/show-booking-details?canceled=true",
                  metadata={
-                    'temp_booking_id': temp_booking.id   # Send all request data as metadata
+                    'temp_booking_id': temp_booking.id  
                 }
             )
             return Response({'id': checkout_session.id})
@@ -438,51 +411,52 @@ def strip_webhook_view(request) :
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
         temp_booking_id = json.loads(session['metadata']['temp_booking_id']) 
-
-        temp_booking = get_object_or_404(TempBooking, id=temp_booking_id)
-
-        booking_details = temp_booking.data
-
-        booking_package_id = booking_details['bookingPackage']
-        booking_package = get_object_or_404(BookingPackages, id=booking_package_id)
         
+        with transaction.atomic():
+            temp_booking = get_object_or_404(TempBooking, id=temp_booking_id)
 
-        booking = Booking.objects.create(
-            user=temp_booking.user,  
-            venue=temp_booking.venue,
-            name=booking_details['fullName'],  
-            phone=booking_details['phoneNumber'],
-            additional_phone=booking_details['additionalPhoneNumber'],
-            city=booking_details['city'],
-            state=booking_details['state'],
-            address=booking_details['fullAddress'],
-            condition=booking_details['airConditioning'],
-            extra_ac_price=booking_details['extraAcAmount'],
-            total_price=booking_details['totalAmount'],
-            booking_amount=booking_details['bookingAmount'], 
-            remaining_amount=booking_details['remainingAmount'],
-            payment_intent_id=session['payment_intent'] ,
-            times = booking_details['times'],
-            dates = booking_details['dates'],
-            event_name = booking_details['eventName'],
-            event_details = booking_details['eventDetails'],
-            package_type = booking_package,
-            package_name=booking_details['packageName']
+            booking_details = temp_booking.data
+
+            booking_package_id = booking_details['bookingPackage']
+            booking_package = get_object_or_404(BookingPackages, id=booking_package_id)
             
-        )
 
-        facilities = booking_details['facilities']
-        print('cheeeeking ', facilities)
-        for f in facilities:
-            BookingDetails.objects.create(
-                booking=booking,
-                facilities=f"{f['facility']} - {f['price']}"
+            booking = Booking.objects.create(
+                user=temp_booking.user,  
+                venue=temp_booking.venue,
+                name=booking_details['fullName'],  
+                phone=booking_details['phoneNumber'],
+                additional_phone=booking_details['additionalPhoneNumber'],
+                city=booking_details['city'],
+                state=booking_details['state'],
+                address=booking_details['fullAddress'],
+                condition=booking_details['airConditioning'],
+                extra_ac_price=booking_details['extraAcAmount'],
+                total_price=booking_details['totalAmount'],
+                booking_amount=booking_details['bookingAmount'], 
+                remaining_amount=booking_details['remainingAmount'],
+                payment_intent_id=session['payment_intent'] ,
+                times = booking_details['times'],
+                dates = booking_details['dates'],
+                event_name = booking_details['eventName'],
+                event_details = booking_details['eventDetails'],
+                package_type = booking_package,
+                package_name=booking_details['packageName']
+                
             )
 
-        # Send Booking confirmation Email 
-        send_venue_booking_confirmation_email(booking, facilities)
+            facilities = booking_details['facilities']
         
-        temp_booking.delete()
+            for f in facilities:
+                BookingDetails.objects.create(
+                    booking=booking,
+                    facilities=f"{f['facility']} - {f['price']}"
+                )
+
+            # Send Booking confirmation Email 
+            send_venue_booking_confirmation_email(booking, facilities)
+            
+            temp_booking.delete()
         
         
         print('Booking created successfully with facilities', session)
@@ -491,37 +465,18 @@ def strip_webhook_view(request) :
 
 
 
-#================== Boooking 2 ===========
-
-
 class GetBookedDates(APIView):
     def get(self, request, vid):
         venue = get_object_or_404(Venue, id=vid)
         bookings = Booking.objects.filter(venue=venue, status="Booking Confirmed")
-        booking_package = request.query_params.get("booking_package")  # Use query params
+        booking_package = request.query_params.get("booking_package")  
 
         if booking_package == "regular":
-            # Scenario 1: Fetch all dates
-            # booked_dates = bookings.values_list("dates", flat=True)  # Fetch from `dates` field
             booked_dates = bookings.filter(package_type__package_name="regular").values_list("dates", flat=True)
             flattened_dates = [date for sublist in booked_dates for date in sublist]  # Flatten nested lists
-            unique_dates = list(set(flattened_dates))  # Remove duplicates
+            unique_dates = list(set(flattened_dates))  
             result = [{"date": date} for date in unique_dates]
-        # else:
-        #     # Scenario 2: Fetch dates with aggregated time slot counts
-        #     date_slot_count = {}
-        #     for booking in bookings:
-        #         if booking.dates and booking.times:
-        #             for date in booking.dates:
-        #                 if date not in date_slot_count:
-        #                     date_slot_count[date] = 0
-        #                 # Increment by the count of time slots
-        #                 date_slot_count[date] += len(booking.times)
-
-        #     result = [
-        #         {"date": date, "booked_time_slots_count": count}
-        #         for date, count in date_slot_count.items()
-        #     ]
+        
         else :
             date_slot_count = {}
             for booking in bookings:
@@ -530,7 +485,6 @@ class GetBookedDates(APIView):
                     filtered_times = [
                         time for time in booking.times if time not in ["Morning", "Evening", "Full Day"]
                     ]
-
                     # Only process bookings with remaining valid time slots
                     if len(filtered_times) > 0:
                         for date in booking.dates:
@@ -568,7 +522,6 @@ class GetBookedTimeSlotsForASelectedDate(APIView):
         return Response( remaining_time_slots, status=status.HTTP_200_OK)
 
 
-# ==================   Booking =================
 
 class ShowBookingDetailsForCalandar(GenericAPIView) :
     serializer_class = ShowBookingDetailsForCalandarSerializer
@@ -580,14 +533,6 @@ class ShowBookingDetailsForCalandar(GenericAPIView) :
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
-
-
-        # paginator = self.pagination_class()
-        # result_page = paginator.paginate_queryset(bookings, request)
-        # serializer = self.serializer_class(result_page, many=True)
-
-        # return paginator.get_paginated_response(serializer.data)
-    
 
 class ShowBookingListView(GenericAPIView) :
     serializer_class = ShowBookingListSerializer
@@ -603,8 +548,7 @@ class ShowBookingListView(GenericAPIView) :
 
         return paginator.get_paginated_response(serializer.data)
 
-       
-        # return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
 
 class ShowSingleBookingDetails(GenericAPIView) :
@@ -622,16 +566,9 @@ class CancelBookingView(GenericAPIView) :
         is_user = request.data.get('user')
         
         booking_obj = get_object_or_404(Booking, id=bid)
-        # booking_obj.cancel_reason = cancel_reason
-        # booking_obj.status = 'Booking Canceled'
-        # booking_obj.save()
-        # return Response({"message": "Booking canceled and refund processed successfully."}, status=status.HTTP_200_OK)
-
-
-        try :
-            
+       
+        try:
             refund_amount = booking_obj.booking_amount
-            print('refund amou',refund_amount) 
 
             if is_user :
                 if booking_obj.dates:
@@ -652,18 +589,18 @@ class CancelBookingView(GenericAPIView) :
                     booking_obj.is_canceled_by_user = True
                     
             if booking_obj.payment_intent_id :
-                rounded_refund = refund_amount.quantize(Decimal('1'), rounding=ROUND_DOWN)
-                print('rondddddddd',rounded_refund)
-                refund = stripe.Refund.create(
-                    payment_intent=booking_obj.payment_intent_id,
-                    amount=int(rounded_refund * 100)
-                )
-                
-                booking_obj.cancel_reason = cancel_reason
-                booking_obj.status = 'Booking Canceled'
-                booking_obj.refund_amount = rounded_refund 
-                booking_obj.save()
+                with transaction.atomic():
+                    rounded_refund = refund_amount.quantize(Decimal('1'), rounding=ROUND_DOWN)
 
+                    refund = stripe.Refund.create(
+                        payment_intent=booking_obj.payment_intent_id,
+                        amount=int(rounded_refund * 100)
+                    )
+                    
+                    booking_obj.cancel_reason = cancel_reason
+                    booking_obj.status = 'Booking Canceled'
+                    booking_obj.refund_amount = rounded_refund 
+                    booking_obj.save()
 
                 return Response({"message": "Booking canceled and refund processed successfully."}, status=status.HTTP_200_OK)
             else:
@@ -676,8 +613,7 @@ class CancelBookingView(GenericAPIView) :
 
 
 
-#-------------- ADD VENUE REVIEWS ----------
-
+#---------- Venue Reviews ----------
 
 class AddReviewView(APIView) :
     def post(self, request) :
@@ -714,11 +650,11 @@ class GetReviewsView(APIView) :
 
 
 
-#------------------ Inquiries from user side ------------   
-
+#--------- Inquiries ---------   
 
 class UserInquiryView(GenericAPIView):
     serializer_class = UserInquirySerializer
+    permission_classes = [IsAuthenticated]
     
     def post(self, request, uid):
         user = get_object_or_404(User, id=uid)

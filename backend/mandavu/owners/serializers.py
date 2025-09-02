@@ -8,22 +8,18 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.urls import reverse
 from .utils import send_owner_password_reset_email
-
 from .models import *
 from django.contrib.auth import authenticate
-
-
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut,GeocoderServiceError
-
 from django.conf import settings
 import googlemaps
 import json
 from users.models import Booking
-
-
 from opencage.geocoder import OpenCageGeocode
 from rest_framework.exceptions import ValidationError
+
+
 
 class OwnerRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=60, min_length=6, write_only=True)
@@ -53,8 +49,6 @@ class OwnerRegisterSerializer(serializers.ModelSerializer):
         )        
         return owner
        
-
-
 
 
 class OwnerLoginSerializer(serializers.ModelSerializer) :
@@ -110,8 +104,6 @@ class OwnerLoginSerializer(serializers.ModelSerializer) :
         return attrs
   
 
-        
-
 class LogoutOwnerSerializer(serializers.Serializer) :
     refresh_token = serializers.CharField()
     default_error_messages ={
@@ -154,7 +146,7 @@ class UpdateOwnerSerializer(serializers.ModelSerializer) :
 
 
 
-#============== PASSWORD RESET ============
+#------------- Reset password ----------
 
 class OwnerPasswordResetSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=225)
@@ -182,8 +174,6 @@ class OwnerPasswordResetSerializer(serializers.ModelSerializer):
             send_owner_password_reset_email(data)
         return super().validate(attrs)
     
-
-
 
 class OwnerSetNewPasswordSerializer(serializers.ModelSerializer) :
     password = serializers.CharField(max_length=60, write_only=True) 
@@ -217,10 +207,6 @@ class OwnerSetNewPasswordSerializer(serializers.ModelSerializer) :
 
 # ============= VENUE HANDLING ===========
 
-
-
-
-
 class RegisterVenueSerializer(serializers.ModelSerializer) :
     
     class Meta: 
@@ -229,35 +215,15 @@ class RegisterVenueSerializer(serializers.ModelSerializer) :
 
     def create(self, validated_data):
         venue = Venue(**validated_data)
-        # self.geocode_address(venue)
         venue.save()
         return venue
     
 
-    # def geocode_address(self,venue):
-    #     geocoder = OpenCageGeocode(settings.OPENCAGE_API_KEY)
-    #     full_address = f"{venue.address}, {venue.district}, {venue.city}, {venue.state}, {venue.pincode}, {settings.BASE_COUNTRY}"
-    #     try:
-    #         results = geocoder.geocode(full_address)
-    #         if results and len(results):
-    #             location = results[0]['geometry']
-    #             venue.latitude = location['lat']
-    #             venue.longitude = location['lng']
-    #             print(f"Geocoding successful: {full_address} -> ({location['lat']}, {location['lng']})")
-    #         else:
-    #             print(f"Geocoding failed for address: {full_address}")
-    #             raise ValidationError(f"Geocoding failed for address: {full_address}")
-    #     except Exception as e:
-    #         print(f"Geocoding error for address '{full_address}': {str(e)}")
-    #         raise ValidationError(f"Geocoding error: {str(e)}")
-        
 
 class VenueDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Venue
         fields = '__all__'
-
-
 
 
 class UpdateVenueSerializer(serializers.ModelSerializer):
@@ -272,10 +238,6 @@ class UpdateVenueSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-   
-
-
-#========================================================
 
 class OwnerAndVenueDetailsSerializer(serializers.ModelSerializer) :
     venue = VenueDetailsSerializer(read_only=True)
@@ -284,9 +246,6 @@ class OwnerAndVenueDetailsSerializer(serializers.ModelSerializer) :
         model = Owner
         fields = '__all__'
     
-
-#=================== FACILITIES ====================
-
 
 class CreatingFacilitySerializer(serializers.ModelSerializer) :
     class Meta:
@@ -339,13 +298,6 @@ class UpdateFacilitiesSerializer(serializers.ModelSerializer) :
         return instance
     
 
-#===========  Banner ========
-
-# class AddVenuePhotoSerializer(serializers.ModelSerializer) :
-#     class Meta:
-#         model = VenueImage
-#         fields = ['venue_photo']
-
 
 class BannerDetailsSerializer(serializers.ModelSerializer) :
     class Meta:
@@ -358,17 +310,11 @@ class BannerDetailsSerializer(serializers.ModelSerializer) :
         return request.build_absolute_uri(photo_url)    
     
 
-#============ VENUE PHOTOS ===========
-
 class AddVenuePhotoSerializer(serializers.ModelSerializer) :
     class Meta:
         model = VenueImage
         fields = '__all__'
 
-        
-
-    
-#============ EVENTS ============
 
 class CreatingEventSerializer(serializers.ModelSerializer) :
     class Meta:
@@ -399,10 +345,6 @@ class UpdateEventSerializer(serializers.ModelSerializer) :
     
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)
-
-
-#============ BOOKING PACKAGES ============
-
 
 
 class BookingPackagesSerializer(serializers.ModelSerializer) :
@@ -448,28 +390,12 @@ class BookingPackagesSerializer(serializers.ModelSerializer) :
         return super().update(instance, validated_data)
 
 
-#============ PACKGE TIME SLOTES ==========
 
 class BookingPackageTimeSlotesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TimeSlots
         fields = ['time_slots']
-
-    # def get_time_slots(self, obj) :
-    #     return [
-    #         {
-    #             "start_time": slot[0],
-    #             "end_time": slot[1],
-    #             "is_active": slot[2],
-    #         }
-    #         for slot in obj.time_slots
-    #     ]
-
-    # time_slots = serializers.SerializerMethodField()
-
-    
-# =========== booking =========
 
 
 class AllBookingDetailsSerializer(serializers.ModelSerializer) :

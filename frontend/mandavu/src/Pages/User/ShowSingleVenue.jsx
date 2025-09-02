@@ -31,22 +31,16 @@ export default function ShowSingleVenueDetails() {
   const { venueId } = useParams();
   const [venue, setVenue] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-
-
-
   const [isEventModalOpen, setIsEventModalOpen] = useState(false)
-
-  // const {handleChat} = useChat()
-
   const userId = useSelector((state) => state.user.user?.id);
-  console.log('sondfdj', userId)
+  
 
   useEffect(() => {
     const fetchVenueDetails = async () => {
       try {
         const response = await axiosUserInstance.get(`single-venue-details/${venueId}/`);
         setVenue(response.data);
-        console.log(response.data)
+
       } catch (error) {
         console.error('Error fetching venue details:', error);
       }

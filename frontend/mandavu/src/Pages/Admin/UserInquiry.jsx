@@ -29,7 +29,7 @@ export default function UserInquiry() {
     const fetchUserInquiries = async () => {
         try {
             const response = await axiosAdminInstance.get('get-user-inquiries/')
-            console.log(response.data)
+            // console.log(response.data)
             setMessages(response.data)
         } catch (error) {
             console.error("error", error)

@@ -58,7 +58,7 @@ export default function VenueBookingStep2() {
             try {
                 const response = await axiosUserInstance.get(`single-venue-details/${venueId}/`);
                 setVenue(response.data);
-                console.log("parent render", response.data)
+                // console.log("parent render", response.data)
             } catch (error) {
                 console.error('Error fetching venue details:', error);
             } finally {

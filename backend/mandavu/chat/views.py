@@ -14,15 +14,11 @@ from rest_framework.exceptions import NotAuthenticated
 from django.core.cache import cache
 
 
-# Create your views here.
-
 
 class MessageListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, user_id1, user_id2):
-        print('uerid',user_id1)
-        print('uerid',user_id2)
 
         if not request.user.is_authenticated:
             raise NotAuthenticated('User must be authenticated to view messages')
@@ -37,7 +33,6 @@ class MessageListView(APIView):
             messages = Messages.objects.filter(chat_room=chat_room).order_by('-timestamp')
             messages.filter(seen=False).exclude(user=request.user).update(seen=True)
 
-            
             serializer = MessageSerializer(messages, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         
@@ -51,10 +46,7 @@ class AddChatRoomView(APIView) :
         try:
             user_id1 = request.data.get('user_id1')
             user_id2 = request.data.get('user_id2')
-            print('uesrid',user_id1)
-            print('ownerrid',user_id2)
-
-
+        
             if user_id1 == user_id2 :
                 return Response({'error': 'Cannot create chat room with the same user.'}, status=status.HTTP_400_BAD_REQUEST)
             

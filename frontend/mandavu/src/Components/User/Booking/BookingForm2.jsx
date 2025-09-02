@@ -18,8 +18,6 @@ import SelectAdditionalFacilitiesSection from "./SelectAdditionalFacilitiesSecti
 export default function BookingFormForDateAndTime({ venueId, setSelectedDates, selectedDates, selectedTimeSlot, setSelectedTimeSlot, airConditionSelection, setAirConditionSelection, facilities, selectedFacilities, setSelectedFacilities, totalAmount, setTotalAmount, setAdvanceAmount }) {
 
 
-    console.log(facilities)
-
     const selectedPackage = useSelector((state) => state.user.selectedPackage)
     const isRangeMode = selectedPackage?.price_for_per_hour.toLowerCase() === "not allowed";
 
@@ -47,7 +45,7 @@ export default function BookingFormForDateAndTime({ venueId, setSelectedDates, s
                     setBookedDatesForAlternativePackage(response.data);
                 }
 
-                console.log("Fetched booked dates:", response.data);
+                // console.log("Fetched booked dates:", response.data);
             } catch (error) {
                 console.error("Error fetching booked dates:", error);
                 toast.error("Something went wrong");

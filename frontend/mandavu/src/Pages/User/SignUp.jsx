@@ -29,7 +29,6 @@ export default function SignUp() {
     },
     validationSchema: SignupSchema,
     onSubmit: async (values) => {
-      console.log('Form submitted with values:', values);
       setLoading(true)
 
       try {

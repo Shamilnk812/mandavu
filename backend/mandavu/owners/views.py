@@ -21,14 +21,11 @@ from django.db.models.functions import TruncDay, TruncWeek, TruncMonth, TruncYea
 from django.db.models import Sum,Q
 from datetime import datetime, timedelta
 from notifications.signals import notify_admin_on_maintenance_change
-
 import stripe
 from reportlab.lib.pagesizes import A4,A3
 from reportlab.pdfgen import canvas
 import io
 from django.http import HttpResponse
-
-
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
@@ -36,12 +33,11 @@ from io import BytesIO
 from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib.units import inch
-
 import requests
-# Create your views here.
 
 
 
+# -------- Owner and Venue registration ---------
 
 class RegistrationStep1(APIView) :
     
@@ -63,9 +59,6 @@ class RegistrationStep1(APIView) :
         return Response({"message":"Registration Step 1 successly completed .", "registrationToken": str(temp_registration.secure_token)},status=status.HTTP_200_OK)
     
 
-        
-
-
 
 class RegistrationStep2(APIView) :
     
@@ -83,8 +76,7 @@ class RegistrationStep2(APIView) :
         pincode = request.data.get('pincode')
         latitude = request.data.get('latitude')
         longitude = request.data.get('longitude')
-
-
+        
         if not all([address, city, district, state, pincode]) :
             return Response({"message": "Address, state, district, city, and pincode are required."}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -94,27 +86,28 @@ class RegistrationStep2(APIView) :
             request.data['latitude'] = round(float(latitude), 6)
             request.data['longitude'] = round(float(longitude), 6)
 
-
         try:
-            response = requests.get(f"https://api.postalpincode.in/pincode/{pincode}")
+            response = requests.get(f"https://api.postalpincode.in/pincode/{pincode}",headers = {
+                "User-Agent": "Mozilla/5.0",
+                "Accept": "application/json"
+            })
             
             data = response.json()
-          
+           
             if data[0]['Status'] == 'Success':
                 post_offices = data[0]['PostOffice']
                 valid_districts = {po['District'].lower() for po in post_offices if po.get('District')}
                 valid_states = {po['State'].lower() for po in post_offices if po.get('State')}
-               
-               
+                
                 if district.lower() not in valid_districts :
                     return Response({"message":"Given district is not valid"},status=status.HTTP_400_BAD_REQUEST)
                 if state.lower() not in valid_states :
                     return Response({"message":"Given state is not valid."},status=status.HTTP_400_BAD_REQUEST)
-               
+                
             else:
-
                 return Response({"message": "Your pincode is not valid, Please enter a valid pincode."},status=status.HTTP_400_BAD_REQUEST)
         except Exception as e :
+            print(str(e))
             return Response({"messge":f"something wrong  {str(e)}"},status=status.HTTP_400_BAD_REQUEST)
         
         
@@ -123,10 +116,7 @@ class RegistrationStep2(APIView) :
         return Response({"message":"Registration Step 2 is successfully completed.", "registrationToken": str(temp_registration_obj.secure_token)},status=status.HTTP_200_OK)
     
 
-    
-
 class RegistrationStep3(APIView) :
-    
     def post(self, request, token):
         temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, secure_token=token)
         temp_registration_obj.event_details = request.data
@@ -134,12 +124,7 @@ class RegistrationStep3(APIView) :
         return Response({"message":"Registration Step 3 successfully completed.", "registrationToken": str(temp_registration_obj.secure_token)}, status=status.HTTP_200_OK)
 
         
-
-
-
-
 class CancelRegistrationView(APIView):
-
     def delete(self, request, token):
         temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, secure_token=token)
         temp_registration_obj.delete()
@@ -147,45 +132,20 @@ class CancelRegistrationView(APIView):
         return Response({"message": "Registration cancelled "}, status=status.HTTP_200_OK)
             
 
-
 class RegisterCombinedView(APIView):
 
     def post(self, request, token):
         temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, secure_token=token)
-
-        # owner_data = temp_registration_obj.owner_details
-        # venue_data = temp_registration_obj.venue_details
-        # events = temp_registration_obj.event_details
-        # facilities = request.data
-        # venue_images = temp_registration_obj.venue_details.venue_images
-        
-        # id_proof_base64 = owner_data.id_proof
-        # venue_license_base64 = venue_data.venue_license
-        # venue_terms_and_conditions = venue_data.terms_and_conditions
-
-
         owner_data = temp_registration_obj.owner_details
         venue_data = temp_registration_obj.venue_details
         events = temp_registration_obj.event_details
-        facilities = request.data  # Facilities passed from the request
+        facilities = request.data 
         venue_images = venue_data.get("venue_images", [])
 
         # Decode files
         id_proof_base64 = owner_data.get('id_proof')
         venue_license_base64 = venue_data.get('venue_license')
         venue_terms_and_conditions = venue_data.get('terms_conditions')
-
-        
-        
-        # owner_data = request.data.get('owner')
-        # venue_data = request.data.get('venue')
-        # events = request.data.get('events')
-        # facilities = request.data.get('facilities')
-        # venue_images = request.data.get('venue_images')
-    
-        # id_proof_base64 = owner_data.get('id_proof')
-        # venue_license_base64 = venue_data.get('venue_license')
-        # venue_terms_and_conditions = venue_data.get('terms_and_conditions')
         
         if id_proof_base64 or venue_license_base64 or venue_terms_and_conditions:
             try:
@@ -265,8 +225,7 @@ class RegisterCombinedView(APIView):
                     print('eoorr;',venue_photo_serializer.errors)
                     return Response(venue_photo_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-
-
+        # create defalut booking package and description 
         booking_package_description = description_for_regular_bookingpackages(venue.dining_seat_count,venue.auditorium_seat_count)
         
         BookingPackages.objects.create(
@@ -289,14 +248,9 @@ class RegisterCombinedView(APIView):
         }, status=status.HTTP_201_CREATED)
         
 
-
-
-
-
 class LoginOwnerView(GenericAPIView) :
     serializer_class = OwnerLoginSerializer
     def post(self, request) :
-        print(request.data)
         serializer = self.serializer_class(data=request.data, context={'request':request})
         if serializer.is_valid() :
             response_data = serializer.validated_data
@@ -304,7 +258,6 @@ class LoginOwnerView(GenericAPIView) :
             return Response(response_data,status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
 
 class LogoutOwnerView(GenericAPIView) :
     serializer_class = LogoutOwnerSerializer
@@ -316,26 +269,609 @@ class LogoutOwnerView(GenericAPIView) :
         serializer.save()
         print('logout successfully')
         return Response(status=status.HTTP_200_OK)
+    
+   
+class VerifyOwerOtp(GenericAPIView) :
+    def post(self, request) :
+        otp_code = request.data.get('otp')
+        email = request.data.get('email')
+        
+        try :
+            owner = Owner.objects.get(email=email)
+            otp_entry = OneTimePasswordForOwner.objects.get(owner=owner)
+            decrypted_otp_code = decrypt_otp(otp_entry.code)
+            print(decrypted_otp_code)
+            if decrypted_otp_code == otp_code :
+
+                if otp_entry.is_expired() :
+                    return Response({'message': 'OTP has expired'}, status=status.HTTP_400_BAD_REQUEST)
+          
+                if not owner.is_verified :
+                    owner.is_verified = True
+                    owner.save()
+                    return Response({
+                        'message':'Account email verified successfully'
+                    },status=status.HTTP_200_OK)
+                return Response({
+                        'message' : 'User already verified'
+                        },status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        except Owner.DoesNotExist:
+                return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)    
+        except OneTimePasswordForOwner.DoesNotExist :
+            Response({'message':'Invalid OTP'},status=status.HTTP_400_BAD_REQUEST)
 
 
-
+class ResendOwnerOtp(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        try:
+            owner = Owner.objects.get(email=email)
+            sent_otp_to_owner(email)
+            return Response({'message': 'OTP has been resent successfully'}, status=status.HTTP_200_OK)
+        except Owner.DoesNotExist:
+            return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'message': f'Failed to resend OTP: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class OwnerDetailsView(GenericAPIView) :
     serializer_class = OwnerDetailsSerializer
+    permission_classes = [IsAuthenticated]
     def get(self,request,uid) :
         owner = get_object_or_404(Owner, id=uid)
         serializer = self.serializer_class(owner)
         return Response(serializer.data,status=status.HTTP_200_OK)
 
 
+class OwnerAndVenueDetailsView(GenericAPIView) :
+    serializer_class = OwnerAndVenueDetailsSerializer
+    permission_classes = [IsAuthenticated]
+    def get(self,request,uid) :
+        owner = get_object_or_404(Owner, id=uid)
+        serializer = self.serializer_class(owner,context={'request': request})
+        return Response(serializer.data,status=status.HTTP_200_OK)
+        
+
+class UpdateOwnerView(GenericAPIView) :
+    serializer_class = UpdateOwnerSerializer
+    permission_classes = [IsAuthenticated]
+    def put(self, request,uid) :
+        owner = get_object_or_404(Owner, id=uid)
+        serializer = self.serializer_class(owner, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True) :
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+class ChangeOwnerPassword(GenericAPIView) :
+    def post(self, request, uid) :
+        owner = get_object_or_404(Owner, id=uid)
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+       
+        if not old_password or not new_password :
+            return Response({'message':'Old password and New password are required'},status=status.HTTP_400_BAD_REQUEST)
+        if not owner.check_password(old_password) :
+             return Response({'message':'Incorrect old password'},status=status.HTTP_400_BAD_REQUEST)
+        owner.password = make_password(new_password)
+        owner.save()
+        return Response({'message':'Password changed successfully'},status=status.HTTP_200_OK)
+
+
+
+# ------------ Reset Password -------------
+
+class OwnerPasswordResetRequestView(GenericAPIView):
+    serializer_class = OwnerPasswordResetSerializer
+    def post(self, request) :
+        serializer = self.serializer_class(data= request.data, context={'request':request})
+        serializer.is_valid(raise_exception=True)
+        return Response({'message':"a link has been sent to your email to reset password"},status=status.HTTP_200_OK)  
+
+
+class OwnerPasswordResetConfirmView(GenericAPIView):
+    def get(self, request, uidb64, token) :
+        try :
+            user_id = smart_str(urlsafe_base64_decode(uidb64))
+            user = Owner.objects.get(id=user_id)
+            if not PasswordResetTokenGenerator().check_token(user, token) :
+                return Response({'message':'token is invalid or has expired'}, status=status.HTTP_401_UNAUTHORIZED)
+            
+            reset_url = f"{settings.BASE_FRONT_END_URL}/owner/set-new-passwod?uidb64={uidb64}&token={token}"
+            return redirect(reset_url)
+
+        except DjangoUnicodeDecodeError :
+                return Response({'message':'token is invalid or has expired'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class OwnerSetNewPasswordView(GenericAPIView):
+    serializer_class = OwnerSetNewPasswordSerializer
+    def patch(self, request) :
+        serializer = self.serializer_class(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response({'message':'password reset successfully '},status=status.HTTP_200_OK)
+
+
+
+# ---------- Venue Management -----------
+
+class VenueDetailsView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = VenueDetailsSerializer
+    def get(self, request, uid):
+        venue = get_object_or_404(Venue, owner=uid)
+        serializer = self.serializer_class(venue)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class UpdateVenueView(GenericAPIView) :
+    serializer_class = UpdateVenueSerializer
+    permission_classes = [IsAuthenticated]
+    def put(self, request,vid) :
+        latitude = request.data.get('latitude')
+        longitude = request.data.get('longitude')
+        request.data['latitude'] = round(float(latitude), 6)
+        request.data['longitude'] = round(float(longitude), 6)
+        venue = get_object_or_404(Venue, id=vid)
+        serializer = self.serializer_class(venue, data=request.data, partial=True)    
+        if serializer.is_valid(raise_exception=True) :
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+# ----------- Facilities ----------
+
+class AddFacilitiesView(GenericAPIView):
+    serializer_class = AddFacilitiesSerializer
+    permission_classes = [IsAuthenticated]
+    def post(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        data = request.data.copy()
+        data['venue'] = venue.id
+        serializer = self.serializer_class(data=data)
+        if serializer.is_valid(raise_exception=True) :
+            serializer.save()
+            print(serializer.data)
+            return Response({'data':serializer.data},status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class GetFacilitiesView(GenericAPIView) :
+    serializer_class= GetFacilitiesSerializer
+    permission_classes = [IsAuthenticated]
+    def get(self, request, vid) :
+        facilities = Facility.objects.filter(venue=vid)
+        serializer = self.serializer_class(facilities, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class UpdateFacilitiesView(GenericAPIView) :
+    serializer_class = UpdateFacilitiesSerializer
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid) 
+        facility_id = request.data.get('facility_id')
+        facility = get_object_or_404(Facility, id=facility_id)
+        data = request.data.copy()
+        data['venue'] = venue.id
+        serializer = self.serializer_class(instance=facility, data=data, partial=True)
+        if serializer.is_valid(raise_exception=True) :
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class BlockFacilityView(GenericAPIView) :
+    def post(self, request, vid) :
+        facility_id = request.data.get('facility_id')
+        venue = get_object_or_404(Venue, id=vid)
+        facility = get_object_or_404(Facility, id=facility_id, venue=venue)
+        facility.is_active = False
+        facility.save()
+        return Response({"message": "Facility blocked successfully"}, status=status.HTTP_200_OK)
+
+
+class UnblockFacilityView(GenericAPIView) :
+    def post(self, request, vid) :
+        facility_id = request.data.get('facility_id')
+        venue = get_object_or_404(Venue, id=vid)
+        facility = get_object_or_404(Facility , id=facility_id, venue=venue)
+        facility.is_active = True
+        facility.save()
+        return Response(status=status.HTTP_200_OK)    
+
+
+# ------------ Venue Photos ----------
+
+class AddVenuePhotoView(APIView) :
+    permission_classes = [IsAuthenticated]
+    def post(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        venue_photo = request.data.get('venue_photo')
+        try:
+             venue_photo_file = decode_base64_file(venue_photo)
+        except ValueError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = AddVenuePhotoSerializer(data={
+            'venue_photo': venue_photo_file,
+            'venue': venue.id,
+        })
+        if serializer.is_valid() :
+            serializer.save()
+            return Response({"message": "Banner added successfully"}, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class ShowAllVenuePhotosView(APIView) :
+    permission_classes = [IsAuthenticated]
+    def get(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        banner_details = VenueImage.objects.filter(venue=venue).order_by('-id')
+        serializer = BannerDetailsSerializer(banner_details, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class BlockVenuePhotoView(APIView) :
+    permission_classes = [IsAuthenticated]
+    def post(self, request, bid) :
+        banner_obj = get_object_or_404(VenueImage, id=bid)
+        banner_obj.is_active = False 
+        banner_obj.save()
+        return Response(status=status.HTTP_200_OK)
+    
+
+class UnblockVenuePhotoView(APIView) :
+    permission_classes = [IsAuthenticated]
+    def post(self, request, bid) :
+        banner_obj = get_object_or_404(VenueImage, id=bid)
+        banner_obj.is_active = True 
+        banner_obj.save()
+        return Response(status=status.HTTP_200_OK)
+
+
+
+# ----------- Events ---------
+
+class GetAllEventsDetails(GenericAPIView) :
+    serializer_class = EventSerializer
+    permission_classes = [IsAuthenticated]
+    def get(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        events = Event.objects.filter(venue=venue).order_by('-id')
+        serializer = self.serializer_class(events, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AddEventView(GenericAPIView) :
+    serializer_class = CreatingEventSerializer
+    permission_classes = [IsAuthenticated]
+    def post(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        event_photo = request.FILES.get('event_photo')
+        event_name  = request.data.get('event_name')
+        
+        if Event.objects.filter(venue=venue,event_name=event_name).exists():
+            return Response({"message": "This event already exist in this veneu"},status=status.HTTP_400_BAD_REQUEST)
+        
+        data = {
+            'event_photo': event_photo,
+            'event_name': event_name,
+            'venue': venue.id
+        }
+        serializer = self.serializer_class(data=data)
+        if serializer.is_valid(raise_exception=True) :
+            serializer.save()
+            return Response({"message": "New event added successfully"}, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, staus=status.HTTP_400_BAD_REQUEST)
+    
+
+class UpdateEventView(GenericAPIView) :
+    serializer_class = UpdateEventSerializer
+    permission_classes = [IsAuthenticated]
+    def patch(self, request, vid) :
+        event_id = request.data.get('event_id')
+        venue = get_object_or_404(Venue, id=vid) 
+        event = Event.objects.filter(id=event_id, venue=venue)
+        data = request.data.copy()
+        data['venue'] = venue.id
+        serializer = self.serializer_class(isinstance=event, data=data, many=True)
+        if serializer.is_valid(raise_exception=True) :
+            return Response({"message":"Event details updated successfully"}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class BlockEventView(APIView) :
+    permission_classes = [IsAuthenticated]
+    def patch(self, request, vid) :
+        event_id = request.data.get('event_id')
+        venue = get_object_or_404(Venue, id=vid)
+        event_obj = get_object_or_404(Event, id=event_id, venue=venue)
+        event_obj.is_active = False
+        event_obj.save()
+        return Response({"message":"Event is blocked successfully"})
+    
+
+class UnblockEventView(APIView) :
+    permission_classes = [IsAuthenticated]
+    def patch(self, request, vid) :
+        event_id = request.data.get('event_id')
+        venue = get_object_or_404(Venue, id=vid)
+        event_obj = get_object_or_404(Event, id=event_id, venue=venue)
+        event_obj.is_active = True
+        event_obj.save()
+        return Response({"message":"Event is unblocked successfully"})
+    
+
+
+#------------ Booking Packges -----------
+
+class GetAllBookingPackagesView(GenericAPIView):
+    serializer_class = BookingPackagesSerializer
+    permission_classes = [IsAuthenticated]
+    def get(self, request, vid):
+        venue = get_object_or_404(Venue, id=vid)
+        booking_packages = BookingPackages.objects.filter(venue=venue)
+        serializer = self.serializer_class(booking_packages,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+class AddBookingPackageView(GenericAPIView) :
+    serializer_class = BookingPackagesSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, vid) :
+        venue = get_object_or_404(Venue, id=vid)
+        data = request.data.copy()
+        data['venue'] = venue.id
+        
+        serializer = self.serializer_class(data=data)
+        if serializer.is_valid() :
+            booking_package  = serializer.save()
+            
+            if booking_package.price_for_per_hour.lower() != 'not allowed':
+                time_slots = []
+                start_hour = 9  # Start time: 9 AM
+                end_hour = 21  # End time: 9 PM (21:00 in 24-hour format)
+
+                for hour in range(start_hour, end_hour):
+                    start_time = f"{hour % 12 if hour % 12 != 0 else 12} {'AM' if hour < 12 else 'PM'}"
+                    end_time = f"{(hour + 1) % 12 if (hour + 1) % 12 != 0 else 12} {'AM' if (hour + 1) < 12 else 'PM'}"
+                    time_slots.append({"start_time":start_time, "end_time":end_time, "is_active":True})
+
+                TimeSlots.objects.create(
+                        booking_package=booking_package,
+                        time_slots=time_slots
+                    )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class UpdateBookingPackageView(GenericAPIView) :
+    serializer_class = BookingPackagesSerializer
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, vid):
+        pid= request.data['package_id']
+        venue = get_object_or_404(Venue, id=vid)
+        booking_package = get_object_or_404(BookingPackages, id=pid, venue=venue)
+        data = request.data.copy()
+        data['venue'] = booking_package.venue.id
+        
+        serializer = self.serializer_class(booking_package, data=data, partial=False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BlockBookingPackageView(APIView) :
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, vid) :
+        pid = request.data.get('package_id')
+        venue = get_object_or_404(Venue, id=vid)
+        booking_package_obj = get_object_or_404(BookingPackages, id=pid, venue=venue)
+        booking_package_obj.is_active = False
+        booking_package_obj.save()
+        return Response({"message":"Event is blocked successfully"},status=status.HTTP_200_OK)
+
+
+class UnblockBookingPackagesView(APIView) :
+    permission_classes = [IsAuthenticated]
+    def patch(self, request, vid) :
+        pid = request.data.get('package_id')
+        venue = get_object_or_404(Venue, id=vid)
+        booking_package_obj = get_object_or_404(BookingPackages, id=pid, venue=venue)
+        booking_package_obj.is_active = True
+        booking_package_obj.save()
+        return Response({"message":"Event is unblocked successfully"},status=status.HTTP_200_OK)
+
+
+
+#---------- Manage booking package time slots ---------
+
+class GetPackageTimeSlotes(GenericAPIView):
+    serializer_class = BookingPackageTimeSlotesSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, vid):
+        venue = get_object_or_404(Venue, id=vid)
+        package_id = request.query_params.get('packageId')
+        booking_package = get_object_or_404(BookingPackages, id=package_id,venue=venue)
+
+        time_slots = TimeSlots.objects.filter(booking_package=booking_package)
+        serializer = self.serializer_class(time_slots,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
+
+
+class BlockOrUnblockBookingPackageTimeSlote(APIView):
+    permission_classes = [IsAuthenticated]
+    def put(self, request, vid):
+        venue = get_object_or_404(Venue, id=vid)
+        package_id = request.data.get('package_id')
+        time_slot_index = request.data.get('index')
+        is_active = request.data.get('is_active')
+
+        if package_id is None or time_slot_index is None or is_active is None :
+            return Response(
+                {"error": "Missing required fields: 'index' or 'is_active'"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+       
+        booking_package = get_object_or_404(BookingPackages, id=package_id, venue=venue)
+        time_slot_obj = get_object_or_404(TimeSlots, booking_package =booking_package)
+        time_slots = time_slot_obj.time_slots
+
+        if time_slot_index < 0 or time_slot_index > len(time_slots) :
+            return Response(
+                {"error": "Invalid time slot index"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        time_slots[time_slot_index]["is_active"] = is_active
+        start_time = time_slots[time_slot_index]["start_time"]
+        end_time = time_slots[time_slot_index]["end_time"]
+        time_slot_obj.time_slots = time_slots
+        time_slot_obj.save()
+
+        return Response({"updated_slot": {"start_time": start_time, "end_time": end_time, "is_active": is_active}},status=status.HTTP_200_OK)
+        
+
+    
+
+#---------- Bookings --------
+class OwnerPagination(PageNumberPagination):
+    page_size = 6
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+    def get_paginated_response(self, data):
+        return Response({
+            'total_pages': self.page.paginator.num_pages,
+            'current_page': self.page.number,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'results': data,
+        })
+
+
+class AllBookingDetailsView(GenericAPIView):
+    serializer_class = AllBookingDetailsSerializer
+    pagination_class = OwnerPagination
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, vid):
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+       
+        all_bookings  = get_bookings_in_date_range(venue_id=vid,is_descending_order=True)     
+
+        if start_date and end_date:
+            all_bookings = get_bookings_in_date_range(venue_id=vid,start_date=start_date,end_date=end_date,is_descending_order=True)
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(all_bookings, request)
+
+        serializer = self.serializer_class(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+    
+
+
+class GetSingleBookingDetailsView(GenericAPIView) :
+    serializer_class = AllBookingDetailsSerializer
+    permission_classes = [IsAuthenticated]
+    def get(self, request, b_id):
+        booking_obj = Booking.objects.filter(id=b_id)
+        serializer = self.serializer_class(booking_obj, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+class UpdateBookingStatusview(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, b_id):
+        booking_obj = get_object_or_404(Booking, id=b_id)
+        booking_obj.status = 'Booking Completed'
+        booking_obj.save()
+        return Response(status=status.HTTP_200_OK) 
+    
+
+
+# ----------- Veneu Maintenance -------------
+
+class SetVenueMaintenanceView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, vid):
+        maintenance_reason = request.data.get('reason')
+        start_date = request.data.get('start_date')
+        end_date = request.data.get('end_date')
+
+        venue = get_object_or_404(Venue, id=vid)
+        previous_status = venue.is_under_maintenance 
+        all_bookings = get_bookings_in_date_range(venue_id=venue.id, start_date=start_date, end_date=end_date )
+
+        for booking in all_bookings:
+            if booking.status == "Booking Confirmed" :
+                if booking.payment_intent_id :
+                    refund = stripe.Refund.create(
+                        payment_intent=booking.payment_intent_id,
+                        amount=int(booking.booking_amount * 100)
+                    )
+                    booking.cancel_reason = maintenance_reason
+                    booking.status = 'Booking Canceled'
+                    booking.save()
+
+        venue.is_under_maintenance = True
+        venue.maintenance_reason = maintenance_reason
+        venue.maintenance_start_date = start_date
+        venue.maintenance_end_date = end_date
+        venue.save()
+
+        if previous_status != venue.is_under_maintenance:
+            notify_admin_on_maintenance_change(venue)
+
+        return Response({'message':'Venue maintenance details have been successfully updated.'}, status=status.HTTP_200_OK)
+
+
+class RemoveVenueMaintenanceView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, vid):
+        venue = get_object_or_404(Venue, id=vid)
+        previous_status = venue.is_under_maintenance 
+        venue.is_under_maintenance = False
+        venue.maintenance_reason = ''
+        venue.maintenance_start_date = None
+        venue.maintenance_end_date = None
+        venue.save()
+
+        if previous_status != venue.is_under_maintenance:
+            notify_admin_on_maintenance_change(venue)
+
+        return Response({'message':'Venue maintenance details Removed successfully.'}, status=status.HTTP_200_OK)
+
+
+# ---------- Dashboard ---------
 
 class TotalRevenueView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request):
         selected_view = request.GET.get('view', 'monthly')
-        venue_id = request.GET.get('venue_id')  # Get venue_id from query params
+        venue_id = request.GET.get('venue_id') 
         if not venue_id:
             return Response({'error': 'Venue ID is required'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -393,12 +929,11 @@ class TotalRevenueView(APIView):
         return Response({'data': list(revenue_data)}, status=status.HTTP_200_OK)
     
 
-
 class GetBookingsStatusView(APIView)  :
     def get(self, request) :
         venue = request.GET.get('venue_id')
         venue_obj = get_object_or_404(Venue, id=venue)
-        print('veneu id ',venue)
+       
         confirmed_count = Booking.objects.filter(venue=venue,status='Booking Confirmed').count()
         completed_count = Booking.objects.filter(venue=venue,status='Booking Completed').count()
         cancelled_count = Booking.objects.filter(venue=venue,status='Booking Canceled').count()
@@ -411,665 +946,27 @@ class GetBookingsStatusView(APIView)  :
             {"total_revenue":total_revenue},
             {"maintenance_status":maintenance_status}
         ]
-
         return Response(data,status=status.HTTP_200_OK)    
     
-#==========================================
 
-class OwnerAndVenueDetailsView(GenericAPIView) :
-    serializer_class = OwnerAndVenueDetailsSerializer
-    
 
-    def get(self,request,uid) :
-        owner = get_object_or_404(Owner, id=uid)
-        serializer = self.serializer_class(owner,context={'request': request})
-        return Response(serializer.data,status=status.HTTP_200_OK)
-        
-
-
-class UpdateOwnerView(GenericAPIView) :
-    serializer_class = UpdateOwnerSerializer
-    def put(self, request,uid) :
-        owner = get_object_or_404(Owner, id=uid)
-        serializer = self.serializer_class(owner, data=request.data, partial=True)
-        if serializer.is_valid(raise_exception=True) :
-            serializer.save()
-            return Response(serializer.data,status=status.HTTP_200_OK)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-
-
-
-class ChangeOwnerPassword(GenericAPIView) :
-    def post(self, request, uid) :
-        owner = get_object_or_404(Owner, id=uid)
-        old_password = request.data.get('old_password')
-        new_password = request.data.get('new_password')
-        print(old_password)
-        print(new_password)
-        if not old_password or not new_password :
-            return Response({'message':'Old password and New password are required'},status=status.HTTP_400_BAD_REQUEST)
-        if not owner.check_password(old_password) :
-             return Response({'message':'Incorrect old password'},status=status.HTTP_400_BAD_REQUEST)
-        owner.password = make_password(new_password)
-        owner.save()
-        return Response({'message':'Password changed successfully'},status=status.HTTP_200_OK)
-
-
-
-# class VerifyOwerOtp(GenericAPIView) :
-#     def post(self, request) :
-#         opt_code = request.data.get('otp')
-#         email = request.data.get('email')
-
-#         try :
-#             owner = Owner.objects.get(email=email)
-#             owner_code_obj = OneTimePasswordForOwner.objects.get(owner=owner)
-#             owner = owner_code_obj.owner
-#             if not owner.is_verified :
-#                 owner.is_verified = True
-#                 owner.save()
-#                 return Response({'message':'account email verified successfully'},status=status.HTTP_200_OK)
-#             return Response({
-#                      'message' : 'OTP is invlid user already verified'
-#                      },status=status.HTTP_204_NO_CONTENT) 
-#         except OneTimePasswordForOwner.DoesNotExist :
-#             Response({'message':'OTP not provided '},status=status.HTTP_400_BAD_REQUEST)
-
-
-   
-class VerifyOwerOtp(GenericAPIView) :
-    def post(self, request) :
-        print('heeee')
-        otp_code = request.data.get('otp')
-        email = request.data.get('email')
-        print('emiail is ',email)
-        print('otp',otp_code)
-        print('ottttttt')
-        try :
-            owner = Owner.objects.get(email=email)
-            otp_entry = OneTimePasswordForOwner.objects.get(owner=owner)
-
-            decrypted_otp_code = decrypt_otp(otp_entry.code)
-            print(decrypted_otp_code)
-            if decrypted_otp_code == otp_code :
-                print(otp_code)
-
-                if otp_entry.is_expired() :
-                    return Response({'message': 'OTP has expired'}, status=status.HTTP_400_BAD_REQUEST)
-
-          
-                if not owner.is_verified :
-                    owner.is_verified = True
-                    owner.save()
-                    return Response({
-                        'message':'Account email verified successfully'
-                    },status=status.HTTP_200_OK)
-        
-                return Response({
-                        'message' : 'User already verified'
-                        },status=status.HTTP_204_NO_CONTENT)
-            else:
-                return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
-            
-
-        except Owner.DoesNotExist:
-                return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)    
-        
-        except OneTimePasswordForOwner.DoesNotExist :
-            Response({'message':'Invalid OTP'},status=status.HTTP_400_BAD_REQUEST)
-
-
-
-class ResendOwnerOtp(APIView):
-    def post(self, request):
-        email = request.data.get('email')
-        print('hey')
-        try:
-            owner = Owner.objects.get(email=email)
-            sent_otp_to_owner(email)
-            return Response({'message': 'OTP has been resent successfully'}, status=status.HTTP_200_OK)
-        except Owner.DoesNotExist:
-            return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            return Response({'message': f'Failed to resend OTP: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-class OwnerPasswordResetRequestView(GenericAPIView):
-    serializer_class = OwnerPasswordResetSerializer
-    def post(self, request) :
-        serializer = self.serializer_class(data= request.data, context={'request':request})
-        serializer.is_valid(raise_exception=True)
-        return Response({'message':"a link has been sent to your email to reset password"},status=status.HTTP_200_OK)  
-
-
-class OwnerPasswordResetConfirmView(GenericAPIView):
-    def get(self, request, uidb64, token) :
-        try :
-            user_id = smart_str(urlsafe_base64_decode(uidb64))
-            user = Owner.objects.get(id=user_id)
-            if not PasswordResetTokenGenerator().check_token(user, token) :
-                return Response({'message':'token is invalid or has expired'}, status=status.HTTP_401_UNAUTHORIZED)
-            # return Response({'success':True,'message':'credentials is valid','uidb64':uidb64,'token':token},status=status.HTTP_200_OK)
-            reset_url = f"{settings.BASE_FRONT_END_URL}/owner/set-new-passwod?uidb64={uidb64}&token={token}"
-            # reset_url = f"http://localhost:5173/owner/set-new-passwod?uidb64={uidb64}&token={token}"
-            return redirect(reset_url)
-
-        except DjangoUnicodeDecodeError :
-                return Response({'message':'token is invalid or has expired'}, status=status.HTTP_401_UNAUTHORIZED)
-
-
-class OwnerSetNewPasswordView(GenericAPIView):
-    serializer_class = OwnerSetNewPasswordSerializer
-    def patch(self, request) :
-        serializer = self.serializer_class(data = request.data)
-        serializer.is_valid(raise_exception=True)
-        return Response({'message':'password reset successfully '},status=status.HTTP_200_OK)
-
-# ================== VENUE MANAGEMENT =================
-
-
-
-
-class VenueDetailsView(GenericAPIView):
-    serializer_class = VenueDetailsSerializer
-    def get(self, request, uid):
-        venue = get_object_or_404(Venue, owner=uid)
-        serializer = self.serializer_class(venue)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-
-class UpdateVenueView(GenericAPIView) :
-    serializer_class = UpdateVenueSerializer
-    def put(self, request,vid) :
-        latitude = request.data.get('latitude')
-        longitude = request.data.get('longitude')
-        request.data['latitude'] = round(float(latitude), 6)
-        request.data['longitude'] = round(float(longitude), 6)
-        venue = get_object_or_404(Venue, id=vid)
-        serializer = self.serializer_class(venue, data=request.data, partial=True)    
-        if serializer.is_valid(raise_exception=True) :
-            serializer.save()
-            return Response(serializer.data,status=status.HTTP_200_OK)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-    
-
-
-#============  FACILITIES ============
-
-class AddFacilitiesView(GenericAPIView):
-    serializer_class = AddFacilitiesSerializer
-    def post(self, request, vid) :
-        venue = get_object_or_404(Venue, id=vid)
-        data = request.data.copy()
-        data['venue'] = venue.id
-        serializer = self.serializer_class(data=data)
-        if serializer.is_valid(raise_exception=True) :
-            serializer.save()
-            print(serializer.data)
-            return Response({'data':serializer.data},status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-
-class GetFacilitiesView(GenericAPIView) :
-    serializer_class= GetFacilitiesSerializer
-    def get(self, request, vid) :
-        facilities = Facility.objects.filter(venue=vid)
-        serializer = self.serializer_class(facilities, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-
-class UpdateFacilitiesView(GenericAPIView) :
-    serializer_class = UpdateFacilitiesSerializer
-
-    def put(self, request, vid) :
-        print(vid)
-        venue = get_object_or_404(Venue, id=vid) 
-        facility_id = request.data.get('facility_id')
-        facility = get_object_or_404(Facility, id=facility_id)
-        data = request.data.copy()
-        data['venue'] = venue.id
-        serializer = self.serializer_class(instance=facility, data=data, partial=True)
-        if serializer.is_valid(raise_exception=True) :
-            serializer.save()
-            return Response(serializer.data,status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
-class BlockFacilityView(GenericAPIView) :
-    def post(self, request, vid) :
-        facility_id = request.data.get('facility_id')
-        venue = get_object_or_404(Venue, id=vid)
-        facility = get_object_or_404(Facility, id=facility_id, venue=venue)
-        facility.is_active = False
-        facility.save()
-        return Response({"message": "Facility blocked successfully"}, status=status.HTTP_200_OK)
-
-
-class UnblockFacilityView(GenericAPIView) :
-    def post(self, request, vid) :
-        facility_id = request.data.get('facility_id')
-        venue = get_object_or_404(Venue, id=vid)
-        facility = get_object_or_404(Facility , id=facility_id, venue=venue)
-        facility.is_active = True
-        facility.save()
-        return Response(status=status.HTTP_200_OK)    
-
-
-#================ VENUE PHOTOS ==============
-
-class AddVenuePhotoView(APIView) :
-    def post(self, request, vid) :
-        venue = get_object_or_404(Venue, id=vid)
-        venue_photo = request.data.get('venue_photo')
-        try:
-             venue_photo_file = decode_base64_file(venue_photo)
-        except ValueError as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
-        serializer = AddVenuePhotoSerializer(data={
-            'venue_photo': venue_photo_file,
-            'venue': venue.id,
-        })
-        if serializer.is_valid() :
-            serializer.save()
-            return Response({"message": "Banner added successfully"}, status=status.HTTP_201_CREATED)
-        print(serializer.errors)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-
-class ShowAllVenuePhotosView(APIView) :
-    def get(self, request, vid) :
-        venue = get_object_or_404(Venue, id=vid)
-        banner_details = VenueImage.objects.filter(venue=venue).order_by('-id')
-        serializer = BannerDetailsSerializer(banner_details, many=True, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class BlockVenuePhotoView(APIView) :
-    def post(self, request, bid) :
-        banner_obj = get_object_or_404(VenueImage, id=bid)
-        banner_obj.is_active = False 
-        banner_obj.save()
-        return Response(status=status.HTTP_200_OK)
-    
-
-class UnblockVenuePhotoView(APIView) :
-    def post(self, request, bid) :
-        banner_obj = get_object_or_404(VenueImage, id=bid)
-        banner_obj.is_active = True 
-        banner_obj.save()
-        return Response(status=status.HTTP_200_OK)
-
-
-
-# ============= EVENTS ============
-
-
-class GetAllEventsDetails(GenericAPIView) :
-    serializer_class = EventSerializer
-    def get(self, request, vid) :
-        venue = get_object_or_404(Venue, id=vid)
-        events = Event.objects.filter(venue=venue).order_by('-id')
-        serializer = self.serializer_class(events, many=True, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
-class AddEventView(GenericAPIView) :
-    serializer_class = CreatingEventSerializer
-    def post(self, request, vid) :
-        venue = get_object_or_404(Venue, id=vid)
-        print(request.data)
-        event_photo = request.FILES.get('event_photo')
-        event_name  = request.data.get('event_name')
-        
-        if Event.objects.filter(venue=venue,event_name=event_name).exists():
-            return Response({"message": "This event already exist in this veneu"},status=status.HTTP_400_BAD_REQUEST)
-        
-        data = {
-            'event_photo': event_photo,
-            'event_name': event_name,
-            'venue': venue.id
-        }
-        serializer = self.serializer_class(data=data)
-        if serializer.is_valid(raise_exception=True) :
-            serializer.save()
-            return Response({"message": "New event added successfully"}, status=status.HTTP_201_CREATED)
-        print(serializer.errors)
-        return Response(serializer.errors, staus=status.HTTP_400_BAD_REQUEST)
-    
-
-class UpdateEventView(GenericAPIView) :
-    serializer_class = UpdateEventSerializer
-    def patch(self, request, vid) :
-        event_id = request.data.get('event_id')
-        venue = get_object_or_404(Venue, id=vid) 
-        event = Event.objects.filter(id=event_id, venue=venue)
-        data = request.data.copy()
-        data['venue'] = venue.id
-        serializer = self.serializer_class(isinstance=event, data=data, many=True)
-        if serializer.is_valid(raise_exception=True) :
-            return Response({"message":"Event details updated successfully"}, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-class BlockEventView(APIView) :
-    def patch(self, request, vid) :
-        event_id = request.data.get('event_id')
-        venue = get_object_or_404(Venue, id=vid)
-        event_obj = get_object_or_404(Event, id=event_id, venue=venue)
-        event_obj.is_active = False
-        event_obj.save()
-        return Response({"message":"Event is blocked successfully"})
-    
-
-class UnblockEventView(APIView) :
-    def patch(self, request, vid) :
-        event_id = request.data.get('event_id')
-        venue = get_object_or_404(Venue, id=vid)
-        event_obj = get_object_or_404(Event, id=event_id, venue=venue)
-        event_obj.is_active = True
-        event_obj.save()
-        return Response({"message":"Event is unblocked successfully"})
-
-#============== BOOKING PACKAGES ===========
-
-
-class GetAllBookingPackagesView(GenericAPIView):
-    serializer_class = BookingPackagesSerializer
-    def get(self, request, vid):
-        venue = get_object_or_404(Venue, id=vid)
-        booking_packages = BookingPackages.objects.filter(venue=venue)
-        serializer = self.serializer_class(booking_packages,many=True)
-        return Response(serializer.data,status=status.HTTP_200_OK)
-
-class AddBookingPackageView(GenericAPIView) :
-    serializer_class = BookingPackagesSerializer
-
-    def post(self, request, vid) :
-        venue = get_object_or_404(Venue, id=vid)
-        data = request.data.copy()
-        data['venue'] = venue.id
-        
-        serializer = self.serializer_class(data=data)
-        if serializer.is_valid() :
-            booking_package  = serializer.save()
-            
-            if booking_package.price_for_per_hour.lower() != 'not allowed':
-                time_slots = []
-                start_hour = 9  # Start time: 9 AM
-                end_hour = 21  # End time: 9 PM (21:00 in 24-hour format)
-
-                for hour in range(start_hour, end_hour):
-                    start_time = f"{hour % 12 if hour % 12 != 0 else 12} {'AM' if hour < 12 else 'PM'}"
-                    end_time = f"{(hour + 1) % 12 if (hour + 1) % 12 != 0 else 12} {'AM' if (hour + 1) < 12 else 'PM'}"
-                    # time_slots.append([f"{start_time} to {end_time}",True])
-                    time_slots.append({"start_time":start_time, "end_time":end_time, "is_active":True})
-
-                TimeSlots.objects.create(
-                        booking_package=booking_package,
-                        time_slots=time_slots
-                    )
-                    
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print(serializer.errors)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-class UpdateBookingPackageView(GenericAPIView) :
-    serializer_class = BookingPackagesSerializer
-
-    def put(self, request, vid):
-        pid= request.data['package_id']
-        venue = get_object_or_404(Venue, id=vid)
-        booking_package = get_object_or_404(BookingPackages, id=pid, venue=venue)
-        print(booking_package)
-        data = request.data.copy()
-        data['venue'] = booking_package.venue.id
-        
-        serializer = self.serializer_class(booking_package, data=data, partial=False)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class BlockBookingPackageView(APIView) :
-    def patch(self, request, vid) :
-        pid = request.data.get('package_id')
-        venue = get_object_or_404(Venue, id=vid)
-        booking_package_obj = get_object_or_404(BookingPackages, id=pid, venue=venue)
-        booking_package_obj.is_active = False
-        booking_package_obj.save()
-        return Response({"message":"Event is blocked successfully"},status=status.HTTP_200_OK)
-
-
-class UnblockBookingPackagesView(APIView) :
-    def patch(self, request, vid) :
-        pid = request.data.get('package_id')
-        venue = get_object_or_404(Venue, id=vid)
-        booking_package_obj = get_object_or_404(BookingPackages, id=pid, venue=venue)
-        booking_package_obj.is_active = True
-        booking_package_obj.save()
-        return Response({"message":"Event is unblocked successfully"},status=status.HTTP_200_OK)
-
-
-
-#============= PACKAGE TIME SLOTES ===============
-
-class GetPackageTimeSlotes(GenericAPIView):
-    serializer_class = BookingPackageTimeSlotesSerializer
-
-    def get(self, request, vid):
-        venue = get_object_or_404(Venue, id=vid)
-        package_id = request.query_params.get('packageId')
-        booking_package = get_object_or_404(BookingPackages, id=package_id,venue=venue)
-
-        time_slots = TimeSlots.objects.filter(booking_package=booking_package)
-
-        serializer = self.serializer_class(time_slots,many=True)
-        return Response(serializer.data,status=status.HTTP_200_OK)
-    
-
-
-class BlockOrUnblockBookingPackageTimeSlote(APIView):
-    def put(self, request, vid):
-        venue = get_object_or_404(Venue, id=vid)
-        package_id = request.data.get('package_id')
-        time_slot_index = request.data.get('index')
-        is_active = request.data.get('is_active')
-
-        if package_id is None or time_slot_index is None or is_active is None :
-            return Response(
-                {"error": "Missing required fields: 'index' or 'is_active'"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-       
-
-        booking_package = get_object_or_404(BookingPackages, id=package_id, venue=venue)
-
-        time_slot_obj = get_object_or_404(TimeSlots, booking_package =booking_package)
-        time_slots = time_slot_obj.time_slots
-
-        if time_slot_index < 0 or time_slot_index > len(time_slots) :
-            return Response(
-                {"error": "Invalid time slot index"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        time_slots[time_slot_index]["is_active"] = is_active
-        start_time = time_slots[time_slot_index]["start_time"]
-        end_time = time_slots[time_slot_index]["end_time"]
-        time_slot_obj.time_slots = time_slots
-        time_slot_obj.save()
-
-
-        return Response(
-            {"updated_slot": {
-                    "start_time": start_time,
-                    "end_time": end_time,
-                    "is_active": is_active
-                }},status=status.HTTP_200_OK)
-        
-
-    
-
-#============== BOOKING ============
-
-
-class OwnerPagination(PageNumberPagination):
-    page_size = 6
-    page_size_query_param = 'page_size'
-    max_page_size = 100
-
-    def get_paginated_response(self, data):
-        return Response({
-            'total_pages': self.page.paginator.num_pages,
-            'current_page': self.page.number,
-            'next': self.get_next_link(),
-            'previous': self.get_previous_link(),
-            'results': data,
-        })
-
-
-class AllBookingDetailsView(GenericAPIView):
-    serializer_class = AllBookingDetailsSerializer
-    pagination_class = OwnerPagination
-    permission_classes = [IsAuthenticated]
-    
-    def get(self, request, vid):
-        start_date = request.query_params.get('start_date')
-        end_date = request.query_params.get('end_date')
-       
-        all_bookings  = get_bookings_in_date_range(venue_id=vid,is_descending_order=True)     
-
-        if start_date and end_date:
-            all_bookings = get_bookings_in_date_range(venue_id=vid,start_date=start_date,end_date=end_date,is_descending_order=True)
-
-        paginator = self.pagination_class()
-        result_page = paginator.paginate_queryset(all_bookings, request)
-
-        serializer = self.serializer_class(result_page, many=True)
-        return paginator.get_paginated_response(serializer.data)
-    
-
-
-class GetSingleBookingDetailsView(GenericAPIView) :
-    serializer_class = AllBookingDetailsSerializer
-    def get(self, request, b_id):
-        booking_obj = Booking.objects.filter(id=b_id)
-        serializer = self.serializer_class(booking_obj, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class CancellingBookingView(GenericAPIView) :
-    def post(self, request, bid) :
-        cancel_reason = request.data.get('reason')
-        booking_obj = get_object_or_404(Booking, id=bid)
-        booking_obj.cancel_reason = cancel_reason
-        booking_obj.status = 'Booking Canceled'
-        booking_obj.save()
-        return Response(status=status.HTTP_200_OK)
-
-
-class UpdateBookingStatusview(APIView):
-    def post(self, request, b_id):
-        booking_obj = get_object_or_404(Booking, id=b_id)
-        booking_obj.status = 'Booking Completed'
-        booking_obj.save()
-        return Response(status=status.HTTP_200_OK) 
-    
-
-
-# ---------------- Set Veneu Miantenance --------------------
-
-
-class SetVenueMaintenanceView(APIView):
-    def patch(self, request, vid):
-        maintenance_reason = request.data.get('reason')
-        start_date = request.data.get('start_date')
-        end_date = request.data.get('end_date')
-
-        venue = get_object_or_404(Venue, id=vid)
-        previous_status = venue.is_under_maintenance 
-        all_bookings = get_bookings_in_date_range(venue_id=venue.id, start_date=start_date, end_date=end_date )
-
-        for booking in all_bookings:
-
-            if booking.status == "Booking Confirmed" :
-                
-                if booking.payment_intent_id :
-                    refund = stripe.Refund.create(
-                        payment_intent=booking.payment_intent_id,
-                        amount=int(booking.booking_amount * 100)
-                    )
-
-                    booking.cancel_reason = maintenance_reason
-                    booking.status = 'Booking Canceled'
-                    booking.save()
-
-
-        print(all_bookings)
-        venue.is_under_maintenance = True
-        venue.maintenance_reason = maintenance_reason
-        venue.maintenance_start_date = start_date
-        venue.maintenance_end_date = end_date
-
-        
-        venue.save()
-
-        if previous_status != venue.is_under_maintenance:
-            notify_admin_on_maintenance_change(venue)
-
-        return Response({'message':'Venue maintenance details have been successfully updated.'}, status=status.HTTP_200_OK)
-
-
-
-
-class RemoveVenueMaintenanceView(APIView):
-    
-    def patch(self, request, vid):
-        venue = get_object_or_404(Venue, id=vid)
-        previous_status = venue.is_under_maintenance 
-        venue.is_under_maintenance = False
-        venue.maintenance_reason = ''
-        venue.maintenance_start_date = None
-        venue.maintenance_end_date = None
-        venue.save()
-
-        if previous_status != venue.is_under_maintenance:
-            notify_admin_on_maintenance_change(venue)
-
-        return Response({'message':'Venue maintenance details Removed successfully.'}, status=status.HTTP_200_OK)
-
-
-
-
-
-# ------------------- Download sales report ---------------
-
+# ----------- Generate sales report ---------
 
 class GenerateSalesReport(APIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
-
         start_date = request.data.get('start_date')
         end_date = request.data.get('end_date')
         venue_id = request.data.get('venue_id')
 
-        print(request.data)
-
         if not start_date or not end_date or not venue_id:
-            return Response({"error": "Missing required parameters"}, status=400)
+            return Response({"error": "start date or end date missing. Please add valid dates"}, status=400)
         
-
         try:
-            
             formatted_start_date = datetime.strptime(start_date, "%Y-%m-%d").strftime("%d %B, %Y")
             formatted_end_date = datetime.strptime(end_date, "%Y-%m-%d").strftime("%d %B, %Y")
             all_booking = get_bookings_in_date_range(venue_id=venue_id ,start_date = start_date, end_date=end_date, is_descending_order=False)   
-            
             
             if not all_booking:
                 return Response({"error": "No records found for the selected date range."}, status=400)
@@ -1083,12 +980,7 @@ class GenerateSalesReport(APIView):
             heading_style = ParagraphStyle('Heading1', parent=styles['Heading1'], alignment=TA_CENTER)
             elements.append(Paragraph("Sales Report", heading_style))
 
-           
-            subheading_style = ParagraphStyle('Subheading',
-                                            parent=styles['Normal'],
-                                            fontSize=14,  
-                                            alignment=TA_CENTER)
-            
+            subheading_style = ParagraphStyle('Subheading', parent=styles['Normal'], fontSize=14, alignment=TA_CENTER)
             elements.append(Paragraph(f"From {formatted_start_date} to {formatted_end_date}", subheading_style))
             elements.append(Spacer(1, 0.2 * inch))  
 
@@ -1098,14 +990,8 @@ class GenerateSalesReport(APIView):
             for index, booking in enumerate(all_booking, start=1):
                 if booking.status == 'Booking Completed':
                     all_total_price += booking.total_price
-
                 formatted_dates = "\n".join([datetime.strptime(date, "%Y-%m-%d").strftime("%d %b, %Y") for date in booking.dates])
-
-               
                 formatted_price = int(float(booking.total_price))  
-
-    
-                
               
                 data.append([
                     str(index),
@@ -1134,19 +1020,14 @@ class GenerateSalesReport(APIView):
             table.setStyle(style)
             elements.append(table)
             elements.append(Spacer(1, 0.2 * inch)) 
-            total_price_style = ParagraphStyle('TotalPrice',
-                                            parent=styles['Normal'],
-                                            fontSize=14,  
-                                            alignment=TA_RIGHT)
+            total_price_style = ParagraphStyle('TotalPrice', parent=styles['Normal'], fontSize=14, alignment=TA_RIGHT)
             elements.append(Paragraph(f"Total Price = {all_total_price}", total_price_style))
 
             doc.build(elements)
             buffer.seek(0)
-
             response = HttpResponse(buffer, content_type='application/pdf')
             response['Content-Disposition'] = 'attachment; filename="sales_report.pdf"'
             return response
-            
             
         except Exception as e:
             print(e)

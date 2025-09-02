@@ -93,9 +93,9 @@ export default function ShowAllVenues() {
     try {
       const response = await axiosUserInstance.get(`venues-list/`, {params})
       setVenuesList(response.data.results);
-      console.log(response.data.results)
+      // console.log(response.data.results)
       setTotalPages(response.data.total_pages);
-      console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.error('fetching error', error);
     } finally {
@@ -122,7 +122,7 @@ export default function ShowAllVenues() {
       min_price: priceRange[0],
       max_price: priceRange[1],
     };
-    console.log("Filter Params:", params);
+    // console.log("Filter Params:", params);
 
 
     fetchVenuesList(params).then(() => {

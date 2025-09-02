@@ -35,7 +35,7 @@ export default function OwnersList() {
             // setOwners(response.data)
             setOwners(response.data.results)
             setTotalPages(response.data.total_pages);
-            console.log(response.data)
+            // console.log(response.data)
         } catch (error) {
             console.error('somethin wrong ', error)
         }finally{
@@ -49,7 +49,7 @@ export default function OwnersList() {
 
 
     const handleBlockOwner = async () => {
-        console.log('owner :', selectedOwner, 'reson ', blockingReason)
+        // console.log('owner :', selectedOwner, 'reson ', blockingReason)
         try {
             setLoading(true);
             const response = await axiosAdminInstance.post(`block-owner/${selectedOwner}/`, { blockingReason: blockingReason })
@@ -67,7 +67,6 @@ export default function OwnersList() {
         try {
             setUnblockProcessing(uid)
             const response = await axiosAdminInstance.post(`unblock-owner/${uid}/`)
-            console.log('unbloked', response.data)
             toast.success('Owner Account is unblocked')
             fetchOwnerslist()
         } catch (error) {

@@ -26,7 +26,7 @@ export default function AdminViewAllBookings() {
             const response = await axiosAdminInstance.get(`get-all-bookings?page=${currentPage}&start_date=${startDate}&end_date=${endDate}`);
             setBookings(response.data.results);
             setTotalPages(response.data.total_pages);
-            console.log(response.data.results)
+            // console.log(response.data.results)
         } catch (error) {
             console.log('error is :', error);
             toast.error('Failed to fetch Bookings details. Please try again later');

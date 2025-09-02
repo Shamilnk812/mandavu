@@ -51,7 +51,7 @@ export default function FacilitesManagement () {
         try{
             console.log(updatedValues)
             const response = await axiosOwnerInstance.put(`update-facility/${venueId}/`,{...updatedValues, facility_id : id})
-            console.log(response.data)
+            // console.log(response.data)
             toast.success('Facility updated successfully ')
             fetchFacilities()
         }catch(error) {
@@ -81,7 +81,7 @@ export default function FacilitesManagement () {
         try{
             const response = await axiosOwnerInstance.get(`get-facility/${venueId}/`)
             setFacility(response.data)
-            console.log(response.data)
+            // console.log(response.data)
         }catch (error) {
             console.error('fetchi facility error',error)
         }

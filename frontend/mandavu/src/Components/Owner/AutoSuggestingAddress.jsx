@@ -33,11 +33,14 @@ const AutoSuggestingAddress = ({ formik }) => {
         const pincode = addr?.postcode || "";
         const state = addr?.state || "";
         const city = display_place || addr?.city || addr?.town || addr?.name || "";
+        setQuery(display_name)
 
         try {
 
             const response = await fetch(`https://us1.locationiq.com/v1/reverse?key=${locationAccessToken}&lat=${lat}&lon=${lon}&format=json`);
             const data = await response.json();
+
+            console.log('heeee dta',data)
 
             const sAddress = data?.address || {};
             const district = sAddress?.state_district || "";
@@ -49,9 +52,9 @@ const AutoSuggestingAddress = ({ formik }) => {
             formik.setFieldValue("city", city);
             formik.setFieldValue("latitude", lat);
             formik.setFieldValue("longitude", lon);
-
+        
             setSuggestions([]);
-            console.log('it is working')
+            
         } catch (error) {
             console.error("Failed to find your locaiton, please try again later.", error);
         }

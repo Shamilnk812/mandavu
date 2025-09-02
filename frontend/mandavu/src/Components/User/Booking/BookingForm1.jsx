@@ -26,7 +26,7 @@ const BookingFormForAddress = forwardRef((props, ref) => {
         },
         validationSchema: BookingForm1Schema,
         onSubmit: async (values) => {
-            console.log("Submitted with ", values);
+            // console.log("Submitted with ", values);
             const {pincode, state} = values
 
             try{

@@ -20,7 +20,7 @@ export default function OwnerChartBox2({ title, icon, pchart }) {
         try {
             const response = await axiosUserInstance.get(`get-reviews/${venueId}/`);
             setReviews(response.data);
-            console.log(response.data);
+            // console.log(response.data);
         } catch (error) {
             toast.error('Failed to fetch reviews. Please try again later');
         }

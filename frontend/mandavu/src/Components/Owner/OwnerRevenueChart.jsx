@@ -31,7 +31,6 @@ export default function OwnerRevenueChart() {
       });
 
       const data = response.data.data;
-      console.log('dta is :',data)
       const formattedData = [];
       const labels = [];
       const currentDate = new Date();
@@ -96,7 +95,7 @@ export default function OwnerRevenueChart() {
     }
   };
 
-  console.log('this is reveneu data',revenueData)
+  // console.log('this is reveneu data',revenueData)
 
   useEffect(() => {
     fetchRevenueData(selectedView);
