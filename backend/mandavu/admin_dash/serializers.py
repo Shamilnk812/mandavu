@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError
+from .models import PlatformFee
 
 
 
@@ -87,7 +88,13 @@ class OwnerListSerializer(serializers.ModelSerializer) :
         fields = ['id', 'first_name', 'last_name', 'email', 'phone', 'phone2', 'is_active', 'date_joined','venue','id_proof']
 
 
+class PlatformFeeSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='booking.user.first_name', read_only=True)
+    venue_name = serializers.CharField(source='booking.venue.convention_center_name', read_only=True)
 
+    class Meta:
+        model = PlatformFee
+        fields = ['id', 'username', 'venue_name', 'fee_collected', 'created_at']
 
 
 

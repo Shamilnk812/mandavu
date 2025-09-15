@@ -65,7 +65,6 @@ class OneTimePassword(models.Model) :
 
 class Booking(models.Model):
     booking_status = (
-        # ('Booking Pending', 'Booking Pending'),
         ('Booking Confirmed', 'Booking Confirmed'),
         ('Booking Completed', 'Booking Completed'),
         ('Booking Canceled', 'Booking Canceled')
@@ -73,16 +72,13 @@ class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     venue = models.ForeignKey('owners.Venue', on_delete=models.CASCADE) 
     name = models.CharField(max_length=150)
-    # email = models.EmailField(max_length=225)   ####
     phone = models.CharField(max_length=12)
     additional_phone = models.CharField(max_length=12) 
     city = models.CharField(max_length=150)
     state = models.CharField(max_length=150)
     address = models.TextField()
-    # time = models.CharField(max_length=150)  ###
     times = models.JSONField(default=list)
     dates = models.JSONField(default=list)
-    # date = models.DateField()   ######
     event_name = models.CharField(max_length=225,default="Default Event Name")
     event_details = models.TextField(blank=True, null=True)
     package_type = models.ForeignKey('owners.BookingPackages', on_delete=models.CASCADE, null=True, blank=True)
@@ -107,6 +103,14 @@ class Booking(models.Model):
             last_date = max(date_objects)  # Find the latest date
             return date.today() > last_date
         return False
+    
+    @property
+    def platform_fee(self):
+        # Calculate platfor fee based on booking total amount
+        if self.total_price >= 1000:
+            return 1000
+        else:
+            return self.total_price * 0.25
 
 
 

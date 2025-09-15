@@ -1,6 +1,6 @@
 import random
 from django.core.mail import EmailMessage
-from .models import Owner,OneTimePasswordForOwner
+from .models import Owner,OneTimePasswordForOwner, BookingPackages
 from users.models import Booking
 from django.conf import settings
 import base64
@@ -10,6 +10,15 @@ from users.utils import encrypt_otp,decrypt_otp
 from datetime import datetime,timedelta
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from io import BytesIO
+from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
+from reportlab.lib.enums import TA_CENTER, TA_RIGHT
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import A4,A3
+
 
 
 
@@ -100,7 +109,6 @@ def description_for_regular_bookingpackages(dining_capacity, auditorium_seating)
 
 
 def get_bookings_in_date_range(venue_id=None, start_date=None, end_date=None, is_descending_order=False):
-    
     if is_descending_order:
         all_bookings = Booking.objects.filter(venue_id=venue_id).order_by('-id')
     else:
@@ -109,25 +117,92 @@ def get_bookings_in_date_range(venue_id=None, start_date=None, end_date=None, is
         else:
             all_bookings = Booking.objects.all()
 
-
     if start_date and end_date:
         start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
         end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
-     
             
         # Generate the range of dates between start_date and end_date
         date_range = [start_date + timedelta(days=x) for x in range((end_date - start_date).days + 1)]
         date_range_str = [d.strftime("%Y-%m-%d") for d in date_range]
-
         
         filtered_bookings = []
         for booking in all_bookings:
             booking_dates = booking.dates 
-
             # Check if any of the booking dates fall within the range
             if any(date in date_range_str for date in booking_dates):
                 filtered_bookings.append(booking)
-
         all_bookings = filtered_bookings        
 
     return all_bookings
+
+
+def build_pdf(bookings, formatted_start_date, formatted_end_date):
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A3)
+    elements = []
+    styles = getSampleStyleSheet()
+
+    # Heading
+    heading_style = ParagraphStyle('Heading1', parent=styles['Heading1'], alignment=TA_CENTER)
+    elements.append(Paragraph("Sales Report", heading_style))
+    subheading_style = ParagraphStyle('Subheading', parent=styles['Normal'], fontSize=14, alignment=TA_CENTER)
+    elements.append(Paragraph(f"From {formatted_start_date} to {formatted_end_date}", subheading_style))
+    elements.append(Spacer(1, 0.2 * inch))
+
+    # Table
+    data, total_price = prepare_table_data(bookings)
+    table = create_table(data)
+    elements.append(table)
+    elements.append(Spacer(1, 0.2 * inch))
+
+    # Total price
+    total_price_style = ParagraphStyle('TotalPrice', parent=styles['Normal'], fontSize=14, alignment=TA_RIGHT)
+    elements.append(Paragraph(f"Total Price = {total_price}", total_price_style))
+
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer
+
+
+
+def prepare_table_data(bookings):
+    data = [["ID", "Username", "Event", "Package Name", "Date", "Total Price", "Status"]]
+    total_price = 0
+
+    for index, booking in enumerate(bookings, start=1):
+        if booking.status == 'Booking Completed':
+            total_price += booking.total_price
+
+        formatted_dates = "\n".join([
+            datetime.strptime(date, "%Y-%m-%d").strftime("%d %b, %Y")
+            for date in booking.dates
+        ])
+        formatted_price = int(float(booking.total_price))
+
+        data.append([
+            str(index),
+            booking.user.first_name,
+            booking.event_name,
+            (booking.package_name[:25] + "...") if booking.package_name and len(booking.package_name) > 25 else (booking.package_name or "N/A"),
+            formatted_dates,
+            f"{formatted_price}",
+            booking.status,
+        ])
+
+    return data, total_price
+
+
+
+def create_table( data):
+    table = Table(data, colWidths=[0.5 * inch, 1.5 * inch, 2 * inch, 2 * inch, 1.5 * inch, 1 * inch, 2 * inch])
+    style = TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ])
+    table.setStyle(style)
+    return table

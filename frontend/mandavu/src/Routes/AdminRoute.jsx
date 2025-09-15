@@ -12,6 +12,7 @@ import ShowVenueDetails from "../Pages/Admin/ShowVenueDetails";
 import AdminViewAllBookings from "../Pages/Admin/AdminViewAllBookings";
 import ShowVenueDetails2 from "../Pages/Admin/ShowVenueDetails1";
 import UserInquiry from "../Pages/Admin/UserInquiry";
+import ViewPlatformProfit from "../Pages/Admin/ViewPlatformProfit";
 
 
 export default function AdminRoute() {
@@ -28,6 +29,7 @@ export default function AdminRoute() {
                 <Route path="/sidebar" element={ <Sidebar/> }/>
                 <Route path="/venuelist" element={ <VenueList/> }/>
                 <Route path="/user-inquiry" element={ <UserInquiry/> }/>
+                <Route path="/view-platform-profit" element={<ViewPlatformProfit/>} />
                 <Route path="/show-venue-details/:venueId" element={ <ShowVenueDetails/> }/>
                 <Route path="/show-venue-details2/:venueId" element={ <ShowVenueDetails2/> }/>
                 <Route path="/view-all-bookings" element={ <AdminViewAllBookings/> }/>\

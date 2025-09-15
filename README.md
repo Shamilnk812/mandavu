@@ -60,3 +60,91 @@ Mandavu is a powerful and user-friendly web application designed to streamline t
 - **Stripe**: Integrates secure payment processing capabilities, supporting various payment methods and ensuring compliance with financial regulations.
 - **CORS (Cross-Origin Resource Sharing)**: Configured to allow secure cross-origin requests, enabling the frontend and backend to interact seamlessly despite being hosted on different domains.
 
+
+## 🛠️ Project Setup
+
+### Clone the repository
+
+```bash
+https://github.com/Shamilnk812/mandavu.git
+```
+
+### Navigate to the frontend directory
+
+```bash
+cd frontend
+```
+
+### Install the dependencies
+
+```bash
+npm install
+```
+
+### Run the developement server
+
+```bash
+npm run dev
+```
+
+### Navigate to the backend directory
+
+```bash
+cd backend/mandavu
+```
+
+### Create and activate a virtual environment
+
+```bash
+python -m venv venv
+source venv/bin/activate #linux
+venv/scripts/activate  # windows
+```
+
+### Install the dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Create a .env file in the root directory and add your environment variables
+
+```bash
+SECRET_KEY=your-django-secret-key
+DEBUG=True
+ALLOWED_HOSTS=
+CORS_ALLOWED_ORIGINS=
+BASE_FRONT_END_URL=frontendurl
+
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+EMAIL_USE_TLS=True
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=email_port
+EMAIL_HOST_USER=dummyemail@example.com
+EMAIL_HOST_PASSWORD=dummypassword123
+
+DB_NAME=kickoff_saga_db
+DB_USER=kickoff_saga_user
+DB_PASSWORD=strong_dummy_password
+DB_HOST=localhost
+DB_PORT=port
+
+STRIPE_SECRET_KEY=your_stripe_secreat_key
+STRIPE_SECRET_WEBHOOK=your_stripe_webhook_key
+```
+
+### Apply migrations
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### Run the development server using Daphne
+
+```bash
+daphne mandavu.asgi:application
+
+```
+
+

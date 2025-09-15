@@ -26,6 +26,8 @@ from io import BytesIO
 from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib.units import inch
+import logging
+logger = logging.getLogger("mandavu")
 
 
 
@@ -224,7 +226,6 @@ class VenueVerifyView(APIView) :
         venue.is_verified = True
         venue.save()
         send_approval_email(venue)
-        print('venue approved ')
         return Response(status=status.HTTP_200_OK)
 
 
@@ -285,7 +286,6 @@ class VeneuBookingPackageApproval(APIView):
     def put(self, request, vid):
         venue = get_object_or_404(Venue, id=vid)
         pkg_id = request.data.get("pkg_id")
-        print("package id is ",pkg_id)
         booking_package_obj = get_object_or_404(BookingPackages, venue=venue, id=pkg_id)
         booking_package_obj.is_verified = True
         booking_package_obj.is_rejected = False
@@ -476,6 +476,18 @@ class GetTotalRevenueView(APIView):
         return Response({'data': list(revenue_data)}, status=status.HTTP_200_OK)
 
 
+class GetPlatformFee(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        fees = PlatformFee.objects.select_related('booking', 'booking__user', 'booking__venue').all()
+        serializer = PlatformFeeSerializer(fees, many=True)
+        total_fee = fees.aggregate(total=Sum('fee_collected'))['total'] or 0
+        return Response({
+            'total_fee': total_fee,
+            'transactions': serializer.data
+        }, status=status.HTTP_200_OK)
+
+
 
 # --------- Generate Sales Report -----------
 
@@ -489,75 +501,16 @@ class GenerateSalesReports(APIView):
             return Response({"error": "Missing required parameters"}, status=400)
         
         try:
-            
             formatted_start_date = datetime.strptime(start_date, "%Y-%m-%d").strftime("%d %B, %Y")
             formatted_end_date = datetime.strptime(end_date, "%Y-%m-%d").strftime("%d %B, %Y")
             all_booking = get_bookings_in_date_range(start_date = start_date, end_date=end_date, is_descending_order=False)   
             
             if not all_booking:
                 return Response({"error": "No records found for the selected date range."}, status=400)
-            
-            buffer = BytesIO()
-            doc = SimpleDocTemplate(buffer, pagesize=A2)
-            elements = []
 
-            # Heading
-            styles = getSampleStyleSheet()
-            heading_style = ParagraphStyle('Heading1', parent=styles['Heading1'], alignment=TA_CENTER)
-            elements.append(Paragraph("Sales Report", heading_style))
-
-            subheading_style = ParagraphStyle('Subheading', parent=styles['Normal'], fontSize=14, alignment=TA_CENTER)
-            elements.append(Paragraph(f"From {formatted_start_date} to {formatted_end_date}", subheading_style))
-            elements.append(Spacer(1, 0.2 * inch))  
-
-            data = [["ID", "Username","Venue", "Event", "Package Name", "Date", "Total Price", "Status"]]  # Table header
-            all_total_price = 0
-
-            for index, booking in enumerate(all_booking, start=1):
-                if booking.status == 'Booking Completed':
-                    all_total_price += booking.total_price
-
-                formatted_dates = "\n".join([datetime.strptime(date, "%Y-%m-%d").strftime("%d %b, %Y") for date in booking.dates])
-                formatted_price = int(float(booking.total_price))  
-
-                data.append([
-                    str(index),
-                    booking.user.first_name,
-                    booking.venue.convention_center_name,
-                    booking.event_name,
-                    (booking.package_name[:25] + "...") if booking.package_name and len(booking.package_name) > 25 else (booking.package_name or "N/A"),
-                    formatted_dates,
-                    f"{formatted_price}",
-                    booking.status,
-                ])
-
-            # Table creation
-            table = Table(data, colWidths=[0.5 * inch, 1.5 * inch,2 * inch, 2 * inch, 2 * inch, 1.5 * inch, 1 * inch, 2 * inch])
-
-            # Table styling
-            style = TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                ('GRID', (0, 0), (-1, -1), 1, colors.black),
-            ])
-
-            table.setStyle(style)
-            elements.append(table)
-            elements.append(Spacer(1, 0.2 * inch)) 
-            total_price_style = ParagraphStyle('TotalPrice', parent=styles['Normal'], fontSize=14, alignment=TA_RIGHT)
-            elements.append(Paragraph(f"Total Price = {all_total_price}", total_price_style))
-
-            doc.build(elements)
-            buffer.seek(0)
-
-            response = HttpResponse(buffer, content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="sales_report.pdf"'
+            pdf_buffer = build_pdf(all_booking, formatted_start_date, formatted_end_date)
+            response = HttpResponse(pdf_buffer, content_type="application/pdf")
+            response["Content-Disposition"] = 'attachment; filename="sales_report.pdf"'
             return response
-            
         except Exception as e:
-            print(e)
             return Response({"error": str(e)}, status=500)

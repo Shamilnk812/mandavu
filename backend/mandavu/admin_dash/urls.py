@@ -25,7 +25,7 @@ urlpatterns  =[
     path('reject-venue/<int:vid>/',RejectVenueView.as_view(),name='reject-venue'),
     # path('unverify-venue/<int:vid>/',VenueUnVerifyView.as_view(),name='unverify-venue'),
     path('venue-details/<int:vid>/',VenueDetailsView.as_view(),name='venue-details'),
-
+    path('get-platformfee/', GetPlatformFee.as_view(), name='get-platformfee'),
 
     path('booking-package-approval/<int:vid>/',VeneuBookingPackageApproval.as_view(),name='booking-package-approval'),
     path('booking-package-rejection/<int:vid>/',VeneuBookingPackageRejection.as_view(),name='booking-package-rejection'),

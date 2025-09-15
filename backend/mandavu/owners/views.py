@@ -34,6 +34,10 @@ from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from reportlab.lib.units import inch
 import requests
+from .services import *
+from admin_dash.models import PlatformFee
+import logging
+logger = logging.getLogger("mandavu")
 
 
 
@@ -124,6 +128,7 @@ class RegistrationStep3(APIView) :
         return Response({"message":"Registration Step 3 successfully completed.", "registrationToken": str(temp_registration_obj.secure_token)}, status=status.HTTP_200_OK)
 
         
+
 class CancelRegistrationView(APIView):
     def delete(self, request, token):
         temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, secure_token=token)
@@ -132,120 +137,61 @@ class CancelRegistrationView(APIView):
         return Response({"message": "Registration cancelled "}, status=status.HTTP_200_OK)
             
 
+
 class RegisterCombinedView(APIView):
 
     def post(self, request, token):
         temp_registration_obj = get_object_or_404(TempOwnerAndVenueDetails, secure_token=token)
+        
         owner_data = temp_registration_obj.owner_details
         venue_data = temp_registration_obj.venue_details
         events = temp_registration_obj.event_details
-        facilities = request.data 
+        facilities = request.data
         venue_images = venue_data.get("venue_images", [])
 
-        # Decode files
-        id_proof_base64 = owner_data.get('id_proof')
-        venue_license_base64 = venue_data.get('venue_license')
-        venue_terms_and_conditions = venue_data.get('terms_conditions')
-        
-        if id_proof_base64 or venue_license_base64 or venue_terms_and_conditions:
-            try:
-                id_proof_file = decode_base64_file(id_proof_base64)
-                venue_license_file = decode_base64_file(venue_license_base64)
-                venue_terms_and_conditions_file = decode_base64_file(venue_terms_and_conditions,'pdf')
-                owner_data['id_proof'] = id_proof_file
-                venue_data['venue_license'] = venue_license_file
-                venue_data['terms_and_conditions'] = venue_terms_and_conditions_file
-                
-            except ValueError as e:
-                print(f"Error decoding base64 file: {e}")  
-                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        # Handle files
+        try:
+            decode_files(owner_data, venue_data)
+        except ValueError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        owner_serializer = OwnerRegisterSerializer(data=owner_data)
-        if owner_serializer.is_valid():
-            owner = owner_serializer.save()
-        else:
-            print('error is ',owner_serializer.errors)
-            return Response(owner_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        venue_data['owner'] = owner.id 
-        venue_serializer = RegisterVenueSerializer(data=venue_data)
-        if venue_serializer.is_valid():
-            venue = venue_serializer.save()
-        else:
-            return Response(venue_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
-        
+        # Create Owner
+        owner = create_owner(owner_data)
+        if isinstance(owner, Response):  
+            return owner
+
+        # Create Venue
+        venue = create_venue(venue_data, owner)
+        if isinstance(venue, Response):
+            return venue
+
         # Handle Facilities
-        if facilities:
-            for facility_data in facilities:
-                facility_serializer = CreatingFacilitySerializer(data={
-                    'facility': facility_data.get('facility'),
-                    'price': facility_data.get('price', 'FREE'),
-                    'venue': venue.id,
-                })
-                if facility_serializer.is_valid():
-                    facility_serializer.save()
-                else:
-                    return Response(facility_serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
-            
+        facility_error = create_facilities(facilities, venue)
+        if facility_error:
+            return facility_error
+
         # Handle Events
-        if events:
-            for event_data in events:
-                event_name = event_data.get('name')
-                event_base64_image = event_data.get('image')
-                try:
-                    event_photo_file = decode_base64_file(event_base64_image)
-                except ValueError as e:
-                    return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)     
-                
-                event_serializer = CreatingEventSerializer(data={
-                    'event_name': event_name,
-                    'event_photo': event_photo_file,
-                    'venue': venue.id,
-                })
-                if event_serializer.is_valid():
-                    event_serializer.save()
-                else:
-                    return Response(event_serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+        event_error = create_events(events, venue)
+        if event_error:
+            return event_error
 
         # Handle Venue Images
-        if venue_images:
-            for venue_photo in venue_images:
-                try:
-                    venue_photo_file = decode_base64_file(venue_photo)
-                except ValueError as e:
-                    return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-                
-                venue_photo_serializer = AddVenuePhotoSerializer(data={
-                    'venue_photo': venue_photo_file,
-                    'venue': venue.id,
-                })
-                if venue_photo_serializer.is_valid():
-                    venue_photo_serializer.save()
-                else:
-                    print('eoorr;',venue_photo_serializer.errors)
-                    return Response(venue_photo_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        # create defalut booking package and description 
-        booking_package_description = description_for_regular_bookingpackages(venue.dining_seat_count,venue.auditorium_seat_count)
-        
-        BookingPackages.objects.create(
-            package_name='regular',
-            venue = venue,
-            price = venue.price,
-            price_for_per_hour = 'Not Allowed',
-            air_condition = venue.condition,
-            extra_price_for_aircondition=venue.extra_ac_price,
-            description=booking_package_description
+        venue_img_error = create_venue_images(venue_images, venue)
+        if venue_img_error:
+            return venue_img_error
 
-        )
-    
-        sent_otp_to_owner(owner.email)        
+        # Create Default Booking Package
+        create_default_booking_package(venue)
+
+        # Send OTP
+        sent_otp_to_owner(owner.email)
 
         return Response({
             'message': 'Owner, Venue, Facilities, and Events registered successfully, OTP sent to owner email.',
-            'owner': owner_serializer.data,
-            'venue': venue_serializer.data,
+            'owner': OwnerRegisterSerializer(owner).data,
+            'venue': RegisterVenueSerializer(venue).data,
         }, status=status.HTTP_201_CREATED)
+
         
 
 class LoginOwnerView(GenericAPIView) :
@@ -254,7 +200,6 @@ class LoginOwnerView(GenericAPIView) :
         serializer = self.serializer_class(data=request.data, context={'request':request})
         if serializer.is_valid() :
             response_data = serializer.validated_data
-            print(response_data)
             return Response(response_data,status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -267,7 +212,6 @@ class LogoutOwnerView(GenericAPIView) :
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        print('logout successfully')
         return Response(status=status.HTTP_200_OK)
     
    
@@ -280,9 +224,8 @@ class VerifyOwerOtp(GenericAPIView) :
             owner = Owner.objects.get(email=email)
             otp_entry = OneTimePasswordForOwner.objects.get(owner=owner)
             decrypted_otp_code = decrypt_otp(otp_entry.code)
-            print(decrypted_otp_code)
+    
             if decrypted_otp_code == otp_code :
-
                 if otp_entry.is_expired() :
                     return Response({'message': 'OTP has expired'}, status=status.HTTP_400_BAD_REQUEST)
           
@@ -805,6 +748,12 @@ class UpdateBookingStatusview(APIView):
         booking_obj = get_object_or_404(Booking, id=b_id)
         booking_obj.status = 'Booking Completed'
         booking_obj.save()
+
+        PlatformFee.objects.update_or_create(
+            booking=booking_obj,
+            fee_collected=booking_obj.platform_fee
+        )
+
         return Response(status=status.HTTP_200_OK) 
     
 
@@ -971,64 +920,71 @@ class GenerateSalesReport(APIView):
             if not all_booking:
                 return Response({"error": "No records found for the selected date range."}, status=400)
             
-            buffer = BytesIO()
-            doc = SimpleDocTemplate(buffer, pagesize=A3)
-            elements = []
+            # buffer = BytesIO()
+            # doc = SimpleDocTemplate(buffer, pagesize=A3)
+            # elements = []
 
-            # Heading
-            styles = getSampleStyleSheet()
-            heading_style = ParagraphStyle('Heading1', parent=styles['Heading1'], alignment=TA_CENTER)
-            elements.append(Paragraph("Sales Report", heading_style))
+            # # Heading
+            # styles = getSampleStyleSheet()
+            # heading_style = ParagraphStyle('Heading1', parent=styles['Heading1'], alignment=TA_CENTER)
+            # elements.append(Paragraph("Sales Report", heading_style))
 
-            subheading_style = ParagraphStyle('Subheading', parent=styles['Normal'], fontSize=14, alignment=TA_CENTER)
-            elements.append(Paragraph(f"From {formatted_start_date} to {formatted_end_date}", subheading_style))
-            elements.append(Spacer(1, 0.2 * inch))  
+            # subheading_style = ParagraphStyle('Subheading', parent=styles['Normal'], fontSize=14, alignment=TA_CENTER)
+            # elements.append(Paragraph(f"From {formatted_start_date} to {formatted_end_date}", subheading_style))
+            # elements.append(Spacer(1, 0.2 * inch))  
 
-            data = [["ID", "Username", "Event", "Package Name", "Date", "Total Price", "Status"]]  # Table header
-            all_total_price = 0
+            # data = [["ID", "Username", "Event", "Package Name", "Date", "Total Price", "Status"]]  # Table header
+            # all_total_price = 0
 
-            for index, booking in enumerate(all_booking, start=1):
-                if booking.status == 'Booking Completed':
-                    all_total_price += booking.total_price
-                formatted_dates = "\n".join([datetime.strptime(date, "%Y-%m-%d").strftime("%d %b, %Y") for date in booking.dates])
-                formatted_price = int(float(booking.total_price))  
+            # for index, booking in enumerate(all_booking, start=1):
+            #     if booking.status == 'Booking Completed':
+            #         all_total_price += booking.total_price
+            #     formatted_dates = "\n".join([datetime.strptime(date, "%Y-%m-%d").strftime("%d %b, %Y") for date in booking.dates])
+            #     formatted_price = int(float(booking.total_price))  
               
-                data.append([
-                    str(index),
-                    booking.user.first_name,
-                    booking.event_name,
-                    (booking.package_name[:25] + "...") if booking.package_name and len(booking.package_name) > 25 else (booking.package_name or "N/A"),
-                    formatted_dates,
-                    f"{formatted_price}",
-                    booking.status,
-                ])
+            #     data.append([
+            #         str(index),
+            #         booking.user.first_name,
+            #         booking.event_name,
+            #         (booking.package_name[:25] + "...") if booking.package_name and len(booking.package_name) > 25 else (booking.package_name or "N/A"),
+            #         formatted_dates,
+            #         f"{formatted_price}",
+            #         booking.status,
+            #     ])
 
-            # Table creation
-            table = Table(data, colWidths=[0.5 * inch, 1.5 * inch, 2 * inch, 2 * inch, 1.5 * inch, 1 * inch, 2 * inch])
+            # # Table creation
+            # table = Table(data, colWidths=[0.5 * inch, 1.5 * inch, 2 * inch, 2 * inch, 1.5 * inch, 1 * inch, 2 * inch])
 
-            # Table styling
-            style = TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                ('GRID', (0, 0), (-1, -1), 1, colors.black),
-            ])
+            # # Table styling
+            # style = TableStyle([
+            #     ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            #     ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            #     ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            #     ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            #     ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            #     ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            #     ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            # ])
 
-            table.setStyle(style)
-            elements.append(table)
-            elements.append(Spacer(1, 0.2 * inch)) 
-            total_price_style = ParagraphStyle('TotalPrice', parent=styles['Normal'], fontSize=14, alignment=TA_RIGHT)
-            elements.append(Paragraph(f"Total Price = {all_total_price}", total_price_style))
+            # table.setStyle(style)
+            # elements.append(table)
+            # elements.append(Spacer(1, 0.2 * inch)) 
+            # total_price_style = ParagraphStyle('TotalPrice', parent=styles['Normal'], fontSize=14, alignment=TA_RIGHT)
+            # elements.append(Paragraph(f"Total Price = {all_total_price}", total_price_style))
 
-            doc.build(elements)
-            buffer.seek(0)
-            response = HttpResponse(buffer, content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename="sales_report.pdf"'
-            return response
+            # doc.build(elements)
+            # buffer.seek(0)
+            # response = HttpResponse(buffer, content_type='application/pdf')
+            # response['Content-Disposition'] = 'attachment; filename="sales_report.pdf"'
+            # return response
             
+
+
+            pdf_buffer = build_pdf(all_booking, formatted_start_date, formatted_end_date)
+
+           
+            response = HttpResponse(pdf_buffer, content_type="application/pdf")
+            response["Content-Disposition"] = 'attachment; filename="sales_report.pdf"'
+            return response
         except Exception as e:
-            print(e)
             return Response({"error": str(e)}, status=500)

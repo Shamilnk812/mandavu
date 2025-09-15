@@ -16,8 +16,6 @@ from admin_dash.views import CustomPagination
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
-
-
 import stripe
 from django.conf import settings
 from django.shortcuts import redirect
@@ -30,9 +28,8 @@ from django.db.models import Avg,Count,F,FloatField, ExpressionWrapper,Q
 from django.db.models.functions import ACos, Cos, Radians, Sin
 from decimal import Decimal, ROUND_DOWN
 from django.db import transaction
-
-
-
+import logging
+logger = logging.getLogger("mandavu")
 
 
 
@@ -43,6 +40,7 @@ class RegisterUserView(GenericAPIView) :
 
     def post(self, request) :
         user_data = request.data
+       
         serializer = self.serializer_class(data=user_data)
         if serializer.is_valid() :
             serializer.save()
@@ -52,7 +50,7 @@ class RegisterUserView(GenericAPIView) :
                 'data' :user,
                 'message' :f"Hi thanks for singing up a OTP has be sent to your email "
             },status=status.HTTP_201_CREATED)
-        print(serializer.errors)
+        logger.warning(f"User registration failed. Errors: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
@@ -64,7 +62,7 @@ class LoginUserView(GenericAPIView) :
         if serializer.is_valid() :
             response_data = serializer.validated_data
             return Response(response_data, status=status.HTTP_200_OK)
-        print(serializer.errors)
+        logger.warning(f"User Loing failed. Errors: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
 
 
@@ -331,9 +329,7 @@ class CreateCheckOutSession(APIView):
         requested_dates = request.data.get('dates', [])
         package_name = request.data.get('packageName').lower()
         booked_dates = []
-
-        print(request.data)
-
+       
         user = get_object_or_404(User, id=user_id)
         venue = get_object_or_404(Venue, id=venue_id)
 
@@ -394,8 +390,6 @@ def strip_webhook_view(request) :
     payload = request.body
     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
     event = None
-
-
     try :
         event = stripe.Webhook.construct_event(
         payload, sig_header, settings.STRIPE_SECRET_WEBHOOK
@@ -420,7 +414,6 @@ def strip_webhook_view(request) :
             booking_package_id = booking_details['bookingPackage']
             booking_package = get_object_or_404(BookingPackages, id=booking_package_id)
             
-
             booking = Booking.objects.create(
                 user=temp_booking.user,  
                 venue=temp_booking.venue,
@@ -442,7 +435,6 @@ def strip_webhook_view(request) :
                 event_details = booking_details['eventDetails'],
                 package_type = booking_package,
                 package_name=booking_details['packageName']
-                
             )
 
             facilities = booking_details['facilities']
@@ -455,11 +447,7 @@ def strip_webhook_view(request) :
 
             # Send Booking confirmation Email 
             send_venue_booking_confirmation_email(booking, facilities)
-            
             temp_booking.delete()
-        
-        
-        print('Booking created successfully with facilities', session)
 
     return HttpResponse(status=200)    
 

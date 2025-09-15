@@ -238,6 +238,8 @@ export default function AdminViewAllBookings() {
 
                                                 {/* Payment Info */}
                                                 <div className="grid grid-cols-3 gap-2 pt-2">
+                                                   {booking.status === 'Booking Confirmed' && (
+                                                    <>
                                                     <div className="bg-gray-100 p-2 rounded-lg">
                                                         <p className="text-xs text-gray-500">Advance</p>
                                                         <p className="font-medium">₹{Math.round(booking.booking_amount)}</p>
@@ -246,15 +248,26 @@ export default function AdminViewAllBookings() {
                                                         <p className="text-xs text-gray-500">Remaining</p>
                                                         <p className="font-medium">₹{Math.round(booking.remaining_amount)}</p>
                                                     </div>
+                                                    </>
+                                                   )}
                                                     <div className="bg-gray-100 p-2 rounded-lg">
                                                         <p className="text-xs text-gray-500">Total</p>
                                                         <p className="font-medium">₹{Math.round(booking.total_price)}</p>
                                                     </div>
                                                 </div>
                                             </div>
-
+                                               {/* <div className="mt-6 flex flex-col sm:flex-row sm:justify-between gap-3">
+                                                    <button
+                                                        // onClick={() => navigate(`/owner/view-single-booking-details/${booking.id}`)}
+                                                        className="flex-1 inline-flex justify-center items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
+                                                    >
+                                                    View Details
+                                                    </button>
+                                                </div> */}
 
                                         </div>
+
+                                       
                                     </div>
                                 ))}
                             </div>

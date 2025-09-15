@@ -252,7 +252,7 @@ export default function BookingManagement() {
 
 
                                                     <div>
-                                                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Time</h4>
+                                                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Time</h4>
                                                         <div className="flex flex-wrap gap-2">
                                                             {booking.times && booking.times.length > 0 ? (
                                                                 booking.times.map((timeRange, index) => (
@@ -271,6 +271,28 @@ export default function BookingManagement() {
                                                         </div>
                                                     </div>
                                                 </div>
+                                                 
+
+                                                                                                 {/* Payment Info */}
+                                                <div className="grid grid-cols-3 gap-2 pt-3">
+                                                    {booking.status === 'Booking Confirmed' && (
+                                                        <>
+                                                        <div className="bg-gray-100 p-2 rounded-lg">
+                                                            <p className="text-xs text-gray-500">Advance</p>
+                                                            <p className="font-medium">₹{Math.round(booking.booking_amount)}</p>
+                                                        </div>
+                                                        <div className="bg-gray-100 p-2 rounded-lg">
+                                                            <p className="text-xs text-gray-500">Remaining</p>
+                                                            <p className="font-medium">₹{Math.round(booking.remaining_amount)}</p>
+                                                        </div>
+                                                        </>
+                                                      )}
+                                                    <div className="bg-gray-100 p-2 rounded-lg">
+                                                        <p className="text-xs text-gray-500">Total</p>
+                                                        <p className="font-medium">₹{Math.round(booking.total_price)}</p>
+                                                    </div>
+                                                </div>
+                                                
 
 
                                                 <div className="mt-6 flex flex-col sm:flex-row sm:justify-between gap-3">

@@ -13,7 +13,6 @@ export default function OwnerViewSingleBookingDetails(){
     const {id} = useParams()
     const venueId = useSelector((state) => state.owner.venueId);
     const [bookingDetails,setBookingDetails] = useState('')
-    console.log('boooooo',bookingDetails)
 
     const fetchBookingDetails = async ()=> {
         try{

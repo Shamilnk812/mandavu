@@ -99,6 +99,18 @@ export default function ChartBox2({ baarchart, titel, icon3, totalRevenue }) {
               <DownloadIcon /> Sales Report
             </button>
           </Box>
+        <Box sx={{
+            display: "flex",
+            justifyContent: 'center',
+            marginTop: { xs: '15px', md: '30px' }
+          }}>
+            <button
+              className="w-full border border-purple-600 text-purple-600 py-3 px-4 rounded hover:bg-purple-600 hover:text-white transition-all duration-300"
+              onClick={()=> navigate('/admin/view-platform-profit')}
+            >
+             View Profit
+            </button>
+          </Box>
 
       </Grid>
 

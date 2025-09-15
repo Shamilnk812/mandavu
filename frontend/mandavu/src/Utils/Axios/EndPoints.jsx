@@ -14,16 +14,16 @@
 // export const notificationUrl = "http://localhost:8000/notification/" 
 
 
-export const baseUrl = "https://mandavu.online/"
+export const baseUrl = "https://mandavu.kickoffsaga.online/"
 
-export const userUrl = "https://mandavu.online/api/v1/auth/"
+export const userUrl = "https://mandavu.kickoffsaga.online/api/v1/auth/"
 
-export const ownerUrl = "https://mandavu.online/api/v2/auth/"
+export const ownerUrl = "https://mandavu.kickoffsaga.online/api/v2/auth/"
 
-export const adminUrl =  "https://mandavu.online/api/admin_dash/auth/"
+export const adminUrl =  "https://mandavu.kickoffsaga.online/api/admin_dash/auth/"
 
-export const ChatUrl = "https://mandavu.online/chat/"
+export const ChatUrl = "https://mandavu.kickoffsaga.online/chat/"
 
-export const SOCKET = "wss://mandavu.online/ws/"
+export const SOCKET = "wss://mandavu.kickoffsaga.online/ws/"
 
-export const notificationUrl = "https://mandavu.online/notification/" 
+export const notificationUrl = "https://mandavu.kickoffsaga.online/notification/" 
