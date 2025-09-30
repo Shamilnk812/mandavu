@@ -51,6 +51,8 @@ urlpatterns = [
     path('get-single-booking-details/<int:b_id>/',GetSingleBookingDetailsView.as_view(),name='get-single-booking-details'),
     # path('booking-cancelling/<int:bid>/',CancellingBookingView.as_view(),name='booking-cancelling'),
     path('update-booking-status/<int:b_id>/',UpdateBookingStatusview.as_view(),name='update-booking-status'),
+    path('get-booked-dates/<int:vid>/', GetAllBookingSlotes.as_view(), name='get-booked-dates' ),
+    path('manage-unavailable-date/<int:vid>/', ManageUnavailableDates.as_view(), name='manage-unavailable-date' ),
     
 
     path('get-owner-venue-details/<int:uid>/',OwnerAndVenueDetailsView.as_view(),name='get-owner-venue-details'),

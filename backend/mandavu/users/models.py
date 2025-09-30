@@ -124,6 +124,8 @@ class TempBooking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     venue = models.ForeignKey('owners.Venue', on_delete=models.CASCADE) 
     data = models.JSONField()
+    error_message = models.TextField(blank=True, null=True)
+    payment_intent_id = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 

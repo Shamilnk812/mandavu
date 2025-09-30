@@ -40,8 +40,10 @@ export default function BookingFormForDateAndTime({ venueId, setSelectedDates, s
                 });
 
                 if (bookingPackage == 'regular') {
+                   
                     setBookedDatesForRegularPackage(response.data)
                 } else {
+
                     setBookedDatesForAlternativePackage(response.data);
                 }
 

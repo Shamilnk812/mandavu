@@ -11,18 +11,27 @@ export default function ViewAllBookingSlots({ venueId, showCalendar, setShowCale
 
 
 
-    const regularbookedDates = bookedDatesForRegularPackage.map(item => item.date)
- 
+    // const regularbookedDates = bookedDatesForRegularPackage.map(item => item.date)
+
+    const regularbookedDates = bookedDatesForRegularPackage.filter(
+        (item) => item.status === "Booking Confirmed"
+    ).map((item) => item.date);
+
+    const unavailableDatesForRegular = bookedDatesForRegularPackage.filter(
+        (item) => item.status === "Unavailable"
+    ).map((item) => item.date);
+
     let mediumAvailabilityDates = [];
     let almostFullyBookedDates = [];
     let completelyBookedDates = [];
+    let unAvailableDates = [];
 
 
 
     // Categorize the dates for alternative packages
     if (bookedDatesForAlternativePackage) {
         bookedDatesForAlternativePackage.forEach(item => {
-            const { date, booked_time_slots_count } = item;
+            const { date, booked_time_slots_count, status } = item;
 
             if (booked_time_slots_count >= 4 && booked_time_slots_count <= 8) {
                 mediumAvailabilityDates.push(date);
@@ -30,6 +39,8 @@ export default function ViewAllBookingSlots({ venueId, showCalendar, setShowCale
                 almostFullyBookedDates.push(date);
             } else if (booked_time_slots_count === 12) {
                 completelyBookedDates.push(date);
+            } else if (status === 'unavailable'){
+                unAvailableDates.push(date)
             }
         });
     }
@@ -41,6 +52,12 @@ export default function ViewAllBookingSlots({ venueId, showCalendar, setShowCale
             start: date,
             color: "red", // Red for regular booked dates
         })),
+        ...unavailableDatesForRegular.map((date) => ({
+            title: "Unavailable",
+            start: date,
+            color: "gray", 
+        })),
+
         ...mediumAvailabilityDates.map((date) => ({
             title: "Medium",
             start: date,
@@ -55,6 +72,11 @@ export default function ViewAllBookingSlots({ venueId, showCalendar, setShowCale
             title: "Fully Booked",
             start: date,
             color: "red", // Red for completely booked dates
+        })),
+        ...unAvailableDates.map((date) => ({
+            title: "Unavailable",
+            start: date,
+            color: "gray", // Red for completely booked dates
         })),
     ];
 

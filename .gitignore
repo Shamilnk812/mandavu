@@ -1,0 +1,6 @@
+backend/env/
+venv/
+.venv/
+__pycache__/
+backend/mandavu/.env
+backend/mandavu/media/

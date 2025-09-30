@@ -48,13 +48,10 @@ export default function BookingSummary2({ venue, venueId, selectedDates, selecte
 
 
         const bookingDetails = {
-            ...userBookingDetails,
-            // email: "jacktest@gmail.com",    
+            ...userBookingDetails,  
             dates: selectedDates,
             times: selectedTimeSlot,
             bookingAmount: advanceAmount,
-            // date: "2024-12-12",
-            // timeOfDay: "morning",
             airConditioning: airConditionSelection,
             extraAcAmount: selectedPackage?.extra_price_for_aircondition,
             packageName: selectedPackage?.package_name,
@@ -70,7 +67,7 @@ export default function BookingSummary2({ venue, venueId, selectedDates, selecte
             // advanceAmount: advanceAmount,
 
         }
-        console.log("Submitted with ", bookingDetails)
+        // console.log("Submitted with ", bookingDetails)
         try {
             const response = await axiosUserInstance.post('create-checkout-session/', bookingDetails);
             

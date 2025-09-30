@@ -14,21 +14,31 @@ export default function SelectDates({ venueId, selectedPackage, isRangeMode, set
 
 
 
-    const bookedDates = bookedDatesForRegularPackage.map(item => item.date)
+    // const bookedDates = bookedDatesForRegularPackage.map(item => item.date)
+
+    const bookedDates = bookedDatesForRegularPackage.filter(
+        (item) => item.status === "Booking Confirmed"
+    ).map((item) => item.date);
+
+    const unavailableDatesForRegular = bookedDatesForRegularPackage.filter(
+        (item) => item.status === "Unavailable"
+    ).map((item) => item.date);
 
 
     // let low = [];
     let mediumAvailabilityDates = [];
     let almostFullyBookedDates = [];
     let completelyBookedDates = [];
+    let unavailableDates = [];
 
 
-    console.log("")
+  
     // Categorize the dates for alternative packages
     if (bookedDatesForAlternativePackage) {
         bookedDatesForAlternativePackage.forEach(item => {
-            const { date, booked_time_slots_count } = item;
-
+            const { date, booked_time_slots_count, status } = item;
+            
+            
             // if (booked_time_slots_count >= 0 && booked_time_slots_count <= 4) {
             //     low.push(date);
             // }
@@ -38,6 +48,8 @@ export default function SelectDates({ venueId, selectedPackage, isRangeMode, set
                 almostFullyBookedDates.push(date);
             } else if (booked_time_slots_count === 12) {
                 completelyBookedDates.push(date);
+            } else if (status === 'unavailable'){
+                unavailableDates.push(date)
             }
         });
     }
@@ -90,7 +102,6 @@ export default function SelectDates({ venueId, selectedPackage, isRangeMode, set
             const singleDate = Array.isArray(dates) ? dates[0] : dates;
             const formattedDate = singleDate ? format(new Date(singleDate), "yyyy-MM-dd") : null;
             setSelectedDates(formattedDate ? [formattedDate] : []);
-            console.log("moooooonneeee112121")
 
             if (singleDate) {
                 datePickerRef.current.closeCalendar();
@@ -188,6 +199,18 @@ export default function SelectDates({ venueId, selectedPackage, isRangeMode, set
 
                                     };
                                 }
+                                if (unavailableDatesForRegular.includes(formattedDate)) {
+                                    return {
+                                        disabled: true,
+                                        style: {
+                                            backgroundColor: "gray",
+                                            color: "white",
+                                            pointerEvents: "none",
+                                            opacity: 0.7,
+                                            // textDecoration: "line-through",
+                                        },
+                                    };
+                                }
                                 if (mediumAvailabilityDates.includes(formattedDate)) {
                                     return {
                                         style: {
@@ -212,6 +235,17 @@ export default function SelectDates({ venueId, selectedPackage, isRangeMode, set
                                         style: {
                                             backgroundColor: "red",
                                             color: "white",
+                                            textDecoration: "line-through",
+                                        }
+                                    }
+                                }
+                                if (unavailableDates.includes(formattedDate)) {
+                                    return {
+                                        disabled: true,
+                                        style: {
+                                            backgroundColor: "gray",
+                                            color: "white",
+                                            pointerEvents: "none",
                                             textDecoration: "line-through",
                                         }
                                     }

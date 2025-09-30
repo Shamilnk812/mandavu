@@ -24,41 +24,43 @@ import VenueBookingStep1 from "../Pages/User/VenueBookingStep1";
 import VenueBookingStep2 from "../Pages/User/VenueBookingStep2";
 import UserLocationCheck from "../Utils/SetUserLocation/SetUserLocationCheck";
 import ContactUs from "../Pages/User/ContactUsPage";
+import PaymentStatus from "../Pages/User/PaymentStatus";
 // import ResetPasswordConfirm from "../Pages/User/ResetPasswordConfirm";
 
 export default function UserRoute() {
-    return(
+    return (
         <ChatProvider>
-        <Routes>
-            <Route element={<UserLogoutAuth  allowedRole="user" />}>
-                <Route path="/signup" element={ <SignUp/>}/>
-                <Route path="/login" element={<Login/>} />
-                <Route path="/otp" element={<OtpVerification/>} />
-                <Route path="/reset-password-request" element={<ResetPasswordRequest/>} />
-                <Route path="/set-new-passwod" element={<UserSetNewPassword/>} />
-            </Route>
-             
+            <Routes>
+                <Route element={<UserLogoutAuth allowedRole="user" />}>
+                    <Route path="/signup" element={<SignUp />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/otp" element={<OtpVerification />} />
+                    <Route path="/reset-password-request" element={<ResetPasswordRequest />} />
+                    <Route path="/set-new-passwod" element={<UserSetNewPassword />} />
+                </Route>
 
-            <Route element={<UserLoginAuth allowedRole="user"/>}>
-                <Route path="/home" element={  <Home/>  } />
-                <Route path="/profile" element={  <Profile/> } />
-                <Route path="/profile2" element={  <UserProfile/> } />
-                <Route path="/contact-us" element={  <ContactUs/> } />
-                <Route path="/show-booking-details" element={  <ShowBookingDetails/> } />
-                <Route path="/view-booking-details/:bookingId" element={  <ShowSingleBookingDetails/> } />
-                <Route path="/payment-success" element={  <PaymentSuccess/> } />
-                <Route path="/payment-cancelled" element={  <PaymentCanclled/> } />
-                <Route path="/show-all-venues" element={  <ShowAllVenues/> } />
-                <Route path="/show-single-venue/:venueId" element={  <ShowSingleVenueDetails/> } />
-                <Route path="/venue-booking/:venueId" element={  <VenueBooking/> } />
-                <Route path="/venue-booking-step1/:venueId" element={  <VenueBookingStep1/> } />
-                <Route path="/venue-booking-step2/:venueId" element={  <VenueBookingStep2/> } />
-                <Route path="/view-slot/:venueId" element={  <ViewSlote/> } />
-                <Route path="/chat" element={  <UserChat/> } />
-            </Route> 
-            
-            
-        </Routes>
+
+                <Route element={<UserLoginAuth allowedRole="user" />}>
+                    <Route path="/home" element={<Home />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/profile2" element={<UserProfile />} />
+                    <Route path="/contact-us" element={<ContactUs />} />
+                    <Route path="/show-booking-details" element={<ShowBookingDetails />} />
+                    <Route path="/view-booking-details/:bookingId" element={<ShowSingleBookingDetails />} />
+                    <Route path="/payment-status" element={<PaymentStatus />} />
+                    <Route path="/payment-success" element={<PaymentSuccess />} />
+                    <Route path="/payment-cancelled" element={<PaymentCanclled />} />
+                    <Route path="/show-all-venues" element={<ShowAllVenues />} />
+                    <Route path="/show-single-venue/:venueId" element={<ShowSingleVenueDetails />} />
+                    <Route path="/venue-booking/:venueId" element={<VenueBooking />} />
+                    <Route path="/venue-booking-step1/:venueId" element={<VenueBookingStep1 />} />
+                    <Route path="/venue-booking-step2/:venueId" element={<VenueBookingStep2 />} />
+                    <Route path="/view-slot/:venueId" element={<ViewSlote />} />
+                    <Route path="/chat" element={<UserChat />} />
+                </Route>
+
+
+            </Routes>
         </ChatProvider>
 
     )

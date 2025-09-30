@@ -20,10 +20,10 @@ import stripe
 from django.conf import settings
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
-
+from owners.models import UnavailableDate
 from django.http import HttpResponse
 import json
-from datetime import datetime
+from datetime import datetime, date as dt_date
 from django.db.models import Avg,Count,F,FloatField, ExpressionWrapper,Q
 from django.db.models.functions import ACos, Cos, Radians, Sin
 from decimal import Decimal, ROUND_DOWN
@@ -328,31 +328,21 @@ class CreateCheckOutSession(APIView):
         user_id  = request.data.get('userId')
         requested_dates = request.data.get('dates', [])
         package_name = request.data.get('packageName').lower()
-        booked_dates = []
-       
         user = get_object_or_404(User, id=user_id)
-        venue = get_object_or_404(Venue, id=venue_id)
+        # venue = get_object_or_404(Venue, id=venue_id)
 
-        existing_bookings = Booking.objects.filter(
-            venue=venue,
-            status__in=['Booking Confirmed', 'Booking Completed']  
-        )
+        with transaction.atomic():
+            venue = Venue.objects.select_for_update().get(id=venue_id)
+            conflict, message = check_booking_conflicts(venue, requested_dates, package_name)
+           
+            if conflict:
+                return Response({'message': message}, status=400)
 
-        for booking in existing_bookings:
-            booked_dates += booking.dates      
-
-        for date in requested_dates:
-            if package_name == 'regular' :
-                if date in booked_dates:
-                    return Response({
-                        'message': f'Booking already exists on date {date}. Please choose a different date.'
-                    }, status=400)
-
-        temp_booking = TempBooking.objects.create(
-            user=user,
-            venue=venue,
-            data=request.data
-        )
+            temp_booking = TempBooking.objects.create(
+                user=user,
+                venue=venue,
+                data=request.data
+            )
 
         try:
             checkout_session = stripe.checkout.Session.create(
@@ -370,16 +360,19 @@ class CreateCheckOutSession(APIView):
                     },
                 ],
                 mode='payment',
-                success_url=f"{settings.BASE_FRONT_END_URL}/user/show-booking-details?success=true",
-                cancel_url=f"{settings.BASE_FRONT_END_URL}/user/show-booking-details?canceled=true",
-                 metadata={
+                success_url=f"{settings.BASE_FRONT_END_URL}/user/payment-status?session_id={{CHECKOUT_SESSION_ID}}",
+                cancel_url=f"{settings.BASE_FRONT_END_URL}/user/payment-status?canceled=true",
+                
+                metadata={
                     'temp_booking_id': temp_booking.id  
                 }
             )
             return Response({'id': checkout_session.id})
         except stripe.error.StripeError as e:
+            temp_booking.delete()
             return Response({'msg': 'Stripe error', 'error': str(e)}, status=500)
         except Exception as e:
+            temp_booking.delete()
             return Response({'msg': 'Something went wrong while creating Stripe session', 'error': str(e)}, status=500)
         
 
@@ -400,20 +393,26 @@ def strip_webhook_view(request) :
     except stripe.error.SignatureVerificationError as e:
         # Invalid signature
         return Response(status=400)
-    
 
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
         temp_booking_id = json.loads(session['metadata']['temp_booking_id']) 
         
         with transaction.atomic():
-            temp_booking = get_object_or_404(TempBooking, id=temp_booking_id)
+            temp_booking = get_object_or_404(TempBooking.objects.select_for_update(), id=temp_booking_id)
+            temp_booking.payment_intent_id = session.get('payment_intent')
+            temp_booking.save()
 
+            conflict, message = handle_webhook_conflicts(temp_booking, session)
+            if conflict:
+                temp_booking.error_message = message
+                temp_booking.save()
+                return HttpResponse(status=200)
+
+            # Create final booking 
             booking_details = temp_booking.data
+            booking_package = get_object_or_404(BookingPackages, id=booking_details['bookingPackage'])
 
-            booking_package_id = booking_details['bookingPackage']
-            booking_package = get_object_or_404(BookingPackages, id=booking_package_id)
-            
             booking = Booking.objects.create(
                 user=temp_booking.user,  
                 venue=temp_booking.venue,
@@ -448,8 +447,49 @@ def strip_webhook_view(request) :
             # Send Booking confirmation Email 
             send_venue_booking_confirmation_email(booking, facilities)
             temp_booking.delete()
-
+    
     return HttpResponse(status=200)    
+
+
+
+
+class VerifyBooking(APIView):
+    def get(self, request):
+        session_id = request.query_params.get("session_id")
+    
+        if not session_id:
+            return Response({"status": "error", "message": "Session ID required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            session = stripe.checkout.Session.retrieve(session_id)
+            payment_intent = session.payment_intent
+            booking = Booking.objects.filter(payment_intent_id=payment_intent).first()
+
+            if booking :
+                return Response({
+                    "status": "success",
+                    "message": "Booking confirmed successfully!"
+                })
+            else:
+                temp_booking = TempBooking.objects.filter(payment_intent_id=payment_intent).first()
+                
+                if temp_booking and temp_booking.error_message:
+                    error_message = temp_booking.error_message
+                    temp_booking.delete()
+                    return Response({
+                        "status": "failed",
+                        "message": error_message
+                    }, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({
+                        "status": "failed",
+                        "message": "Payment failed or was cancelled. Please try again."
+                    }, status=status.HTTP_400_BAD_REQUEST)
+
+        except stripe.error.StripeError as e:
+            return Response({"status": "error", "message": "Payment verification failed"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({"status": "error", "message": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -458,13 +498,35 @@ class GetBookedDates(APIView):
         venue = get_object_or_404(Venue, id=vid)
         bookings = Booking.objects.filter(venue=venue, status="Booking Confirmed")
         booking_package = request.query_params.get("booking_package")  
+        today = dt_date.today()
+        unavailables = UnavailableDate.objects.filter(venue_id=vid, date__gte=today)
+        result = []
 
         if booking_package == "regular":
-            booked_dates = bookings.filter(package_type__package_name="regular").values_list("dates", flat=True)
-            flattened_dates = [date for sublist in booked_dates for date in sublist]  # Flatten nested lists
-            unique_dates = list(set(flattened_dates))  
-            result = [{"date": date} for date in unique_dates]
+            booked_dates = bookings.filter(package_type__package_name="regular")
+            for booking in booked_dates:
+                for d in booking.dates:
+                    try:
+                        d_obj = datetime.strptime(d, "%Y-%m-%d").date()
+                        if d_obj >= today:  
+                            result.append({
+                                "date": d,
+                                "status": booking.status
+                            })
+                    except ValueError:
+                        continue  
+
+            # flattened_dates = [date for sublist in booked_dates for date in sublist]
+            # unique_dates = list(set(flattened_dates))  
+            # result = [{"date": date, "status": booking.status} for date in unique_dates]
+
+            for un in unavailables:
+                result.append({
+                    "date": str(un.date),
+                    "status": "Unavailable"
+                })
         
+
         else :
             date_slot_count = {}
             for booking in bookings:
@@ -482,9 +544,16 @@ class GetBookedDates(APIView):
                             date_slot_count[date] += len(filtered_times)
 
             result = [
-                {"date": date, "booked_time_slots_count": count}
+                {"date": date, "booked_time_slots_count": count, "status":"available"}
                 for date, count in date_slot_count.items()
             ]
+            
+            for un in unavailables:
+                result.append({
+                    "date": str(un.date),
+                    "booked_time_slots_count": 0,
+                    "status":"unavailable"
+                })
 
         return Response(result, status=status.HTTP_200_OK)
     

@@ -118,6 +118,14 @@ class TimeSlots(models.Model):
     time_slots = models.JSONField(blank=True, null=True, default=list)
 
 
+class UnavailableDate(models.Model):
+    venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name="unavailable_dates")
+    date = models.DateField()
+
+    class Meta:
+        unique_together = ("venue", "date") 
+
+
 class VenueImage(models.Model):
     venue_photo = models.ImageField(upload_to='venue_images/', verbose_name="Venue Photo")
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name='images')

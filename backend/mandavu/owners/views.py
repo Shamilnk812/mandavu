@@ -19,7 +19,7 @@ from django.core.files.base import ContentFile
 from users.utils import decrypt_otp
 from django.db.models.functions import TruncDay, TruncWeek, TruncMonth, TruncYear
 from django.db.models import Sum,Q
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date as dt_date
 from notifications.signals import notify_admin_on_maintenance_change
 import stripe
 from reportlab.lib.pagesizes import A4,A3
@@ -758,6 +758,118 @@ class UpdateBookingStatusview(APIView):
     
 
 
+# ----------- Manage Booking Slotes ----------
+
+class GetAllBookingSlotes(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, vid):
+        today = dt_date.today()
+        result = []
+
+        bookings = Booking.objects.filter(venue_id=vid, status="Booking Confirmed")
+        for booking in bookings:
+            for d in booking.dates:
+                try:
+                    d_obj = datetime.strptime(d, "%Y-%m-%d").date()
+                    if d_obj >= today:  
+                        result.append({
+                            "date": d,
+                            "status": booking.status
+                        })
+                except ValueError:
+                    continue  
+
+        unavailables = UnavailableDate.objects.filter(venue_id=vid, date__gte=today)
+        for un in unavailables:
+            result.append({
+                "date": str(un.date),
+                "status": "Unavailable"
+            })
+
+        return Response(result, status=status.HTTP_200_OK)
+    
+
+
+class ManageUnavailableDates(APIView):
+    permission_classes = [IsAuthenticated]
+
+    # make a date as unavailable 
+    def _add_date(self, venue, selected_date_obj, selected_date):
+        obj, created = UnavailableDate.objects.get_or_create(
+            venue=venue, date=selected_date_obj
+        )
+        if created:
+            return Response(
+                {"message": f"Date {selected_date} marked as unavailable"},
+                status=status.HTTP_201_CREATED,
+            )
+        return Response(
+            {"warning": f"Date {selected_date} is already marked unavailable"},
+            status=status.HTTP_200_OK,
+        )
+
+    # remove unavailbale date 
+    def _remove_date(self, venue, selected_date_obj, selected_date):
+        deleted, _ = UnavailableDate.objects.filter(
+            venue=venue, date=selected_date_obj
+        ).delete()
+        if deleted:
+            return Response(
+                {"message": f"Date {selected_date} is now available"},
+                status=status.HTTP_200_OK,
+            )
+        return Response(
+            {"warning": f"Date {selected_date} was not marked unavailable"},
+            status=status.HTTP_200_OK,
+        )
+
+
+    def post(self, request, vid):
+        action = request.data.get("action")
+        selected_date = request.data.get("date")
+
+        if not action or not selected_date:
+            return Response({"error": "Date is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            selected_date_obj = datetime.strptime(selected_date, "%Y-%m-%d").date()
+
+            venue = Venue.objects.get(id=vid)
+        except ValueError:
+            return Response({"error": "Invalid date format"}, status=status.HTTP_400_BAD_REQUEST)
+        except Venue.DoesNotExist:
+            return Response({"error": "Venue not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+        if selected_date_obj < dt_date.today():
+            return Response({"error": "You cannot block a past date"}, status=status.HTTP_400_BAD_REQUEST,)
+        
+        booking_exists = Booking.objects.filter(
+            venue=venue,
+            status="Booking Confirmed",
+            dates__contains=[selected_date]  
+        ).exists()
+
+        if booking_exists:
+            return Response(
+                {"error": f"Date {selected_date} is already booked. Cannot mark unavailable."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+    
+        # manage date based on action 
+        if action == "add":
+            return self._add_date(venue, selected_date_obj, selected_date)
+        elif action == "remove":
+            return self._remove_date(venue, selected_date_obj, selected_date)
+        else:
+            return Response({"error": "Invalid action"}, status=status.HTTP_400_BAD_REQUEST)
+
+            
+
+
+    
+
+
 # ----------- Veneu Maintenance -------------
 
 class SetVenueMaintenanceView(APIView):
@@ -920,69 +1032,7 @@ class GenerateSalesReport(APIView):
             if not all_booking:
                 return Response({"error": "No records found for the selected date range."}, status=400)
             
-            # buffer = BytesIO()
-            # doc = SimpleDocTemplate(buffer, pagesize=A3)
-            # elements = []
-
-            # # Heading
-            # styles = getSampleStyleSheet()
-            # heading_style = ParagraphStyle('Heading1', parent=styles['Heading1'], alignment=TA_CENTER)
-            # elements.append(Paragraph("Sales Report", heading_style))
-
-            # subheading_style = ParagraphStyle('Subheading', parent=styles['Normal'], fontSize=14, alignment=TA_CENTER)
-            # elements.append(Paragraph(f"From {formatted_start_date} to {formatted_end_date}", subheading_style))
-            # elements.append(Spacer(1, 0.2 * inch))  
-
-            # data = [["ID", "Username", "Event", "Package Name", "Date", "Total Price", "Status"]]  # Table header
-            # all_total_price = 0
-
-            # for index, booking in enumerate(all_booking, start=1):
-            #     if booking.status == 'Booking Completed':
-            #         all_total_price += booking.total_price
-            #     formatted_dates = "\n".join([datetime.strptime(date, "%Y-%m-%d").strftime("%d %b, %Y") for date in booking.dates])
-            #     formatted_price = int(float(booking.total_price))  
-              
-            #     data.append([
-            #         str(index),
-            #         booking.user.first_name,
-            #         booking.event_name,
-            #         (booking.package_name[:25] + "...") if booking.package_name and len(booking.package_name) > 25 else (booking.package_name or "N/A"),
-            #         formatted_dates,
-            #         f"{formatted_price}",
-            #         booking.status,
-            #     ])
-
-            # # Table creation
-            # table = Table(data, colWidths=[0.5 * inch, 1.5 * inch, 2 * inch, 2 * inch, 1.5 * inch, 1 * inch, 2 * inch])
-
-            # # Table styling
-            # style = TableStyle([
-            #     ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-            #     ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            #     ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            #     ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            #     ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            #     ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-            #     ('GRID', (0, 0), (-1, -1), 1, colors.black),
-            # ])
-
-            # table.setStyle(style)
-            # elements.append(table)
-            # elements.append(Spacer(1, 0.2 * inch)) 
-            # total_price_style = ParagraphStyle('TotalPrice', parent=styles['Normal'], fontSize=14, alignment=TA_RIGHT)
-            # elements.append(Paragraph(f"Total Price = {all_total_price}", total_price_style))
-
-            # doc.build(elements)
-            # buffer.seek(0)
-            # response = HttpResponse(buffer, content_type='application/pdf')
-            # response['Content-Disposition'] = 'attachment; filename="sales_report.pdf"'
-            # return response
-            
-
-
             pdf_buffer = build_pdf(all_booking, formatted_start_date, formatted_end_date)
-
-           
             response = HttpResponse(pdf_buffer, content_type="application/pdf")
             response["Content-Disposition"] = 'attachment; filename="sales_report.pdf"'
             return response

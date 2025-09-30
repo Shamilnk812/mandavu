@@ -27,6 +27,7 @@ import OwnerViewSingleBookingDetails from "../Pages/Owner/OwnerViewSingleBooking
 import BookingPackages from "../Pages/Owner/BookingPackages";
 import ManageTimeSlotesForPackages from "../Pages/Owner/ManageTimeSlotes";
 import { useDispatch } from "react-redux";
+import ManageSlote from "../Pages/Owner/ManageSlote";
 
 export default function OwnerRoute() {
   
@@ -64,6 +65,7 @@ export default function OwnerRoute() {
                 <Route path="/booking-packages" element={ <BookingPackages/>} />
                 <Route path="/manage-time-slotes/:id" element={ <ManageTimeSlotesForPackages/>} />
                 <Route path="/booking-management" element={ <BookingManagement/>} />
+                <Route path="/manage-slote" element={<ManageSlote/>} />
                 <Route path="/view-single-booking-details/:id" element={ <OwnerViewSingleBookingDetails/>} />
                 <Route path="/chat" element={ <OwnerChat/>} />
                 <Route path="/details2" element={ <OwnerDetails2/>}/>

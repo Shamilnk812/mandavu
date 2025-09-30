@@ -135,8 +135,8 @@ export default function BookingManagement() {
                         <div className="px-6 py-4 border-b border-gray-200 bg-white">
                             {/* <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-teal-50 to-gray-100"> */}
                             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                                <h1 className="text-2xl border-gray-300 font-semibold py-3  text-center text-gray-700">Booking Management</h1>
-
+                                {/* <h1 className="text-2xl border-gray-300 font-semibold py-3  text-center text-gray-700">Booking Management</h1> */}
+                                <button className="bg-purple-600 text-white py-1 px-2 rounded" onClick={()=> navigate('/owner/manage-slote')}>Manage Slote</button>
                                 {/* Date Filter */}
                                 <form onSubmit={handleSearch} className="mt-4 md:mt-0 flex flex-col sm:flex-row gap-4 items-end">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

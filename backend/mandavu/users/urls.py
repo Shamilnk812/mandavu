@@ -24,7 +24,7 @@ urlpatterns = [
     path('venue-events-details/<int:vid>/',SingleVenueEventsDetails.as_view(),name='venue-events-details'),
     path('create-checkout-session/',CreateCheckOutSession.as_view(),name='create-checkout-session'),
     path('stripe-webhook/', strip_webhook_view, name='stripe-webhook'),
-
+    path('verify-booking/', VerifyBooking.as_view(), name='verify-booking'),
     path('booking-details/<int:vid>/',ShowBookingDetailsForCalandar.as_view(),name='booking-details'),
     path('show-booked-details/<int:uid>/',ShowBookingListView.as_view(),name='show-booked-details'),
     path('show-single-booking-details/<int:bid>/',ShowSingleBookingDetails.as_view(),name='show-single-booking-details'),

@@ -1,13 +1,13 @@
 import random
 from django.core.mail import EmailMessage
-from .models import OneTimePassword,User
+from .models import OneTimePassword,User,TempBooking,Booking
 from django.conf import settings
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from datetime import datetime
-
-
+from owners.models import Venue
+import stripe
 from decimal import Decimal
 from django.db.models import F
 from django.db.models.functions import Radians
@@ -58,11 +58,7 @@ def sent_otp_to_user(email) :
 
 
 
-# ======== Password Reset email  ===========
-
-
-
-
+# --------- Password Reset email -------
 def send_password_reset_email(data) :
     email = EmailMessage(
         subject=data['email_subject'],
@@ -78,11 +74,8 @@ def send_password_reset_email(data) :
 def send_venue_booking_confirmation_email(booking , facilities):
     subject = f"Booking Confirmation - {booking.venue.convention_center_name}"
     logo_url = f"{settings.MEDIA_URL}logo/mandavu-logo.png"
-    # recipient_list = ['shamilnk0458@gmail.com']
     recipient_list = [booking.user.email]
 
-    print('user email is ',recipient_list)
-    print('facilitis', facilities)
     context = {
         'logo_url': logo_url,
         'venue_name': booking.venue.convention_center_name,
@@ -102,23 +95,84 @@ def send_venue_booking_confirmation_email(booking , facilities):
     send_mail(subject,'',settings.DEFAULT_FROM_EMAIL, recipient_list, html_message=message)
 
 
-
-
 def send_user_inquiry_message(username,email,message):
     subject = f"New Inquiry from {username}"
     recipient_list = [settings.DEFAULT_FROM_EMAIL]
-    print(recipient_list)
-
+  
     context = {
         "username":username,
         "email":email,
         "message":message
 
     }
-
     message = render_to_string('emails/user_inquiry.html',context)
     send_mail(subject,'',email,recipient_list, html_message=message)
-    print("email sented success")
+    
+
+
+
+# Check if requested dates are already booked or exist in temp bookings.
+def check_booking_conflicts(venue, requested_dates, package_name):
+    # Check confirmed bookings
+    existing_bookings = Booking.objects.filter(
+        venue=venue,
+        status__in=['Booking Confirmed', 'Booking Completed']
+    )
+    booked_dates = []
+    for booking in existing_bookings:
+        booked_dates += booking.dates
+
+    for date in requested_dates:
+        if package_name == 'regular' and date in booked_dates:
+            return True, f"Booking already exists on date {date}. Please choose a different date."
+
+    # Check temp bookings
+    existing_temps = TempBooking.objects.filter(venue=venue)
+    for temp in existing_temps:
+        temp_dates = temp.data.get('dates', [])
+        if set(requested_dates) & set(temp_dates):
+            return True, f"The date(s) {set(requested_dates) & set(temp_dates)} are currently being booked. Try again later."
+        
+    return False, ""
+
+
+
+def handle_webhook_conflicts(temp_booking, session):
+    venue = Venue.objects.select_for_update().get(id=temp_booking.venue.id)
+    booking_details = temp_booking.data
+    requested_dates = booking_details['dates']
+    package_name = booking_details['packageName'].lower()
+   
+    # Check against confirmed bookings
+    existing_bookings = Booking.objects.select_for_update().filter(
+        venue=venue,
+        status__in=['Booking Confirmed', 'Booking Completed']
+    )
+    booked_dates = []
+    for booking in existing_bookings:
+        booked_dates += booking.dates
+
+    for date in requested_dates:
+        if package_name == 'regular' and date in booked_dates:
+
+            try:
+                stripe.Refund.create(payment_intent=session['payment_intent'])
+                return True, "Sorry! The venue is already booked for your selected dates. Your payment has been refunded. Please try different dates."
+            except stripe.error.StripeError as e:
+                return True, "Booking conflict detected. Please contact support for refund."
+
+    # Check against other temp bookings
+    existing_temps = TempBooking.objects.filter(venue=venue).exclude(id=temp_booking.id)
+    for temp in existing_temps:
+        temp_dates = temp.data.get('dates', [])
+        if set(requested_dates) & set(temp_dates):
+
+            try:
+                stripe.Refund.create(payment_intent=session['payment_intent'])
+                return True, "Another user is currently booking the same dates. Your payment has been refunded. Please try again in a few minutes."
+            except stripe.error.StripeError as e:
+                return True, "Booking conflict detected. Please contact support for refund."
+    return False, ""
 
 
 
@@ -129,19 +183,3 @@ def send_user_inquiry_message(username,email,message):
 
 
 
-
-# def haversine(lat1, lon1, lat2, lon2):
-#     """
-#     Calculate the distance between two points on Earth using the Haversine formula.
-#     """
-#     R = 6371  # Earth's radius in kilometers
-
-#     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
-
-#     dlon = lon2 - lon1
-#     dlat = lat2 - lat1
-
-#     a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
-#     c = 2 * asin(sqrt(a))
-
-#     return c * R
