@@ -12,7 +12,6 @@ from django.core.cache import cache
 
 
 
-
 # Utility Function for Creating Notifications
 def create_notification(user,message,link=None) :
     Notification.objects.create(
@@ -22,7 +21,6 @@ def create_notification(user,message,link=None) :
         link=link
     )
     send_real_time_notification(user.id,message)
-
 
 
 # Utility Function for Real-Time Notifications
@@ -37,10 +35,7 @@ def send_real_time_notification(user_id,message) :
     )
 
 
-
-
-#--------------- Venue Booking  ---------------
-
+#-------- Venue Booking  -------
 @receiver(post_save,sender=Booking)
 def send_booking_notification(sender,instance,created, **kwargs) :
     if created :
@@ -91,11 +86,7 @@ def send_booking_notification(sender,instance,created, **kwargs) :
         create_notification(user,message_for_user)
 
 
-
-
-
-# --------------  Booking Cancellation  --------------
-
+# ----------  Booking Cancellation  ------------
 @receiver(post_save,sender=Booking)
 def send_booking_cancellation_notification(sender, instance, **kwargs):
     if instance.status == 'Booking Canceled':
@@ -107,7 +98,6 @@ def send_booking_cancellation_notification(sender, instance, **kwargs):
         else:
             formatted_dates = "No dates provided"
         
-
         if instance.package_type and instance.package_type.price_for_per_hour != "Not Allowed":
             formatted_times = ", ".join([", ".join(time_slot) for time_slot in instance.times])
         else:
@@ -121,7 +111,6 @@ def send_booking_cancellation_notification(sender, instance, **kwargs):
             "type": "admin_notification",
             "content": f"Your booking on {formatted_dates} at {formatted_times} has been canceled. If you have any questions, feel free to contact us."
         }
-
 
         message_for_admin = {
             "type": "admin_notification",
@@ -142,10 +131,7 @@ def send_booking_cancellation_notification(sender, instance, **kwargs):
 
         
 
-
-
-#------------------- Venue booking package creation and updation -----------------------
-
+#------------ Venue booking package creation and updation ---------------
 _original_booking_package_data = {}
 
 @receiver(pre_save, sender=BookingPackages)
@@ -178,9 +164,6 @@ def send_notification_for_booking_package(sender, instance, created, **kwargs):
             "type": "admin_notification",
             "content": f"A new booking package '{booking_package_name}' has been created for the venue '{venue_name}'. Please check and verify!" 
         }
-
-        
-
         create_notification(admin_user,message=message_content)
     
     else :
@@ -195,17 +178,11 @@ def send_notification_for_booking_package(sender, instance, created, **kwargs):
             "type": "admin_notification",
             "content":  f"The booking package '{booking_package_name}' for the venue '{venue_name}' has been updated. Please check and verify!"
             }
-
-
             create_notification(admin_user, message=message_content)
 
 
-        
 
-
-
-#---------------------- Users Registration ----------------
-
+#----------- Users Registration ------------
 @receiver(post_save,sender=User)
 def send_notification_user_registration(sender,instance,created, **kwargs):
     if created:
@@ -219,63 +196,45 @@ def send_notification_user_registration(sender,instance,created, **kwargs):
 
 
 
-
-
-#------------------- Owners and Venues Registration ------------
-
+#---------- Owners and Venues Registration ---------
 @receiver(post_save,sender=Owner)
 def send_notification_owner_registration(sender,instance,created, **kwargs) :
     if created :
-
         message_content = {
             "type": "admin_notification",
             "username": "New Venue Created",
             "content": f'New Venue Owner Rquest - {instance.first_name}{instance.last_name}. Please check and verify!' 
         }
 
-
         admin_user = CustomUser.objects.filter(is_superuser=True).first()
         create_notification(admin_user, message=message_content)
 
 
-
-
-# -------------------- Chat Notifications ---------------
-
+# ---------- Chat Notifications -------------
 @receiver(post_save, sender=Messages)
 def notify_recipient_on_new_message(sender, instance, created, **kwargs):
 
     if created:
-
         chat_room = instance.chat_room
         sender_user = instance.user
-        print(chat_room)
-
         recipient_user = (
             chat_room.user2 if chat_room.user1 == sender_user else chat_room.user1
         )
     
-        
         chat_room.last_message_timestamp = instance.timestamp
         chat_room.save()
 
-       
         message_content = {
             "type": "chat_notification",
             "content": instance.content,
             "username": f"{sender_user.first_name} {sender_user.last_name}",
             "timestamp": instance.timestamp.isoformat(),
         }
-
         create_notification(user=recipient_user,message=message_content) 
 
       
         
-
-
-
-# -------------------- User Inquiries -------------
-
+# ---------- User Inquiries -----------
 @receiver(post_save, sender=UserInquiry)
 def notify_new_user_inquiry(sender, instance, created, **kwargs):
     if created:
@@ -285,16 +244,11 @@ def notify_new_user_inquiry(sender, instance, created, **kwargs):
             "content": instance.message,
             "username": f"{user.first_name} {user.last_name}",
         }
-
-
         admin_user = CustomUser.objects.filter(is_superuser=True).first()
         create_notification(admin_user,message=message_content)
 
 
-
-# --------------------- Venue Maintenance ----------------
-
-
+# ----------- Venue Maintenance ---------
 def notify_admin_on_maintenance_change(venue):
     admin_user = CustomUser.objects.filter(is_superuser=True).first()
     if not admin_user:

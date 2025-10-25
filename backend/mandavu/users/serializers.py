@@ -144,7 +144,6 @@ class LogoutUserSerializer(serializers.Serializer) :
             raise serializers.ValidationError({'refresh_token': 'Token is invalid or has expired'})
         
 
-
 class UpdateUserSerializer(serializers.ModelSerializer) :
 
     class Meta:
@@ -163,7 +162,6 @@ class UserDetailsSerializer(serializers.ModelSerializer) :
     class Meta:
         model = User
         fields = '__all__'
-
 
 
 class PasswordResetRequestSerializer(serializers.ModelSerializer) :
@@ -192,8 +190,6 @@ class PasswordResetRequestSerializer(serializers.ModelSerializer) :
             send_password_reset_email(data)
         return super().validate(attrs)    
       
-
-
 
 class SetNewPasswordSerializer(serializers.ModelSerializer) :
     password = serializers.CharField(max_length=60, write_only=True) 
@@ -225,9 +221,7 @@ class SetNewPasswordSerializer(serializers.ModelSerializer) :
             return AuthenticationFailed("link is  invalid or has expired")
 
 
-
-#---------------- Venue Details ---------------         
-
+#---------- Venue Details -----------   
 class VenuesListSerializer(serializers.ModelSerializer) :
     images = BannerDetailsSerializer(many=True, read_only=True)
 
@@ -254,9 +248,7 @@ class SingleVenueEventsDetailsSerializer(serializers.ModelSerializer) :
         fields = '__all__'
         
 
-
-# ----------------- Bookings ----------------
-
+# ----------- Bookings -------------
 class ShowBookingDetailsForCalandarSerializer(serializers.ModelSerializer) :
 
     start = serializers.DateField(source='date')
@@ -264,7 +256,6 @@ class ShowBookingDetailsForCalandarSerializer(serializers.ModelSerializer) :
     class Meta:
         model = Booking
         fields = ['id', 'start', 'status' ]
-
 
 
 class ShowBookingListSerializer(serializers.ModelSerializer) :
@@ -280,19 +271,13 @@ class ShowBookingListSerializer(serializers.ModelSerializer) :
         return Review.objects.filter(booking=obj).exists()
     
 
-    
-#----------------- Customuser -----------
-
 class CustomUserSerializer(serializers.ModelSerializer) :
     class Meta:
         model = CustomUser
         fields = '__all__'
 
 
-
-
-# ----------------- Add Veneu Reviews --------------
-
+# -------- Add Veneu Reviews --------
 class AddReviewSerializer(serializers.ModelSerializer) :
     class Meta:
         model = Review
@@ -307,10 +292,7 @@ class GetReviewSerializer(serializers.ModelSerializer):
         fields = ['id', 'rating', 'review', 'created_at', 'user_first_name', 'user_last_name']
 
 
-
-
-#------------------- User Inquiry ------------------
-
+#--------- User Inquiry ---------
 class UserInquirySerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInquiry

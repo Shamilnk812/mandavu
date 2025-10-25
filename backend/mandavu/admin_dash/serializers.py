@@ -56,7 +56,6 @@ class AdminLogoutSerializer(serializers.Serializer) :
             raise serializers.ValidationError({'refresh_token': 'Token is invalid or has expired'})
 
 
-
 class GetAllBookingDetailsSerializer(serializers.ModelSerializer) :
     venue_name = serializers.SerializerMethodField()
 
@@ -72,7 +71,6 @@ class UserListSerializer(serializers.ModelSerializer) :
     class Meta:
         model = User
         fields = ['id', 'first_name', 'last_name', 'email', 'is_active', 'date_joined']
-
 
 
 class VenueDetailsSeriallizer(serializers.ModelSerializer) :

@@ -57,8 +57,6 @@ class ChatroomSerializer(serializers.ModelSerializer):
     
 
 
-
-
 class MessageSerializer(serializers.ModelSerializer):
     chat_room = ChatroomSerializer(read_only=True)
 

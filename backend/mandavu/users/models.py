@@ -26,13 +26,7 @@ class CustomUser(AbstractBaseUser) :
     REQUIRED_FIELDS = ['first_name','last_name']
     
     objects = UserManager()
-
-    def has_perm(self, perm, obj = None):
-        return True
-    
-    def has_module_perms(self,app_label):
-        return True
-    
+ 
     def token(self) :
         refresh = RefreshToken.for_user(self)
         return{
@@ -41,12 +35,10 @@ class CustomUser(AbstractBaseUser) :
         }
     
 
-
 class User(CustomUser) :
     
     def __str__(self) -> str:
         return self.email
-
 
 
 class OneTimePassword(models.Model) :
@@ -59,8 +51,6 @@ class OneTimePassword(models.Model) :
     
     def __str__(self) :
         return f"{self.user.first_name}-OTP"
-    
-
 
 
 class Booking(models.Model):
@@ -111,8 +101,6 @@ class Booking(models.Model):
             return 1000
         else:
             return self.total_price * 0.25
-
-
 
 
 class BookingDetails(models.Model):

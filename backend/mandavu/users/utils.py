@@ -1,17 +1,19 @@
 import random
 from django.core.mail import EmailMessage
-from .models import OneTimePassword,User,TempBooking,Booking
+from django.shortcuts import get_object_or_404
+from .models import OneTimePassword,User,TempBooking, Booking, BookingDetails
 from django.conf import settings
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from datetime import datetime
-from owners.models import Venue
+from owners.models import Venue, BookingPackages
 import stripe
 from decimal import Decimal
 from django.db.models import F
 from django.db.models.functions import Radians
-from math import cos, sin, asin, sqrt,radians
+from django.db.models import Avg,Count,F,FloatField, ExpressionWrapper,Q
+from django.db.models.functions import ACos, Cos, Radians, Sin
 
 
 def generateOtp() :
@@ -20,19 +22,21 @@ def generateOtp() :
         otp += str(random.randint(1,9))
     return otp
 
+
 def encrypt_otp(otp):
     encrypted_otp = settings.CIPHER_SUITE.encrypt(otp.encode())
     return encrypted_otp.decode()
+
 
 def decrypt_otp(encrypted_otp):
     decrypted_otp = settings.CIPHER_SUITE.decrypt(encrypted_otp.encode())
     return decrypted_otp.decode()
 
+
 def sent_otp_to_user(email) :
     subject = "One time OTP for email verification"
     otp_code = generateOtp()
     encrypted_otp = encrypt_otp(otp_code)
-    print(otp_code)  # For testing purposes
     
     try :
         user = User.objects.get(email=email)
@@ -41,9 +45,7 @@ def sent_otp_to_user(email) :
             'user_name': user.first_name + user.last_name,
             'otp_code' : otp_code, 
             'current_year': datetime.now().year
-
         }
-    
         OneTimePassword.objects.update_or_create(
             user=user,
             defaults={'code': encrypted_otp, 'created_at': timezone.now()}
@@ -54,8 +56,6 @@ def sent_otp_to_user(email) :
         print('emial sented success')
     except Exception as e :
         print(f"Failed to send email: {e}")    
-
-
 
 
 # --------- Password Reset email -------
@@ -69,8 +69,7 @@ def send_password_reset_email(data) :
     email.send(fail_silently=False) 
 
 
-#-------------- Venue Booking Confirmation Email -------------
-
+#---------- Venue Booking Confirmation Email -----------
 def send_venue_booking_confirmation_email(booking , facilities):
     subject = f"Booking Confirmation - {booking.venue.convention_center_name}"
     logo_url = f"{settings.MEDIA_URL}logo/mandavu-logo.png"
@@ -85,11 +84,8 @@ def send_venue_booking_confirmation_email(booking , facilities):
         'times': booking.times,
         'facilities': facilities,
         'total_amount': booking.total_price,
-        # 'remaining_amount': booking.remaining_amount,
         'booking_amount': booking.booking_amount,
         'current_year': datetime.now().year
-
-    
     }
     message = render_to_string('emails/venue_booking_confirmation_email.html', context)
     send_mail(subject,'',settings.DEFAULT_FROM_EMAIL, recipient_list, html_message=message)
@@ -103,12 +99,10 @@ def send_user_inquiry_message(username,email,message):
         "username":username,
         "email":email,
         "message":message
-
     }
     message = render_to_string('emails/user_inquiry.html',context)
     send_mail(subject,'',email,recipient_list, html_message=message)
     
-
 
 
 # Check if requested dates are already booked or exist in temp bookings.
@@ -134,7 +128,6 @@ def check_booking_conflicts(venue, requested_dates, package_name):
             return True, f"The date(s) {set(requested_dates) & set(temp_dates)} are currently being booked. Try again later."
         
     return False, ""
-
 
 
 def handle_webhook_conflicts(temp_booking, session):
@@ -174,6 +167,64 @@ def handle_webhook_conflicts(temp_booking, session):
                 return True, "Booking conflict detected. Please contact support for refund."
     return False, ""
 
+
+def create_final_booking(temp_booking, session):
+    """
+    Create the final booking from a TempBooking after Stripe payment is successful.
+    """
+    booking_details = temp_booking.data
+    booking_package = get_object_or_404(BookingPackages, id=booking_details['bookingPackage'])
+
+    booking = Booking.objects.create(
+        user=temp_booking.user,  
+        venue=temp_booking.venue,
+        name=booking_details['fullName'],  
+        phone=booking_details['phoneNumber'],
+        additional_phone=booking_details['additionalPhoneNumber'],
+        city=booking_details['city'],
+        state=booking_details['state'],
+        address=booking_details['fullAddress'],
+        condition=booking_details['airConditioning'],
+        extra_ac_price=booking_details['extraAcAmount'],
+        total_price=booking_details['totalAmount'],
+        booking_amount=booking_details['bookingAmount'], 
+        remaining_amount=booking_details['remainingAmount'],
+        payment_intent_id=session['payment_intent'],
+        times=booking_details['times'],
+        dates=booking_details['dates'],
+        event_name=booking_details['eventName'],
+        event_details=booking_details['eventDetails'],
+        package_type=booking_package,
+        package_name=booking_details['packageName']
+    )
+
+    # Create BookingDetails entries
+    facilities = booking_details.get('facilities', [])
+    for f in facilities:
+        BookingDetails.objects.create(
+            booking=booking,
+            facilities=f"{f['facility']} - {f['price']}"
+        )
+    return booking, facilities
+
+
+def calculate_distance(queryset, user_latitude, user_longitude):
+        """
+        Calculate the distance (in km) from the user's location for each venue
+        using the Haversine formula and order results by nearest first.
+        """
+        return queryset.annotate(
+            distance=ExpressionWrapper(
+                6371 * ACos(
+                    Cos(Radians(user_latitude)) *
+                    Cos(Radians(F('latitude'))) *
+                    Cos(Radians(F('longitude')) - Radians(user_longitude)) +
+                    Sin(Radians(user_latitude)) *
+                    Sin(Radians(F('latitude')))
+                ),
+                output_field=FloatField()
+            )
+        ).order_by('distance')
 
 
 

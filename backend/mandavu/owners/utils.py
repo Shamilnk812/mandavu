@@ -29,15 +29,6 @@ def generateOtp() :
     return otp
 
 
-# def encrypt_otp(otp):
-#     encrypted_otp = settings.CIPHER_SUITE.encrypt(otp.encode())
-#     return encrypted_otp.decode()
-
-# def decrypt_otp(encrypted_otp):
-#     decrypted_otp = settings.CIPHER_SUITE.decrypt(encrypted_otp.encode())
-#     return decrypted_otp.decode()
-
-
 def sent_otp_to_owner(email) :
     subject = "One time OTP for email verification"
     otp_code = generateOtp()

@@ -12,7 +12,6 @@ class ChatRooms(models.Model) :
     unread_count_user2 = models.IntegerField(default=0)  
     last_message_timestamp = models.DateTimeField(null=True, blank=True)
 
-    
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -21,7 +20,6 @@ class ChatRooms(models.Model) :
                 condition=Q(user1__lt=models.F('user2'))
             )
         ]
-        
         
     def save(self, *args, **kwargs):
         if self.user1.id > self.user2.id:
@@ -39,7 +37,6 @@ class Messages(models.Model) :
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     seen = models.BooleanField(default=False)
-
 
     class Meta:
         ordering = ['timestamp']

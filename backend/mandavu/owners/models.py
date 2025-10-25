@@ -10,7 +10,6 @@ from datetime import timedelta
 import uuid
 
 
-# Create your models here.
 
 
 class Owner(CustomUser):
@@ -19,17 +18,14 @@ class Owner(CustomUser):
     id_proof = models.ImageField(upload_to='id_proof/', verbose_name="Id Proof")
     is_approved = models.BooleanField(default=False)
     
-
     def __str__(self):
         return f"{self.first_name} - {self.last_name}"
 
-    
 
 class OneTimePasswordForOwner(models.Model) :
     owner = models.OneToOneField(Owner, on_delete=models.CASCADE)
     code  = models.CharField(max_length=225,unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
 
     def is_expired(self):
         return timezone.now() > self.created_at + timedelta(minutes=2)

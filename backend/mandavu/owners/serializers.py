@@ -92,8 +92,7 @@ class OwnerLoginSerializer(serializers.ModelSerializer) :
            raise AuthenticationFailed("Your venue is not approved yet. You will receive an email when it is approved.")
         
         owner_token = owner.token()
-       
-        print(owner.id)
+    
         attrs.pop('password', None)
         attrs['owner_id'] = owner.id    
         attrs['email'] = owner.email   
@@ -144,10 +143,7 @@ class UpdateOwnerSerializer(serializers.ModelSerializer) :
         return  instance
 
 
-
-
 #------------- Reset password ----------
-
 class OwnerPasswordResetSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=225)
 
@@ -205,8 +201,6 @@ class OwnerSetNewPasswordSerializer(serializers.ModelSerializer) :
             return AuthenticationFailed("link is  invalid or has expired")
 
 
-# ============= VENUE HANDLING ===========
-
 class RegisterVenueSerializer(serializers.ModelSerializer) :
     
     class Meta: 
@@ -217,7 +211,6 @@ class RegisterVenueSerializer(serializers.ModelSerializer) :
         venue = Venue(**validated_data)
         venue.save()
         return venue
-    
 
 
 class VenueDetailsSerializer(serializers.ModelSerializer):
@@ -321,6 +314,7 @@ class CreatingEventSerializer(serializers.ModelSerializer) :
         model  = Event
         fields = '__all__'
 
+
 class EventSerializer(serializers.ModelSerializer) :
     class Meta:
         model  = Event
@@ -388,7 +382,6 @@ class BookingPackagesSerializer(serializers.ModelSerializer) :
         instance.is_verified = False
         instance.is_editable = False    
         return super().update(instance, validated_data)
-
 
 
 class BookingPackageTimeSlotesSerializer(serializers.ModelSerializer):

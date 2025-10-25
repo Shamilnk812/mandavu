@@ -35,6 +35,9 @@ export default function ShowAllVenues() {
   const userLocation = useSelector((state) => state.user.userLocation);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
 
+  const [activeFilters, setActiveFilters] = useState({});
+
+
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -48,24 +51,30 @@ export default function ShowAllVenues() {
 
 
   useEffect(() => {
-    const { latitude, longitude } = userLocation;
+    setCurrentPage(1);
+  }, [debouncedSearchQuery]);
+
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilters]);
+
+
+  const { latitude, longitude } = userLocation;
+
+
+  useEffect(() => {
     if (debouncedSearchQuery.trim() !== ""  || searchQuery === "") {
       fetchVenuesList({
-        latitude:latitude,
-        longitude:longitude,
+        latitude: latitude,
+        longitude: longitude,
         search: debouncedSearchQuery,
         page: currentPage,
+        ...activeFilters,
       });
     }
-  }, [debouncedSearchQuery, currentPage]);
+  }, [debouncedSearchQuery, currentPage, latitude, longitude, activeFilters]);
 
-  
-  const handleSearchFunc = ()=> {
-    fetchVenuesList( {
-      search: searchQuery,
-      page: currentPage,
-    })
-  }
 
   const scrollVariants = {
     hidden: { opacity: 0, y: 50 },
@@ -82,6 +91,13 @@ export default function ShowAllVenues() {
   };
 
 
+  useEffect(() => {
+    if (isSidebarOpen) {
+      setDiningSeatCount(activeFilters.dining_seat_count || 0);
+      setAuditoriumSeatCount(activeFilters.auditorium_seat_count || 0);
+      setPriceRange([activeFilters.min_price || 0, activeFilters.max_price || 0]);
+    }
+  }, [isSidebarOpen]);
 
 
   const toggleSidebar = () => {
@@ -105,35 +121,35 @@ export default function ShowAllVenues() {
 
 
   const handleFilterFunc = ()=> {
-    if (
-      !diningSeatCount &&
-      !auditoriumSeatCount && 
-      (priceRange[0] === 0) && 
-      (priceRange[1] === 0) 
-    ) {
-      
-      toast.warn('Please fill in at least one filter before applying!');
-      return; 
+    const newFilters = {};
+    if (diningSeatCount > 0) {
+      newFilters.dining_seat_count = diningSeatCount;
     }
-    const params = {
-      page: currentPage,
-      dining_seat_count: diningSeatCount,
-      auditorium_seat_count: auditoriumSeatCount,
-      min_price: priceRange[0],
-      max_price: priceRange[1],
-    };
-    // console.log("Filter Params:", params);
+    if (auditoriumSeatCount > 0) {
+      newFilters.auditorium_seat_count = auditoriumSeatCount;
+    }
+    if (priceRange[1] > 0) {
+      newFilters.min_price = priceRange[0];
+      newFilters.max_price = priceRange[1];
+    }
 
+    if (Object.keys(newFilters).length === 0) {
+      toast.warn('Please fill in at least one filter before applying!');
+      return;
+    }
 
-    fetchVenuesList(params).then(() => {
-      // Reset filter values after fetching data
-      setDiningSeatCount(0);
-      setAuditoriumSeatCount(0);
-      setPriceRange([0, 0]);
-    });
+    setActiveFilters(newFilters);
   }
 
-  
+
+  const handleClearFilters = () => {
+    setActiveFilters({});
+    setDiningSeatCount(0);
+    setAuditoriumSeatCount(0);
+    setPriceRange([0, 0]);
+  };
+
+
 
   if (loading) {
     return <LoadingAnimation />
@@ -237,6 +253,12 @@ export default function ShowAllVenues() {
                 className="py-2 px-4 bg-teal-600 text-white rounded hover:bg-teal-700"
               >
                 Apply
+              </button>
+              <button
+                onClick={handleClearFilters}
+                className="py-2 px-4 bg-gray-500 text-white rounded hover:bg-gray-600 ml-2"
+              >
+                Clear
               </button>
             </motion.div>
           )}

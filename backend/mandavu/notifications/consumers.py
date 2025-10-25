@@ -1,4 +1,3 @@
-
 import json
 import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -9,12 +8,10 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         self.user_id = self.scope['url_route']['kwargs']['user_id']
         self.group_name = f'notifications_{self.user_id}'
 
-
         await self.channel_layer.group_add(
             self.group_name,
             self.channel_name
         )
-
         await self.accept()
 
     async def disconnect(self, close_code):
@@ -26,8 +23,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
         message = data['message']
-
-
         await self.channel_layer.group_send(
             self.group_name,
             {

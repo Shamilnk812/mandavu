@@ -12,29 +12,27 @@ from reportlab.lib.units import inch
 
 
 def send_approval_email(venue):
-        subject = 'Your Venue has been Approved!'
-        recipient_list = [venue.owner.email]
-        context = {
-            'venue_name': venue.convention_center_name,
-        }
-        message = render_to_string('emails/venue_approved.html', context)
-        send_mail(subject, '', 'shamilnk67@gmail.com', recipient_list, html_message=message)
+      subject = 'Your Venue has been Approved!'
+      recipient_list = [venue.owner.email]
+      context = {
+      'venue_name': venue.convention_center_name,
+      }
+      message = render_to_string('emails/venue_approved.html', context)
+      send_mail(subject, '', 'shamilnk67@gmail.com', recipient_list, html_message=message)
 
 
 def send_rejection_email(venue, reason):
-    subject = f'Rejection: {reason}'
-    recipient_list = [venue.owner.email]
-    context = {
-        'venue_name': venue.convention_center_name,
-        'rejection_reason': reason,
-    }
-    message = render_to_string('emails/venue_rejected.html', context)
-    send_mail(subject, '', 'shamilnk67@gmail.com', recipient_list, html_message=message)
+      subject = f'Rejection: {reason}'
+      recipient_list = [venue.owner.email]
+      context = {
+            'venue_name': venue.convention_center_name,
+            'rejection_reason': reason,
+      }
+      message = render_to_string('emails/venue_rejected.html', context)
+      send_mail(subject, '', 'shamilnk67@gmail.com', recipient_list, html_message=message)
 
 
-
-# VENUE BOOKING PACKAGE APPROVALS AND REJECTIONS
-
+# -------- Venue booking package approvals and rejection --------- 
 def send_venue_booking_package_approval_email(venue, booking_package_name):
       subject = "Booking Package Approved"
       recipient_list = [venue.owner.email]
@@ -47,8 +45,6 @@ def send_venue_booking_package_approval_email(venue, booking_package_name):
       }
       message = render_to_string('emails/venue_booking_package_approval.html', context)
       send_mail(subject, '', settings.DEFAULT_FROM_EMAIL, recipient_list, html_message=message)
-
-
 
 
 def send_venue_booking_package_rejection_email(venue, booking_package_name, rejection_reason) :
@@ -64,10 +60,7 @@ def send_venue_booking_package_rejection_email(venue, booking_package_name, reje
       send_mail(subject, '',settings.DEFAULT_FROM_EMAIL, recipient_list, html_message=message)
 
 
-
-
-#------------- Accounts blockng and unblocking  -------------
-
+#----------- Accounts blockng and unblocking  -----------
 def send_account_blocking_reason_email(recipient, username ,reason , venue_name=None):
       if venue_name :
             subject = f"Your venue {venue_name} is blocked!"
@@ -81,7 +74,6 @@ def send_account_blocking_reason_email(recipient, username ,reason , venue_name=
       }
       message = render_to_string('emails/account_blocking_email.html', context)
       send_mail(subject, '',settings.DEFAULT_FROM_EMAIL, recipient_list, html_message=message)
-
 
 
 def send_account_unblocking_email(recipient, username, venue_name=None):
@@ -98,9 +90,7 @@ def send_account_unblocking_email(recipient, username, venue_name=None):
       send_mail(subject, '',settings.DEFAULT_FROM_EMAIL, recipient_list, html_message=message)
 
 
-
-#----------- User Inquiry reply mail ---------
-
+#--------- User Inquiry reply mail ---------
 def send_user_inquiry_reply_email(recipient,username, reply_message):
       
       subject = f"Mandavu Support Team Reply"
@@ -114,15 +104,12 @@ def send_user_inquiry_reply_email(recipient,username, reply_message):
       message = render_to_string('emails/user_inquiry_reply_email.html', context)
       send_mail(subject, '',settings.DEFAULT_FROM_EMAIL, recipient_list, html_message=message)
 
- 
 
- # ----------- Generate Salesreport -----------
-
+ # ---------- Generate Salesreport -----------
 def build_pdf(bookings, formatted_start, formatted_end):
       buffer = BytesIO()
       doc = SimpleDocTemplate(buffer, pagesize=A2)
       elements = []
-
       styles = getSampleStyleSheet()
 
       # Heading
@@ -145,7 +132,6 @@ def build_pdf(bookings, formatted_start, formatted_end):
       doc.build(elements)
       buffer.seek(0)
       return buffer
-
 
 
 def prepare_table_data(bookings):
@@ -173,7 +159,6 @@ def prepare_table_data(bookings):
                   booking.status,
             ])
       return data, total_price
-
 
 
 def create_table(data):

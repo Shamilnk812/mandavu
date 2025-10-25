@@ -15,7 +15,6 @@ class JwtAuthentication(BaseAuthentication) :
             payload = jwt.decode(token,settings.SECRET_KEY, algorithms=['HS256'])
             user_id = payload['user_id']
             user = CustomUser.objects.get(id=user_id)
-            # print("auth_token_user_id: ",user_id)
             return user
         
         except user.DoesNotExist :
